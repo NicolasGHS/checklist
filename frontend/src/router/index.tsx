@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import Layout from "../components/Layout";
+import Layout from "@/layout";
 import Inbox from "../pages/Inbox";
 import Today from "../pages/Today";
 import Upcoming from "../pages/Upcoming";
