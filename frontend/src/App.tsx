@@ -2,8 +2,8 @@ import "./App.css";
 
 function App() {
   return (
-    <div className="bg-gray-800">
-      <p>Checklist</p>
+    <div className="h-screen w-full bg-gray-800">
+      <p className="text-3xl">Inbox</p>
     </div>
   );
 }
