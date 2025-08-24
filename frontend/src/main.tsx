@@ -1,9 +1,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
 import "./style.css";
-import App from "./App";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "./components/AppSidebar";
+import router from "./router";
 
 const container = document.getElementById("root");
 
@@ -11,12 +10,6 @@ const root = createRoot(container!);
 
 root.render(
   <React.StrictMode>
-    <SidebarProvider>
-      <SidebarTrigger />
-      <main className="flex h-screen w-screen">
-        <AppSidebar />
-        <App />
-      </main>
-    </SidebarProvider>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );

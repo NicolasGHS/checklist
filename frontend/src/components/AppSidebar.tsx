@@ -7,7 +7,9 @@ import {
   Star,
   Layers,
   Archive,
+  FolderOpen,
 } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 import {
   Sidebar,
@@ -24,7 +26,7 @@ import {
 const items = [
   {
     title: "Inbox",
-    url: "/",
+    url: "/inbox",
     icon: Inbox,
   },
   {
@@ -38,18 +40,15 @@ const items = [
     icon: Calendar,
   },
   {
-    title: "Anytime",
-    url: "/anytime",
-    icon: Layers,
-  },
-  {
-    title: "Someday",
-    url: "/someday",
-    icon: Archive,
+    title: "Projects",
+    url: "/projects",
+    icon: FolderOpen,
   },
 ];
 
 export function AppSidebar() {
+  const location = useLocation();
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -59,11 +58,17 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={
+                      location.pathname === item.url ||
+                      (location.pathname === "/" && item.url === "/inbox")
+                    }
+                  >
+                    <Link to={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
