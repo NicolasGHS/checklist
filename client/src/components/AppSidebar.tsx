@@ -1,14 +1,4 @@
-import {
-  Calendar,
-  Home,
-  Inbox,
-  Search,
-  Settings,
-  Star,
-  Layers,
-  Archive,
-  FolderOpen,
-} from "lucide-react";
+import { Calendar, Inbox, Star, FolderOpen } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 import {
@@ -23,6 +13,11 @@ import {
   SidebarMenuItem,
 } from "./ui/sidebar";
 import { SettingsButton } from "./SettingsButton";
+import { NewListButton } from "./NewListButton";
+import { Lists } from "./Lists";
+import { GetLists } from "../../wailsjs/go/main/App";
+import { useEffect, useState } from "react";
+import { List } from "../types/list";
 
 // Menu items.
 const items = [
@@ -50,6 +45,18 @@ const items = [
 
 export function AppSidebar() {
   const location = useLocation();
+  const [lists, setLists] = useState<List[]>([]);
+
+  const loadLists = async () => {
+    const result = (await GetLists()) as unknown as List[];
+    setLists(result);
+  };
+
+  useEffect(() => {
+    loadLists();
+  }, []);
+
+  console.log("lists: ", lists);
 
   return (
     <Sidebar>
@@ -74,11 +81,13 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <Lists items={lists} />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="flex">
+        <NewListButton />
         <SettingsButton />
       </SidebarFooter>
     </Sidebar>
