@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AddTodo, GetTodos } from "../../wailsjs/go/main/App";
+import { AddTodo, GetTodos, ToggleTodo } from "../../wailsjs/go/main/App";
 import { Task } from "../components/Task";
 import { Todo } from "../types/todo";
 
@@ -8,10 +8,22 @@ const Inbox: React.FC = () => {
 
   const loadTodos = async () => {
     const todoList = (await GetTodos()) as unknown as Todo[];
-
-    console.log("todoList: ", todoList);
-
     setTodos(todoList);
+  };
+
+  const handleToggle = async (id: number) => {
+    setTodos((prev) =>
+      prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t))
+    );
+
+    try {
+      await ToggleTodo(id);
+    } catch (error) {
+      console.error(error);
+      setTodos((prev) =>
+        prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t))
+      );
+    }
   };
 
   useEffect(() => {
@@ -27,10 +39,7 @@ const Inbox: React.FC = () => {
         <ul>
           {todos.map((todo: Todo, index) => (
             <li key={index} className="text-white mb-2">
-              {/* <span className={todo.Completed ? "line-through" : ""}>
-                {todo.Name} - {todo.Description}
-              </span> */}
-              <Task todo={todo} />
+              <Task todo={todo} onToggle={handleToggle} />
             </li>
           ))}
         </ul>

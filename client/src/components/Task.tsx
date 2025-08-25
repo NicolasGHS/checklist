@@ -1,37 +1,21 @@
 import { useEffect } from "react";
 import { Todo } from "../types/todo";
 import { Checkbox } from "./ui/checkbox";
-import { GetTodoById, ToggleTodo } from "../../wailsjs/go/main/App";
+import { GetTodoById } from "../../wailsjs/go/main/App";
 
 type TaskProps = {
   todo: Todo;
+  onToggle: (id: number) => void;
 };
 
-export const Task = ({ todo }: TaskProps) => {
-  console.log("todo in task: ", todo);
-
-  useEffect(() => {
-    const getTodo = async () => {
-      const result = await GetTodoById(todo.ID);
-
-      console.log("result of getTodoById: ", result);
-    };
-
-    getTodo();
-  }, []);
-
-  const handleToggleTodo = async (checked: boolean) => {
-    try {
-      await ToggleTodo(todo.ID);
-      console.log(`Todo ${todo.ID} toggled to: ${checked}`);
-    } catch (error) {
-      console.error("Error toggling todo:", error);
-    }
+export const Task = ({ todo, onToggle }: TaskProps) => {
+  const handleChange = () => {
+    onToggle(todo.ID);
   };
 
   return (
     <div className="flex gap-3 items-center">
-      <Checkbox checked={todo.Completed} onCheckedChange={handleToggleTodo} />
+      <Checkbox checked={todo.Completed} onCheckedChange={handleChange} />
       <p className="text-foreground">{todo.Name}</p>
       <p>{todo.ID}</p>
     </div>
