@@ -1,25 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { AddTodo, GetTodos } from "../../wailsjs/go/main/App";
 import { Task } from "../components/Task";
-
-type Todo = {
-  Name: string;
-  Description: string;
-  Completed: boolean;
-};
+import { Todo } from "../types/todo";
 
 const Inbox: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
 
+  const loadTodos = async () => {
+    const todoList = (await GetTodos()) as unknown as Todo[];
+
+    console.log("todoList: ", todoList);
+
+    setTodos(todoList);
+  };
+
   useEffect(() => {
-    const loadTodos = async () => {
-      const todoList = (await GetTodos()) as unknown as Todo[];
-
-      console.log("todoList: ", todoList);
-
-      setTodos(todoList);
-    };
-
     loadTodos();
   }, []);
 
@@ -30,12 +25,12 @@ const Inbox: React.FC = () => {
         <p>Geen todo's gevonden.</p>
       ) : (
         <ul>
-          {todos.map((todo, index) => (
+          {todos.map((todo: Todo, index) => (
             <li key={index} className="text-white mb-2">
               {/* <span className={todo.Completed ? "line-through" : ""}>
                 {todo.Name} - {todo.Description}
               </span> */}
-              <Task name={todo.Name} />
+              <Task todo={todo} />
             </li>
           ))}
         </ul>

@@ -39,10 +39,18 @@ func (a *App) GetTodos() ([]models.Todo, error) {
 	return todo.GetTodos()
 }
 
+func (a *App) GetTodoById(id uint) (models.Todo, error) {
+	return todo.GetTodoById(id)
+}
+
 func (a *App) AddList(name, description string) error {
 	return list.AddList(name, description)
 }
 
 func (a *App) GetLists() ([]models.List, error) {
 	return list.GetLists()
+}
+
+func (a *App) ToggleTodo(id uint) error {
+	return todo.ToggleTodo(id)
 }

@@ -14,6 +14,14 @@ export function GetLists() {
   return window['go']['main']['App']['GetLists']();
 }
 
+export function GetTodoById(arg1) {
+  return window['go']['main']['App']['GetTodoById'](arg1);
+}
+
 export function GetTodos() {
   return window['go']['main']['App']['GetTodos']();
+}
+
+export function ToggleTodo(arg1) {
+  return window['go']['main']['App']['ToggleTodo'](arg1);
 }
