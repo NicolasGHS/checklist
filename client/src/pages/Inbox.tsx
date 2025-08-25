@@ -27,9 +27,9 @@ const Inbox: React.FC = () => {
 
   return (
     <div className="flex-1 p-6">
-      <h1 className="text-3xl font-bold text-white mb-6">Inbox</h1>
+      <h1 className="text-3xl text-foreground font-bold mb-6">Inbox</h1>
       {todos.length === 0 ? (
-        <p className="text-white">Geen todo's gevonden.</p>
+        <p>Geen todo's gevonden.</p>
       ) : (
         <ul>
           {todos.map((todo, index) => (

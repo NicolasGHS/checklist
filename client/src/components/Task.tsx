@@ -8,7 +8,7 @@ export const Task = ({ name }: TaskProps) => {
   return (
     <div className="flex gap-3 items-center">
       <Checkbox />
-      <p>{name}</p>
+      <p className="text-foreground">{name}</p>
     </div>
   );
 };
