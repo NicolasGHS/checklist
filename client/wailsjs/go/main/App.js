@@ -17,7 +17,3 @@ export function GetLists() {
 export function GetTodos() {
   return window['go']['main']['App']['GetTodos']();
 }
-
-export function Greet(arg1) {
-  return window['go']['main']['App']['Greet'](arg1);
-}

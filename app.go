@@ -6,7 +6,6 @@ import (
 	"checklist/core/models"
 	"checklist/core/todo"
 	"context"
-	"fmt"
 	"log"
 )
 
@@ -46,9 +45,4 @@ func (a *App) AddList(name, description string) error {
 
 func (a *App) GetLists() ([]models.List, error) {
 	return list.GetLists()
-}
-
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
 }

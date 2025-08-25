@@ -9,5 +9,3 @@ export function AddTodo(arg1:string,arg2:string):Promise<void>;
 export function GetLists():Promise<Array<models.List>>;
 
 export function GetTodos():Promise<Array<models.Todo>>;
-
-export function Greet(arg1:string):Promise<string>;
