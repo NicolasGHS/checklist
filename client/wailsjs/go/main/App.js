@@ -10,6 +10,10 @@ export function AddTodo(arg1, arg2) {
   return window['go']['main']['App']['AddTodo'](arg1, arg2);
 }
 
+export function GetInboxTasks() {
+  return window['go']['main']['App']['GetInboxTasks']();
+}
+
 export function GetLists() {
   return window['go']['main']['App']['GetLists']();
 }

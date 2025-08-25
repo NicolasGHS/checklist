@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { AddTodo, GetTodos, ToggleTodo } from "../../wailsjs/go/main/App";
+import {
+  AddTodo,
+  GetTodos,
+  ToggleTodo,
+  GetInboxTasks,
+} from "../../wailsjs/go/main/App";
 import { Task } from "../components/Task";
 import { Todo } from "../types/todo";
 
@@ -7,7 +12,7 @@ const Inbox: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
 
   const loadTodos = async () => {
-    const todoList = (await GetTodos()) as unknown as Todo[];
+    const todoList = (await GetInboxTasks()) as unknown as Todo[];
     setTodos(todoList);
   };
 

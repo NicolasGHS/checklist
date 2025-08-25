@@ -3,6 +3,7 @@ package todo
 import (
 	"checklist/core/db"
 	"checklist/core/models"
+	"fmt"
 )
 
 func GetTodos() ([]models.Todo, error) {
@@ -18,6 +19,16 @@ func GetTodoById(id uint) (models.Todo, error) {
 	_ = db.DB.First(&todo)
 
 	return todo, nil
+}
+
+func GetInboxTasks() ([]models.Todo, error) {
+	var todos []models.Todo
+
+	_ = db.DB.Where("list_id = ?", 1).Find(&todos)
+
+	fmt.Printf("todos in inbox: %v", todos)
+
+	return todos, nil
 }
 
 func AddTodo(name, description string) error {
