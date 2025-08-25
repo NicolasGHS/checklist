@@ -1,3 +1,4 @@
 build/bin
 node_modules
 client/dist
+todos.db
