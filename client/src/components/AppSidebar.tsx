@@ -23,6 +23,7 @@ import {
   SidebarMenuItem,
 } from "./ui/sidebar";
 import { ModeToggle } from "./mode-toggle";
+import { SettingsButton } from "./SettingsButton";
 
 // Menu items.
 const items = [
@@ -79,7 +80,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <ModeToggle />
+        <SettingsButton />
       </SidebarFooter>
     </Sidebar>
   );
