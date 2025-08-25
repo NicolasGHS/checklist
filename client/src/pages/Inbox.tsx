@@ -23,8 +23,6 @@ const Inbox: React.FC = () => {
     loadTodos();
   }, []);
 
-  console.log("todos: ", todos);
-
   return (
     <div className="flex-1 p-6">
       <h1 className="text-3xl text-foreground font-bold mb-6">Inbox</h1>

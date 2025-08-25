@@ -22,7 +22,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "./ui/sidebar";
-import { ModeToggle } from "./mode-toggle";
 import { SettingsButton } from "./SettingsButton";
 
 // Menu items.
