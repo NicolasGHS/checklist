@@ -2,7 +2,9 @@ package main
 
 import (
 	"checklist/core/db"
+	"checklist/core/list"
 	"checklist/core/models"
+	"checklist/core/todo"
 	"context"
 	"fmt"
 	"log"
@@ -31,11 +33,19 @@ func (a *App) startup(ctx context.Context) {
 }
 
 func (a *App) AddTodo(name, description string) error {
-	return db.AddTodo(name, description)
+	return todo.AddTodo(name, description)
 }
 
 func (a *App) GetTodos() ([]models.Todo, error) {
-	return db.GetTodos()
+	return todo.GetTodos()
+}
+
+func (a *App) AddList(name, description string) error {
+	return list.AddList(name, description)
+}
+
+func (a *App) GetLists() ([]models.List, error) {
+	return list.GetLists()
 }
 
 // Greet returns a greeting for the given name
