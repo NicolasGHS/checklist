@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AddTodo, GetTodos } from "../../wailsjs/go/main/App";
+import { Task } from "../components/Task";
 
 type Todo = {
   Name: string;
@@ -33,9 +34,10 @@ const Inbox: React.FC = () => {
         <ul>
           {todos.map((todo, index) => (
             <li key={index} className="text-white mb-2">
-              <span className={todo.Completed ? "line-through" : ""}>
+              {/* <span className={todo.Completed ? "line-through" : ""}>
                 {todo.Name} - {todo.Description}
-              </span>
+              </span> */}
+              <Task name={todo.Name} />
             </li>
           ))}
         </ul>
