@@ -8,12 +8,16 @@ import { Card, CardContent } from "./ui/card";
 import { Checkbox } from "./ui/checkbox";
 import { Textarea } from "./ui/textarea";
 
+type NewTodoCardProps = {
+  AddTodoFunction: (name: string, description: string) => void;
+};
+
 const formSchema = z.object({
   name: z.string().min(2).max(50),
   description: z.string().min(0).max(255),
 });
 
-export const NewTodoCard = () => {
+export const NewTodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -23,6 +27,7 @@ export const NewTodoCard = () => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    AddTodoFunction(values.name, values.description);
   }
 
   return (

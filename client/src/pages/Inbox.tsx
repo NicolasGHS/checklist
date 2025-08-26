@@ -39,6 +39,10 @@ const Inbox: React.FC = () => {
     }
   };
 
+  const createTodo = async (name: string, description: string) => {
+    await AddTodo(name, description);
+  };
+
   useEffect(() => {
     loadTodos();
   }, []);
@@ -50,7 +54,7 @@ const Inbox: React.FC = () => {
         <p>No todo's yet.</p>
       ) : (
         <div>
-          {showNewTaskCard && <NewTodoCard />}
+          {showNewTaskCard && <NewTodoCard AddTodoFunction={createTodo} />}
           <ul>
             {todos.map((todo: Todo, index) => (
               <li key={index} className="text-white mb-2">
