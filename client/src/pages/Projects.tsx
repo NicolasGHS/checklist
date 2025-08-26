@@ -1,9 +1,9 @@
-import React from "react";
+import { Page } from "../components/Page";
 
-const Projects: React.FC = () => {
+const Projects = () => {
   return (
-    <div className="flex-1 p-6">
-      <h1 className="text-3xl font-bold text-foreground mb-6">Projects</h1>
+    <div>
+      <Page title="Projects" id={0} />
     </div>
   );
 };
