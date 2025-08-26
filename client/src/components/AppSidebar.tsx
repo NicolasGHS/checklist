@@ -86,9 +86,11 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="flex">
-        <NewListButton />
-        <SettingsButton />
+      <SidebarFooter>
+        <div className="flex items-center justify-between mr-1 ml-1">
+          <NewListButton />
+          <SettingsButton />
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
