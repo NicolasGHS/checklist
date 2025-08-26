@@ -3,6 +3,8 @@ package list
 import (
 	"checklist/core/db"
 	"checklist/core/models"
+
+	"github.com/gosimple/slug"
 )
 
 func GetLists() ([]models.List, error) {
@@ -19,6 +21,15 @@ func GetListBySlug(slug string) (models.List, error) {
 	return list, result.Error
 }
 
+func MakeSlug(name string) string {
+	newSlug := slug.Make(name)
+
+	return newSlug
+}
+
 func AddList(name, description string) error {
-	return db.DB.Create(&models.List{Name: name}).Error
+
+	slug := MakeSlug(name)
+
+	return db.DB.Create(&models.List{Name: name, Slug: slug}).Error
 }
