@@ -7,9 +7,17 @@ import {
 } from "../../wailsjs/go/main/App";
 import { Task } from "../components/Task";
 import { Todo } from "../types/todo";
+import { NewTodoCard } from "../components/NewTodoCard";
+import { NewTaskButton } from "../components/NewTaskButton";
 
 const Inbox: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [showNewTaskCard, setShowNewTaskCard] = useState<boolean>(false);
+
+  const showCard = () => {
+    console.log("Show card!!");
+    setShowNewTaskCard(!showNewTaskCard);
+  };
 
   const loadTodos = async () => {
     const todoList = (await GetInboxTasks()) as unknown as Todo[];
@@ -41,13 +49,17 @@ const Inbox: React.FC = () => {
       {todos.length === 0 ? (
         <p>No todo's yet.</p>
       ) : (
-        <ul>
-          {todos.map((todo: Todo, index) => (
-            <li key={index} className="text-white mb-2">
-              <Task todo={todo} onToggle={handleToggle} />
-            </li>
-          ))}
-        </ul>
+        <div>
+          {showNewTaskCard && <NewTodoCard />}
+          <ul>
+            {todos.map((todo: Todo, index) => (
+              <li key={index} className="text-white mb-2">
+                <Task todo={todo} onToggle={handleToggle} />
+              </li>
+            ))}
+          </ul>
+          <NewTaskButton onClick={showCard} />
+        </div>
       )}
     </div>
   );
