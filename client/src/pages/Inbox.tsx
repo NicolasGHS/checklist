@@ -40,7 +40,7 @@ const Inbox: React.FC = () => {
   };
 
   const createTodo = async (name: string, description: string) => {
-    await AddTodo(name, description);
+    await AddTodo(name, description, 1);
   };
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import {models} from '../models';
 
 export function AddList(arg1:string,arg2:string):Promise<void>;
 
-export function AddTodo(arg1:string,arg2:string):Promise<void>;
+export function AddTodo(arg1:string,arg2:string,arg3:number):Promise<void>;
 
 export function GetInboxTasks():Promise<Array<models.Todo>>;
 

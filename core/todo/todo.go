@@ -31,8 +31,8 @@ func GetInboxTasks() ([]models.Todo, error) {
 	return todos, nil
 }
 
-func AddTodo(name, description string) error {
-	return db.DB.Create(&models.Todo{Name: name, Completed: false, Description: description}).Error
+func AddTodo(name, description string, list_id uint) error {
+	return db.DB.Create(&models.Todo{Name: name, Completed: false, Description: description, ListID: list_id}).Error
 }
 
 func ToggleTodo(id uint) error {

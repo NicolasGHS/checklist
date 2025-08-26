@@ -32,8 +32,8 @@ func (a *App) startup(ctx context.Context) {
 }
 
 // Todo
-func (a *App) AddTodo(name, description string) error {
-	return todo.AddTodo(name, description)
+func (a *App) AddTodo(name, description string, list_id uint) error {
+	return todo.AddTodo(name, description, list_id)
 }
 
 func (a *App) GetTodos() ([]models.Todo, error) {
