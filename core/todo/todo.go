@@ -31,6 +31,13 @@ func GetInboxTasks() ([]models.Todo, error) {
 	return todos, nil
 }
 
+func GetTodosByList(id uint) ([]models.Todo, error) {
+	var todos []models.Todo
+
+	_ = db.DB.Where("list_id = ?", 1).Find(&todos)
+	return todos, nil
+}
+
 func AddTodo(name, description string, list_id uint) error {
 	return db.DB.Create(&models.Todo{Name: name, Completed: false, Description: description, ListID: list_id}).Error
 }

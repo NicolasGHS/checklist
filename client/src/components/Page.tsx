@@ -1,21 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NewTodoCard } from "./NewTodoCard";
 import { Todo } from "../types/todo";
 import { Task } from "./Task";
-import { AddTodo, ToggleTodo } from "../../wailsjs/go/main/App";
+import { AddTodo, GetTodosByList, ToggleTodo } from "../../wailsjs/go/main/App";
 import { NewTaskButton } from "./NewTaskButton";
 
 type PageProps = {
   title: string;
+  id: number;
 };
 
-export const Page = ({ title }: PageProps) => {
+export const Page = ({ title, id }: PageProps) => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [showNewTaskCard, setShowNewTaskCard] = useState<boolean>(false);
 
   const showCard = () => {
     console.log("Show card!!");
     setShowNewTaskCard(!showNewTaskCard);
+  };
+
+  const loadTodos = async () => {
+    const result = (await GetTodosByList(id)) as unknown as Todo[];
+    setTodos(result);
   };
 
   const createTodo = async (name: string, description: string) => {
@@ -36,6 +42,10 @@ export const Page = ({ title }: PageProps) => {
       );
     }
   };
+
+  useEffect(() => {
+    loadTodos();
+  }, []);
 
   return (
     <div className="flex-1 p-6">

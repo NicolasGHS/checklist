@@ -16,4 +16,6 @@ export function GetTodoById(arg1:number):Promise<models.Todo>;
 
 export function GetTodos():Promise<Array<models.Todo>>;
 
+export function GetTodosByList(arg1:number):Promise<Array<models.Todo>>;
+
 export function ToggleTodo(arg1:number):Promise<void>;

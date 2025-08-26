@@ -30,6 +30,10 @@ export function GetTodos() {
   return window['go']['main']['App']['GetTodos']();
 }
 
+export function GetTodosByList(arg1) {
+  return window['go']['main']['App']['GetTodosByList'](arg1);
+}
+
 export function ToggleTodo(arg1) {
   return window['go']['main']['App']['ToggleTodo'](arg1);
 }
