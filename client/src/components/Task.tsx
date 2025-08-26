@@ -14,7 +14,7 @@ export const Task = ({ todo, onToggle }: TaskProps) => {
   };
 
   return (
-    <div className="flex gap-3 items-center">
+    <div className="flex gap-3 items-center ml-6">
       <Checkbox checked={todo.Completed} onCheckedChange={handleChange} />
       <p className="text-foreground">{todo.Name}</p>
     </div>
