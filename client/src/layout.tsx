@@ -3,6 +3,8 @@ import { Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./components/AppSidebar";
 import { ThemeProvider } from "./components/theme-provider";
+import { Separator } from "./components/ui/separator";
+import { Toolbar } from "./components/Toolbar";
 
 const Layout: React.FC = () => {
   return (

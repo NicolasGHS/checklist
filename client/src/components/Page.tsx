@@ -3,7 +3,8 @@ import { NewTodoCard } from "./NewTodoCard";
 import { Todo } from "../types/todo";
 import { Task } from "./Task";
 import { AddTodo, GetTodosByList, ToggleTodo } from "../../wailsjs/go/main/App";
-import { NewTaskButton } from "./NewTaskButton";
+import { Button } from "./ui/button";
+import { Plus } from "lucide-react";
 
 type PageProps = {
   title: string;
@@ -43,24 +44,47 @@ export const Page = ({ title, id }: PageProps) => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape" && showNewTaskCard) {
+      e.preventDefault();
+      setShowNewTaskCard(false);
+    }
+  };
+
   useEffect(() => {
     loadTodos();
   }, []);
 
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => handleKeyDown(e);
+    window.addEventListener("keydown", listener);
+    return () => {
+      window.removeEventListener("keydown", listener);
+    };
+  }, [showNewTaskCard]);
+
   return (
-    <div className="flex-1 p-6">
-      <h1 className="text-3xl text-foreground font-bold mb-6">{title}</h1>
-      <div>
-        {showNewTaskCard && <NewTodoCard AddTodoFunction={createTodo} />}
-        <ul>
-          {todos.map((todo: Todo, index) => (
-            <li key={index} className="text-white mb-2">
-              <Task todo={todo} onToggle={handleToggle} />
-            </li>
-          ))}
-        </ul>
-        <NewTaskButton onClick={showCard} />
+    <div className="flex flex-col h-full relative">
+      <div className="flex-1 p-6">
+        <h1 className="text-3xl text-foreground font-bold mb-6">{title}</h1>
+        <div>
+          {showNewTaskCard && <NewTodoCard AddTodoFunction={createTodo} />}
+          <ul>
+            {todos.map((todo: Todo, index) => (
+              <li key={index} className="text-white mb-2">
+                <Task todo={todo} onToggle={handleToggle} />
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
+      <Button
+        onClick={showCard}
+        size="icon"
+        className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-lg"
+      >
+        <Plus className="h-6 w-6" />
+      </Button>
     </div>
   );
 };
