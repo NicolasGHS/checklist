@@ -1,9 +1,9 @@
-import React from "react";
+import { Page } from "../components/Page";
 
-const Today: React.FC = () => {
+const Today = () => {
   return (
-    <div className="flex-1 p-6">
-      <h1 className="text-3xl font-bold text-foreground mb-6">Today</h1>
+    <div>
+      <Page title="Today" id={0} />
     </div>
   );
 };
