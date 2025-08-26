@@ -8,6 +8,8 @@ export function AddTodo(arg1:string,arg2:string):Promise<void>;
 
 export function GetInboxTasks():Promise<Array<models.Todo>>;
 
+export function GetListBySlug(arg1:string):Promise<models.List>;
+
 export function GetLists():Promise<Array<models.List>>;
 
 export function GetTodoById(arg1:number):Promise<models.Todo>;

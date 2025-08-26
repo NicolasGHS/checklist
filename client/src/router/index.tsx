@@ -5,6 +5,7 @@ import Today from "../pages/Today";
 import Upcoming from "../pages/Upcoming";
 import Projects from "../pages/Projects";
 import Settings from "../pages/Settings";
+import { ListPage } from "../pages/List";
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ export const router = createBrowserRouter([
       {
         path: "settings",
         element: <Settings />,
+      },
+      {
+        path: "list/:slug",
+        element: <ListPage />,
       },
     ],
   },

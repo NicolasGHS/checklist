@@ -89,12 +89,11 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       asChild
                       isActive={
-                        location.pathname === list.Name.toLowerCase() ||
-                        (location.pathname === "/" &&
-                          list.Name.toLowerCase() === "/inbox")
+                        location.pathname === list.Slug ||
+                        (location.pathname === "/" && list.Slug === "/inbox")
                       }
                     >
-                      <Link to={list.Name.toLowerCase()}>
+                      <Link to={`list/${list.Slug}`}>
                         <span>{list.Name}</span>
                       </Link>
                     </SidebarMenuButton>

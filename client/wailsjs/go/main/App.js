@@ -14,6 +14,10 @@ export function GetInboxTasks() {
   return window['go']['main']['App']['GetInboxTasks']();
 }
 
+export function GetListBySlug(arg1) {
+  return window['go']['main']['App']['GetListBySlug'](arg1);
+}
+
 export function GetLists() {
   return window['go']['main']['App']['GetLists']();
 }

@@ -31,6 +31,7 @@ func (a *App) startup(ctx context.Context) {
 	}
 }
 
+// Todo
 func (a *App) AddTodo(name, description string) error {
 	return todo.AddTodo(name, description)
 }
@@ -47,14 +48,19 @@ func (a *App) GetInboxTasks() ([]models.Todo, error) {
 	return todo.GetInboxTasks()
 }
 
-func (a *App) AddList(name, description string) error {
-	return list.AddList(name, description)
+func (a *App) ToggleTodo(id uint) error {
+	return todo.ToggleTodo(id)
 }
 
+// List
 func (a *App) GetLists() ([]models.List, error) {
 	return list.GetLists()
 }
 
-func (a *App) ToggleTodo(id uint) error {
-	return todo.ToggleTodo(id)
+func (a *App) GetListBySlug(slug string) (models.List, error) {
+	return list.GetListBySlug(slug)
+}
+
+func (a *App) AddList(name, description string) error {
+	return list.AddList(name, description)
 }
