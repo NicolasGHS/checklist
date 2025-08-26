@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 import { Button } from "./ui/button";
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { Input } from "./ui/input";
@@ -24,6 +25,17 @@ export const NewTodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
       name: "",
     },
   });
+
+  // Focus on input when opening card
+  useEffect(() => {
+    const nameField = form.getFieldState("name");
+    const inputElement = document.querySelector(
+      'input[name="name"]'
+    ) as HTMLInputElement;
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     AddTodoFunction(values.name, values.description || "");
