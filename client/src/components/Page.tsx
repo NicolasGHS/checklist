@@ -25,7 +25,7 @@ export const Page = ({ title, id }: PageProps) => {
   };
 
   const createTodo = async (name: string, description: string) => {
-    await AddTodo(name, description, 1);
+    await AddTodo(name, description, id);
   };
 
   const handleToggle = async (id: number) => {
