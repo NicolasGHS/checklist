@@ -1,5 +1,6 @@
 import { Calendar, Inbox, Star, FolderOpen } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { Separator } from "./ui/separator";
 
 import {
   Sidebar,
@@ -14,7 +15,6 @@ import {
 } from "./ui/sidebar";
 import { SettingsButton } from "./SettingsButton";
 import { NewListButton } from "./NewListButton";
-import { Lists } from "./Lists";
 import { GetLists } from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { List } from "../types/list";
@@ -65,28 +65,48 @@ export function AppSidebar() {
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={
-                      location.pathname === item.url ||
-                      (location.pathname === "/" && item.url === "/inbox")
-                    }
-                  >
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              <Lists items={lists} />
+              <div>
+                {items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={
+                        location.pathname === item.url ||
+                        (location.pathname === "/" && item.url === "/inbox")
+                      }
+                    >
+                      <Link to={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </div>
+              <div className="mt-3">
+                {lists.map((list) => (
+                  <SidebarMenuItem key={list.ID}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={
+                        location.pathname === list.Name.toLowerCase() ||
+                        (location.pathname === "/" &&
+                          list.Name.toLowerCase() === "/inbox")
+                      }
+                    >
+                      <Link to={list.Name.toLowerCase()}>
+                        <span>{list.Name}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </div>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        <Separator />
         <div className="flex items-center justify-between mr-1 ml-1">
           <NewListButton />
           <SettingsButton />
