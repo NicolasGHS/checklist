@@ -3,8 +3,7 @@ import { NewTodoCard } from "./NewTodoCard";
 import { Todo } from "../types/todo";
 import { Task } from "./Task";
 import { AddTodo, GetTodosByList, ToggleTodo } from "../../wailsjs/go/main/App";
-import { Button } from "./ui/button";
-import { Plus } from "lucide-react";
+import { NewTaskButton } from "./NewTaskButton";
 
 type PageProps = {
   title: string;
@@ -49,6 +48,11 @@ export const Page = ({ title, id }: PageProps) => {
       e.preventDefault();
       setShowNewTaskCard(false);
     }
+
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "n") {
+      e.preventDefault();
+      setShowNewTaskCard(true);
+    }
   };
 
   useEffect(() => {
@@ -78,13 +82,7 @@ export const Page = ({ title, id }: PageProps) => {
           </ul>
         </div>
       </div>
-      <Button
-        onClick={showCard}
-        size="icon"
-        className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-lg"
-      >
-        <Plus className="h-6 w-6" />
-      </Button>
+      <NewTaskButton onClick={showCard} />
     </div>
   );
 };
