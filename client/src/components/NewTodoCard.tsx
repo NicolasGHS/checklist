@@ -26,9 +26,16 @@ export const NewTodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    AddTodoFunction(values.name, values.description);
+    AddTodoFunction(values.name, values.description || "");
+    form.reset();
   }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      form.handleSubmit(onSubmit)();
+    }
+  };
 
   return (
     <div>
@@ -46,6 +53,7 @@ export const NewTodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
                         <Checkbox disabled={true} />
                         <Input
                           placeholder="New Task"
+                          onKeyDown={handleKeyDown}
                           {...field}
                           className="border-0 focus-visible:ring-0 focus-visible:outline-none shadow-none"
                         />
@@ -64,6 +72,7 @@ export const NewTodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
                         <Textarea
                           placeholder="Description"
                           {...field}
+                          onKeyDown={handleKeyDown}
                           className="border-0 ml-7 focus-visible:ring-0 focus-visible:outline-none shadow-none"
                         />
                       </div>
@@ -71,7 +80,6 @@ export const NewTodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Add</Button>
             </form>
           </Form>
         </CardContent>
