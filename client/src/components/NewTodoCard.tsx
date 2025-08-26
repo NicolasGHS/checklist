@@ -68,12 +68,12 @@ export const NewTodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <div>
+                      <div className="mr-3">
                         <Textarea
                           placeholder="Description"
                           {...field}
                           onKeyDown={handleKeyDown}
-                          className="border-0 ml-7 focus-visible:ring-0 focus-visible:outline-none shadow-none"
+                          className="border-0 ml-7 focus-visible:ring-0 focus-visible:outline-none shadow-none resize-none"
                         />
                       </div>
                     </FormControl>
