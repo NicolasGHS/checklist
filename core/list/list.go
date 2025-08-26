@@ -12,6 +12,6 @@ func AddList(name, description string) error {
 func GetLists() ([]models.List, error) {
 	var lists []models.List
 
-	result := db.DB.Find(&lists)
+	result := db.DB.Not("id = 1").Find(&lists)
 	return lists, result.Error
 }
