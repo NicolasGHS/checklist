@@ -5,7 +5,6 @@ type NewTaskProps = {
   onClick: () => void;
 };
 
-// TODO: make meta icon dynamic with windows
 export const NewTaskButton = ({ onClick }: NewTaskProps) => {
   return (
     <Button
