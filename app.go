@@ -1,6 +1,7 @@
 package main
 
 import (
+	"checklist/core/area"
 	"checklist/core/db"
 	"checklist/core/list"
 	"checklist/core/models"
@@ -67,4 +68,13 @@ func (a *App) GetListBySlug(slug string) (models.List, error) {
 
 func (a *App) AddList(name, description string) error {
 	return list.AddList(name, description)
+}
+
+// Area
+func (a *App) GetAreas() ([]models.Area, error) {
+	return area.GetAreas()
+}
+
+func (a *App) AddArea(name string) error {
+	return area.AddArea(name)
 }
