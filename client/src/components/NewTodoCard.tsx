@@ -15,7 +15,7 @@ type NewTodoCardProps = {
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
-  description: z.string().min(0).max(255),
+  description: z.string().max(255).optional(),
 });
 
 export const NewTodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
@@ -23,6 +23,7 @@ export const NewTodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      description: "",
     },
   });
 
@@ -39,7 +40,10 @@ export const NewTodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     AddTodoFunction(values.name, values.description || "");
-    form.reset();
+    form.reset({
+      name: "",
+      description: "",
+    });
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
