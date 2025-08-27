@@ -15,6 +15,7 @@ import {
 } from "./ui/sidebar";
 import { SettingsButton } from "./SettingsButton";
 import { NewListButton } from "./NewListButton";
+import { ListItem } from "./ListItem";
 import { GetLists } from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { List } from "../types/list";
@@ -86,17 +87,7 @@ export function AppSidebar() {
               <div className="mt-3">
                 {lists.map((list) => (
                   <SidebarMenuItem key={list.ID}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={
-                        location.pathname === list.Slug ||
-                        (location.pathname === "/" && list.Slug === "/inbox")
-                      }
-                    >
-                      <Link to={`list/${list.Slug}`}>
-                        <span>{list.Name}</span>
-                      </Link>
-                    </SidebarMenuButton>
+                    <ListItem list={list} />
                   </SidebarMenuItem>
                 ))}
               </div>
