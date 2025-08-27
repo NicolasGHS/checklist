@@ -43,7 +43,7 @@ export const Page = ({ title, id }: PageProps) => {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Escape" && showNewTaskCard) {
       e.preventDefault();
       setShowNewTaskCard(false);
