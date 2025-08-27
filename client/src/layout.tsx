@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "../src/components/ui/sidebar";
 import { AppSidebar } from "./components/AppSidebar";
 import { ThemeProvider } from "./components/theme-provider";
 import { Separator } from "./components/ui/separator";
@@ -12,10 +12,11 @@ const Layout: React.FC = () => {
       <SidebarProvider>
         <div className="flex h-screen w-screen">
           <AppSidebar />
+
+          <div className="flex items-start p-4">
+            <SidebarTrigger />
+          </div>
           <main className="flex-1 flex flex-col">
-            <div className="p-4 border-b text-foreground">
-              <SidebarTrigger />
-            </div>
             <div className="flex-1">
               <Outlet />
             </div>
