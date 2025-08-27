@@ -30,6 +30,10 @@ export function GetLists() {
   return window['go']['main']['App']['GetLists']();
 }
 
+export function GetListsByArea(arg1) {
+  return window['go']['main']['App']['GetListsByArea'](arg1);
+}
+
 export function GetTodoById(arg1) {
   return window['go']['main']['App']['GetTodoById'](arg1);
 }

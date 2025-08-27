@@ -3,7 +3,7 @@ export namespace models {
 	export class Area {
 	    ID: number;
 	    Name: string;
-	    ListID: number;
+	    Slug: string;
 	    // Go type: time
 	    CreatedAt: any;
 	    // Go type: time
@@ -17,7 +17,7 @@ export namespace models {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.ID = source["ID"];
 	        this.Name = source["Name"];
-	        this.ListID = source["ListID"];
+	        this.Slug = source["Slug"];
 	        this.CreatedAt = this.convertValues(source["CreatedAt"], null);
 	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], null);
 	    }
@@ -44,6 +44,7 @@ export namespace models {
 	    ID: number;
 	    Name: string;
 	    Slug: string;
+	    AreaID: number;
 	    // Go type: time
 	    CreatedAt: any;
 	    // Go type: time
@@ -58,6 +59,7 @@ export namespace models {
 	        this.ID = source["ID"];
 	        this.Name = source["Name"];
 	        this.Slug = source["Slug"];
+	        this.AreaID = source["AreaID"];
 	        this.CreatedAt = this.convertValues(source["CreatedAt"], null);
 	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], null);
 	    }

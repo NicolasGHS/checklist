@@ -16,9 +16,11 @@ import {
 import { SettingsButton } from "./SettingsButton";
 import { NewListButton } from "./NewListButton";
 import { ListItem } from "./ListItem";
-import { GetLists } from "../../wailsjs/go/main/App";
+import { GetLists, GetAreas } from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { List } from "../types/list";
+import { Area } from "../types/areas";
+import { AreaList } from "./AreaList";
 
 // Menu items.
 const items = [
@@ -47,17 +49,24 @@ const items = [
 export function AppSidebar() {
   const location = useLocation();
   const [lists, setLists] = useState<List[]>([]);
+  const [areas, setAreas] = useState<Area[]>([]);
 
   const loadLists = async () => {
     const result = (await GetLists()) as unknown as List[];
     setLists(result);
   };
 
+  const loadAreas = async () => {
+    const result = (await GetAreas()) as unknown as Area[];
+    setAreas(result);
+  };
+
   useEffect(() => {
     loadLists();
+    loadAreas();
   }, []);
 
-  console.log("lists: ", lists);
+  console.log("areas: ", areas);
 
   return (
     <Sidebar>
@@ -84,11 +93,10 @@ export function AppSidebar() {
                   </SidebarMenuItem>
                 ))}
               </div>
+
               <div className="mt-3">
-                {lists.map((list) => (
-                  <SidebarMenuItem key={list.ID}>
-                    <ListItem list={list} />
-                  </SidebarMenuItem>
+                {areas.map((area) => (
+                  <AreaList areaItem={area} />
                 ))}
               </div>
             </SidebarMenu>

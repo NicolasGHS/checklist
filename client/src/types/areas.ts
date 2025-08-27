@@ -1,8 +1,7 @@
-export type List = {
+export type Area = {
     ID: number;
     Name: string;
     Slug: string;
-    AreaID: number;
     CreatedAt: string;
     UpdatedAt: string;
-};
+}
