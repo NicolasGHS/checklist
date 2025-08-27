@@ -15,17 +15,17 @@ export const Page = ({ title, id }: PageProps) => {
   const [showNewTaskCard, setShowNewTaskCard] = useState<boolean>(false);
 
   const showCard = () => {
-    console.log("Show card!!");
     setShowNewTaskCard(!showNewTaskCard);
   };
 
   const loadTodos = async () => {
-    const result = (await GetTodosByList(id)) as unknown as Todo[];
+    const result = await GetTodosByList(id);
     setTodos(result);
   };
 
   const createTodo = async (name: string, description: string) => {
     await AddTodo(name, description, id);
+    loadTodos();
   };
 
   const handleToggle = async (id: number) => {
@@ -57,7 +57,7 @@ export const Page = ({ title, id }: PageProps) => {
 
   useEffect(() => {
     loadTodos();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const listener = (e: KeyboardEvent) => handleKeyDown(e);

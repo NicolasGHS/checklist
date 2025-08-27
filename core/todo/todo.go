@@ -34,7 +34,7 @@ func GetInboxTasks() ([]models.Todo, error) {
 func GetTodosByList(id uint) ([]models.Todo, error) {
 	var todos []models.Todo
 
-	_ = db.DB.Where("list_id = ?", 1).Find(&todos)
+	_ = db.DB.Where("list_id = ?", id).Find(&todos)
 	return todos, nil
 }
 
