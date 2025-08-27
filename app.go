@@ -70,6 +70,10 @@ func (a *App) AddList(name, description string) error {
 	return list.AddList(name, description)
 }
 
+func (a *App) GetListsByArea(id uint) ([]models.List, error) {
+	return list.GetListsByArea(id)
+}
+
 // Area
 func (a *App) GetAreas() ([]models.Area, error) {
 	return area.GetAreas()
