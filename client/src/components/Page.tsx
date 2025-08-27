@@ -68,7 +68,7 @@ export const Page = ({ title, id }: PageProps) => {
   }, [showNewTaskCard]);
 
   return (
-    <div className="flex flex-col h-full relative">
+    <div className="mt-10 flex flex-col h-full relative">
       <div className="flex-1 p-6">
         <h1 className="text-3xl text-foreground font-bold mb-6">{title}</h1>
         <div>
