@@ -23,14 +23,14 @@ const formSchema = z.object({
   name: z.string().min(2).max(50),
 });
 
-export const NewListButton = ({ 
-  addArea, 
-  addList, 
-  showAreaCreation, 
-  showListCreation, 
-  closeAreaCreation, 
-  closeListCreation, 
-  reloadData 
+export const NewListButton = ({
+  addArea,
+  addList,
+  showAreaCreation,
+  showListCreation,
+  closeAreaCreation,
+  closeListCreation,
+  reloadData,
 }: NewListProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -76,12 +76,15 @@ export const NewListButton = ({
               </Button>
             </>
           ) : null}
-          
+
           {showListCreation && (
             <div>
               <h3 className="mb-2 font-semibold">Create New Project</h3>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-2"
+                >
                   <FormField
                     control={form.control}
                     name="name"
@@ -94,8 +97,15 @@ export const NewListButton = ({
                     )}
                   />
                   <div className="flex gap-2">
-                    <Button type="submit" size="sm">Create</Button>
-                    <Button type="button" variant="outline" size="sm" onClick={closeListCreation}>
+                    <Button type="submit" size="sm">
+                      Create
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={closeListCreation}
+                    >
                       Cancel
                     </Button>
                   </div>
@@ -103,12 +113,15 @@ export const NewListButton = ({
               </Form>
             </div>
           )}
-          
+
           {showAreaCreation && (
             <div>
               <h3 className="mb-2 font-semibold">Create New Area</h3>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onAreaSubmit)} className="space-y-2">
+                <form
+                  onSubmit={form.handleSubmit(onAreaSubmit)}
+                  className="space-y-2"
+                >
                   <FormField
                     control={form.control}
                     name="name"
@@ -121,8 +134,15 @@ export const NewListButton = ({
                     )}
                   />
                   <div className="flex gap-2">
-                    <Button type="submit" size="sm">Create</Button>
-                    <Button type="button" variant="outline" size="sm" onClick={closeAreaCreation}>
+                    <Button type="submit" size="sm">
+                      Create
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={closeAreaCreation}
+                    >
                       Cancel
                     </Button>
                   </div>
