@@ -50,6 +50,8 @@ export function AppSidebar() {
   const location = useLocation();
   const [lists, setLists] = useState<List[]>([]);
   const [areas, setAreas] = useState<Area[]>([]);
+  const [showAreaCreation, setShowAreaCreation] = useState<boolean>(false);
+  const [showListCreation, setShowListCreation] = useState<boolean>(false);
 
   const loadLists = async () => {
     const result = (await GetLists()) as unknown as List[];
@@ -67,6 +69,26 @@ export function AppSidebar() {
   }, []);
 
   console.log("areas: ", areas);
+  console.log("showAreaCreation: ", showAreaCreation);
+  console.log("showListCreation: ", showListCreation);
+
+  const areaCreation = () => {
+    setShowAreaCreation(true);
+    console.log("Opening area creation");
+  };
+
+  const listCreation = () => {
+    setShowListCreation(true);
+    console.log("Opening list creation");
+  };
+
+  const closeAreaCreation = () => {
+    setShowAreaCreation(false);
+  };
+
+  const closeListCreation = () => {
+    setShowListCreation(false);
+  };
 
   return (
     <Sidebar>
@@ -96,7 +118,7 @@ export function AppSidebar() {
 
               <div className="mt-3">
                 {areas.map((area) => (
-                  <AreaList areaItem={area} />
+                  <AreaList key={area.ID} areaItem={area} />
                 ))}
               </div>
             </SidebarMenu>
@@ -106,7 +128,18 @@ export function AppSidebar() {
       <SidebarFooter>
         <Separator />
         <div className="flex items-center justify-between mr-1 ml-1">
-          <NewListButton />
+          <NewListButton 
+            addArea={areaCreation} 
+            addList={listCreation}
+            showAreaCreation={showAreaCreation}
+            showListCreation={showListCreation}
+            closeAreaCreation={closeAreaCreation}
+            closeListCreation={closeListCreation}
+            reloadData={() => {
+              loadLists();
+              loadAreas();
+            }}
+          />
           <SettingsButton />
         </div>
       </SidebarFooter>
