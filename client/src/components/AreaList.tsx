@@ -31,7 +31,7 @@ export const AreaList = ({ areaItem }: AreaListProps) => {
       <div>
         {lists.map((list) => (
           <SidebarMenuItem>
-            <ListItem list={list} />
+            <ListItem list={list} key={list.ID} />
           </SidebarMenuItem>
         ))}
       </div>
