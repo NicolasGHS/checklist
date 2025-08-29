@@ -16,9 +16,11 @@ import {
 import { SettingsButton } from "./SettingsButton";
 import { NewListButton } from "./NewListButton";
 import { ListItem } from "./ListItem";
-import { GetLists } from "../../wailsjs/go/main/App";
+import { GetLists, GetAreas } from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { List } from "../types/list";
+import { Area } from "../types/areas";
+import { AreaList } from "./AreaList";
 
 // Menu items.
 const items = [
@@ -47,17 +49,40 @@ const items = [
 export function AppSidebar() {
   const location = useLocation();
   const [lists, setLists] = useState<List[]>([]);
+  const [areas, setAreas] = useState<Area[]>([]);
+  const [showAreaCreation, setShowAreaCreation] = useState<boolean>(false);
+  const [showListCreation, setShowListCreation] = useState<boolean>(false);
 
   const loadLists = async () => {
     const result = (await GetLists()) as unknown as List[];
     setLists(result);
   };
 
+  const loadAreas = async () => {
+    const result = (await GetAreas()) as unknown as Area[];
+    setAreas(result);
+  };
+
   useEffect(() => {
     loadLists();
+    loadAreas();
   }, []);
 
-  console.log("lists: ", lists);
+  const areaCreation = () => {
+    setShowAreaCreation(true);
+  };
+
+  const listCreation = () => {
+    setShowListCreation(true);
+  };
+
+  const closeAreaCreation = () => {
+    setShowAreaCreation(false);
+  };
+
+  const closeListCreation = () => {
+    setShowListCreation(false);
+  };
 
   return (
     <Sidebar>
@@ -84,11 +109,10 @@ export function AppSidebar() {
                   </SidebarMenuItem>
                 ))}
               </div>
+
               <div className="mt-3">
-                {lists.map((list) => (
-                  <SidebarMenuItem key={list.ID}>
-                    <ListItem list={list} />
-                  </SidebarMenuItem>
+                {areas.map((area) => (
+                  <AreaList key={area.ID} areaItem={area} />
                 ))}
               </div>
             </SidebarMenu>
@@ -98,7 +122,18 @@ export function AppSidebar() {
       <SidebarFooter>
         <Separator />
         <div className="flex items-center justify-between mr-1 ml-1">
-          <NewListButton />
+          <NewListButton
+            addArea={areaCreation}
+            addList={listCreation}
+            showAreaCreation={showAreaCreation}
+            showListCreation={showListCreation}
+            closeAreaCreation={closeAreaCreation}
+            closeListCreation={closeListCreation}
+            reloadData={() => {
+              loadLists();
+              loadAreas();
+            }}
+          />
           <SettingsButton />
         </div>
       </SidebarFooter>

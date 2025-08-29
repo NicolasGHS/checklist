@@ -21,6 +21,16 @@ func GetListBySlug(slug string) (models.List, error) {
 	return list, result.Error
 }
 
+func GetListsByArea(id uint) ([]models.List, error) {
+	var lists []models.List
+
+	result := db.DB.Where("area_id = ?", id).Find(&lists)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return lists, nil
+}
+
 func MakeSlug(name string) string {
 	newSlug := slug.Make(name)
 
