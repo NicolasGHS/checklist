@@ -13,14 +13,6 @@ func GetTodos() ([]models.Todo, error) {
 	return todos, result.Error
 }
 
-func GetTodoById(id uint) (models.Todo, error) {
-	var todo models.Todo
-
-	_ = db.DB.First(&todo)
-
-	return todo, nil
-}
-
 func GetInboxTasks() ([]models.Todo, error) {
 	var todos []models.Todo
 
@@ -45,7 +37,7 @@ func AddTodo(name, description string, list_id uint) error {
 func ToggleTodo(id uint) error {
 	var todo models.Todo
 
-	_ = db.DB.Find(&todo)
+	_ = db.DB.Where("id = ?", id).Find(&todo)
 
 	todo.Completed = !todo.Completed
 

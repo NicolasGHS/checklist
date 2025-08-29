@@ -29,8 +29,9 @@ export const Page = ({ title, id }: PageProps) => {
   };
 
   const handleToggle = async (id: number) => {
+    console.log("id van todo: ", id);
     setTodos((prev) =>
-      prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t))
+      prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t)),
     );
 
     try {
@@ -38,7 +39,7 @@ export const Page = ({ title, id }: PageProps) => {
     } catch (error) {
       console.error(error);
       setTodos((prev) =>
-        prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t))
+        prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t)),
       );
     }
   };
