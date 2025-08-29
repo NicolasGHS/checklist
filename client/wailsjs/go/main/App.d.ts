@@ -18,7 +18,7 @@ export function GetLists():Promise<Array<models.List>>;
 
 export function GetListsByArea(arg1:number):Promise<Array<models.List>>;
 
-export function GetTodoById(arg1:number):Promise<models.Todo>;
+export function GetTodoById(arg1:number):Promise<Array<models.Todo>>;
 
 export function GetTodos():Promise<Array<models.Todo>>;
 

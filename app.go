@@ -41,8 +41,8 @@ func (a *App) GetTodos() ([]models.Todo, error) {
 	return todo.GetTodos()
 }
 
-func (a *App) GetTodoById(id uint) (models.Todo, error) {
-	return todo.GetTodoById(id)
+func (a *App) GetTodoById(id uint) ([]models.Todo, error) {
+	return todo.GetTodosByList(id)
 }
 
 func (a *App) GetInboxTasks() ([]models.Todo, error) {
