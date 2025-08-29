@@ -45,7 +45,7 @@ export const ListItem = ({ list }: ListItemProps) => {
         (location.pathname === "/" && list.Slug === "inbox")
       }
     >
-      <div 
+      <div
         className="flex items-center justify-between"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -56,7 +56,11 @@ export const ListItem = ({ list }: ListItemProps) => {
 
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Ellipsis className={`w-4 transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
+            <Ellipsis
+              className={`w-4 transition-opacity duration-200 ${
+                isHovered ? "opacity-100" : "opacity-0"
+              }`}
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
