@@ -68,18 +68,12 @@ export function AppSidebar() {
     loadAreas();
   }, []);
 
-  console.log("areas: ", areas);
-  console.log("showAreaCreation: ", showAreaCreation);
-  console.log("showListCreation: ", showListCreation);
-
   const areaCreation = () => {
     setShowAreaCreation(true);
-    console.log("Opening area creation");
   };
 
   const listCreation = () => {
     setShowListCreation(true);
-    console.log("Opening list creation");
   };
 
   const closeAreaCreation = () => {
