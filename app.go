@@ -45,10 +45,6 @@ func (a *App) GetTodoById(id uint) ([]models.Todo, error) {
 	return todo.GetTodosByList(id)
 }
 
-func (a *App) GetInboxTasks() ([]models.Todo, error) {
-	return todo.GetInboxTasks()
-}
-
 func (a *App) GetTodosByList(id uint) ([]models.Todo, error) {
 	return todo.GetTodosByList(id)
 }

@@ -18,10 +18,6 @@ export function GetAreas() {
   return window['go']['main']['App']['GetAreas']();
 }
 
-export function GetInboxTasks() {
-  return window['go']['main']['App']['GetInboxTasks']();
-}
-
 export function GetListBySlug(arg1) {
   return window['go']['main']['App']['GetListBySlug'](arg1);
 }

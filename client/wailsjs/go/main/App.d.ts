@@ -10,8 +10,6 @@ export function AddTodo(arg1:string,arg2:string,arg3:number):Promise<void>;
 
 export function GetAreas():Promise<Array<models.Area>>;
 
-export function GetInboxTasks():Promise<Array<models.Todo>>;
-
 export function GetListBySlug(arg1:string):Promise<models.List>;
 
 export function GetLists():Promise<Array<models.List>>;
