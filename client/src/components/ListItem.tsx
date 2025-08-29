@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { DeleteList } from "../../wailsjs/go/main/App";
 
 type ListItemProps = {
   list: List;
@@ -30,6 +31,10 @@ type ListItemProps = {
 export const ListItem = ({ list }: ListItemProps) => {
   const location = useLocation();
   const [open, setOpen] = useState<boolean>(false);
+
+  const handleDelete = async () => {
+    await DeleteList(list.ID);
+  };
 
   return (
     <SidebarMenuButton
@@ -46,7 +51,7 @@ export const ListItem = ({ list }: ListItemProps) => {
 
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Ellipsis />
+            <Ellipsis className="w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -69,7 +74,9 @@ export const ListItem = ({ list }: ListItemProps) => {
               <AlertDialogCancel onClick={() => setOpen(false)}>
                 Cancel
               </AlertDialogCancel>
-              <AlertDialogAction>Continue</AlertDialogAction>
+              <AlertDialogAction onClick={handleDelete}>
+                Continue
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

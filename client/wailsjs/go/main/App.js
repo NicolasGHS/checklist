@@ -14,6 +14,10 @@ export function AddTodo(arg1, arg2, arg3) {
   return window['go']['main']['App']['AddTodo'](arg1, arg2, arg3);
 }
 
+export function DeleteList(arg1) {
+  return window['go']['main']['App']['DeleteList'](arg1);
+}
+
 export function GetAreas() {
   return window['go']['main']['App']['GetAreas']();
 }

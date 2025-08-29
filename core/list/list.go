@@ -43,3 +43,7 @@ func AddList(name, description string) error {
 
 	return db.DB.Create(&models.List{Name: name, Slug: slug}).Error
 }
+
+func DeleteList(id uint) error {
+	return db.DB.Delete(&models.List{}, id).Error
+}
