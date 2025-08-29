@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { List } from "../types/list";
 import { SidebarMenuButton } from "./ui/sidebar";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, Hash } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,8 +50,11 @@ export const ListItem = ({ list }: ListItemProps) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <Link to={`list/${list.Slug}`} className="flex-1 px-2 py-1">
-          <span>{list.Name}</span>
+        <Link to={`list/${list.Slug}`} className="flex-1 py-1">
+          <span className="flex items-center gap-2">
+            <Hash className="w-4 h-4" />
+            {list.Name}
+          </span>
         </Link>
 
         <DropdownMenu>

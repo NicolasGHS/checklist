@@ -26,7 +26,7 @@ export const AreaList = ({ areaItem }: AreaListProps) => {
     <div className="mb-4">
       <div className="flex gap-2 ml-2 items-center">
         <Box className="w-4 h-4 mb-1" />
-        <p className="font-bold">{areaItem.Name}</p>
+        <p className="font-semibold text-base">{areaItem.Name}</p>
       </div>
       <div className="mt-1">
         {lists.map((list) => (
