@@ -28,7 +28,7 @@ export const AreaList = ({ areaItem }: AreaListProps) => {
         <Box className="w-4 h-4 mb-1" />
         <p className="font-bold">{areaItem.Name}</p>
       </div>
-      <div>
+      <div className="mt-1">
         {lists.map((list) => (
           <SidebarMenuItem>
             <ListItem list={list} key={list.ID} />
