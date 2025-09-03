@@ -25,3 +25,5 @@ export function GetTodos():Promise<Array<models.Todo>>;
 export function GetTodosByList(arg1:number):Promise<Array<models.Todo>>;
 
 export function ToggleTodo(arg1:number):Promise<void>;
+
+export function UpdateListArea(arg1:number,arg2:number):Promise<void>;

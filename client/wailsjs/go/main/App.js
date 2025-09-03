@@ -49,3 +49,7 @@ export function GetTodosByList(arg1) {
 export function ToggleTodo(arg1) {
   return window['go']['main']['App']['ToggleTodo'](arg1);
 }
+
+export function UpdateListArea(arg1, arg2) {
+  return window['go']['main']['App']['UpdateListArea'](arg1, arg2);
+}
