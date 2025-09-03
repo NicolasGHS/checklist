@@ -23,6 +23,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { DeleteList } from "../../wailsjs/go/main/App";
+import { useDraggable } from "@dnd-kit/core";
 
 type ListItemProps = {
   list: List;
@@ -32,6 +33,14 @@ export const ListItem = ({ list }: ListItemProps) => {
   const location = useLocation();
   const [open, setOpen] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: list.ID,
+  });
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+      }
+    : undefined;
 
   const handleDelete = async () => {
     await DeleteList(list.ID);
@@ -44,6 +53,10 @@ export const ListItem = ({ list }: ListItemProps) => {
         location.pathname === `/list/${list.Slug}` ||
         (location.pathname === "/" && list.Slug === "inbox")
       }
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
     >
       <div
         className="flex items-center justify-between"
