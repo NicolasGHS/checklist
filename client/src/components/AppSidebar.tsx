@@ -1,6 +1,7 @@
 import { Calendar, Inbox, Star, FolderOpen } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Separator } from "./ui/separator";
+import { DndContext } from "@dnd-kit/core";
 
 import {
   Sidebar,
@@ -85,58 +86,60 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <div>
-                {items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={
-                        location.pathname === item.url ||
-                        (location.pathname === "/" && item.url === "/inbox")
-                      }
-                    >
-                      <Link to={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </div>
+    <DndContext>
+      <Sidebar>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Application</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <div>
+                  {items.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={
+                          location.pathname === item.url ||
+                          (location.pathname === "/" && item.url === "/inbox")
+                        }
+                      >
+                        <Link to={item.url}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </div>
 
-              <div className="mt-3">
-                {areas.map((area) => (
-                  <AreaList key={area.ID} areaItem={area} />
-                ))}
-              </div>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <Separator />
-        <div className="flex items-center justify-between mr-1 ml-1">
-          <NewListButton
-            addArea={areaCreation}
-            addList={listCreation}
-            showAreaCreation={showAreaCreation}
-            showListCreation={showListCreation}
-            closeAreaCreation={closeAreaCreation}
-            closeListCreation={closeListCreation}
-            reloadData={() => {
-              loadLists();
-              loadAreas();
-            }}
-          />
-          <SettingsButton />
-        </div>
-      </SidebarFooter>
-    </Sidebar>
+                <div className="mt-3">
+                  {areas.map((area) => (
+                    <AreaList key={area.ID} areaItem={area} />
+                  ))}
+                </div>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
+          <Separator />
+          <div className="flex items-center justify-between mr-1 ml-1">
+            <NewListButton
+              addArea={areaCreation}
+              addList={listCreation}
+              showAreaCreation={showAreaCreation}
+              showListCreation={showListCreation}
+              closeAreaCreation={closeAreaCreation}
+              closeListCreation={closeListCreation}
+              reloadData={() => {
+                loadLists();
+                loadAreas();
+              }}
+            />
+            <SettingsButton />
+          </div>
+        </SidebarFooter>
+      </Sidebar>
+    </DndContext>
   );
 }
