@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DeleteList } from "../../wailsjs/go/main/App";
 import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 
 type ListItemProps = {
   list: List;
@@ -33,14 +34,15 @@ export const ListItem = ({ list }: ListItemProps) => {
   const location = useLocation();
   const [open, setOpen] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: list.ID,
-  });
-  const style = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      }
-    : undefined;
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: list.ID,
+    });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   const handleDelete = async () => {
     await DeleteList(list.ID);
@@ -53,19 +55,21 @@ export const ListItem = ({ list }: ListItemProps) => {
         location.pathname === `/list/${list.Slug}` ||
         (location.pathname === "/" && list.Slug === "inbox")
       }
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
     >
       <div
         className="flex items-center justify-between"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        ref={setNodeRef}
+        style={style}
       >
         <Link to={`list/${list.Slug}`} className="flex-1 py-1">
           <span className="flex items-center gap-2">
-            <Hash className="w-4 h-4" />
+            <Hash
+              className="w-4 h-4 cursor-grab active:cursor-grabbing"
+              {...listeners}
+              {...attributes}
+            />
             {list.Name}
           </span>
         </Link>

@@ -1,7 +1,12 @@
-import { Calendar, Inbox, Star, FolderOpen } from "lucide-react";
+import { Calendar, Inbox, Star, FolderOpen, Hash } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Separator } from "./ui/separator";
-import { DndContext } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+} from "@dnd-kit/core";
 
 import {
   Sidebar,
@@ -17,7 +22,7 @@ import {
 import { SettingsButton } from "./SettingsButton";
 import { NewListButton } from "./NewListButton";
 import { ListItem } from "./ListItem";
-import { GetLists, GetAreas } from "../../wailsjs/go/main/App";
+import { GetLists, GetAreas, UpdateListArea } from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { List } from "../types/list";
 import { Area } from "../types/areas";
@@ -53,6 +58,8 @@ export function AppSidebar() {
   const [areas, setAreas] = useState<Area[]>([]);
   const [showAreaCreation, setShowAreaCreation] = useState<boolean>(false);
   const [showListCreation, setShowListCreation] = useState<boolean>(false);
+  const [updateTrigger, setUpdateTrigger] = useState<number>(0);
+  const [activeList, setActiveList] = useState<List | null>(null);
 
   const loadLists = async () => {
     const result = (await GetLists()) as unknown as List[];
@@ -85,8 +92,37 @@ export function AppSidebar() {
     setShowListCreation(false);
   };
 
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const draggedList = lists.find((list) => list.ID === active.id);
+    setActiveList(draggedList || null);
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveList(null);
+
+    if (!over) return;
+
+    // Check if we're dropping over an area
+    if (over.id.toString().startsWith("area-")) {
+      const areaId = parseInt(over.id.toString().replace("area-", ""));
+      const listId = parseInt(active.id.toString());
+
+      try {
+        await UpdateListArea(listId, areaId);
+        // Reload data to reflect changes
+        await loadLists();
+        await loadAreas();
+        setUpdateTrigger((prev) => prev + 1);
+      } catch (error) {
+        console.error("Failed to update list area:", error);
+      }
+    }
+  };
+
   return (
-    <DndContext>
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <Sidebar>
         <SidebarContent>
           <SidebarGroup>
@@ -114,7 +150,10 @@ export function AppSidebar() {
 
                 <div className="mt-3">
                   {areas.map((area) => (
-                    <AreaList key={area.ID} areaItem={area} />
+                    <AreaList
+                      key={`${area.ID}-${updateTrigger}`}
+                      areaItem={area}
+                    />
                   ))}
                 </div>
               </SidebarMenu>
@@ -140,6 +179,15 @@ export function AppSidebar() {
           </div>
         </SidebarFooter>
       </Sidebar>
+
+      <DragOverlay>
+        {activeList ? (
+          <div className="flex items-center gap-2 bg-background border rounded px-2 py-1 shadow-lg">
+            <Hash className="w-4 h-4" />
+            {activeList.Name}
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 }

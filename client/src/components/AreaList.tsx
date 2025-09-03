@@ -5,6 +5,7 @@ import { SidebarMenuItem } from "./ui/sidebar";
 import { ListItem } from "./ListItem";
 import { List } from "../types/list";
 import { Box } from "lucide-react";
+import { useDroppable } from "@dnd-kit/core";
 
 type AreaListProps = {
   areaItem: Area;
@@ -12,6 +13,9 @@ type AreaListProps = {
 
 export const AreaList = ({ areaItem }: AreaListProps) => {
   const [lists, setLists] = useState<List[]>([]);
+  const { isOver, setNodeRef } = useDroppable({
+    id: `area-${areaItem.ID}`,
+  });
 
   const loadLists = async () => {
     const result = await GetListsByArea(areaItem.ID);
@@ -20,11 +24,18 @@ export const AreaList = ({ areaItem }: AreaListProps) => {
 
   useEffect(() => {
     loadLists();
-  }, [areaItem]);
+  }, [areaItem.ID]);
 
   return (
-    <div className="mb-4">
-      <div className="flex gap-2 ml-2 items-center">
+    <div
+      ref={setNodeRef}
+      className={`mb-4 transition-colors duration-200 rounded-md ${
+        isOver
+          ? "bg-accent/50 border-2 border-dashed border-accent-foreground/20 p-2"
+          : "p-2"
+      }`}
+    >
+      <div className="flex gap-2 items-center">
         <Box className="w-4 h-4 mb-1" />
         <p className="font-semibold text-base">{areaItem.Name}</p>
       </div>
