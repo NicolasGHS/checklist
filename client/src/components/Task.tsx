@@ -43,7 +43,7 @@ export const Task = ({ todo, onToggle }: TaskProps) => {
       />
       <Checkbox checked={todo.Completed} onCheckedChange={handleChange} />
       <p
-        className={`flex-1 ${
+        className={` ${
           todo.Completed
             ? "line-through text-muted-foreground"
             : "text-foreground"
