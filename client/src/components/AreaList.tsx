@@ -27,19 +27,22 @@ export const AreaList = ({ areaItem }: AreaListProps) => {
   }, [areaItem.ID]);
 
   return (
-    <div
-      ref={setNodeRef}
-      className={`mb-4 transition-colors duration-200 rounded-md ${
-        isOver
-          ? "bg-accent/50 border-2 border-dashed border-accent-foreground/20 p-2"
-          : "p-2"
-      }`}
-    >
-      <div className="flex gap-2 items-center">
-        <Box className="w-4 h-4 mb-1" />
-        <p className="font-semibold text-base">{areaItem.Name}</p>
+    <div className="mb-4">
+      <div
+        ref={setNodeRef}
+        className={`transition-colors duration-200 rounded-md p-2 ${
+          isOver
+            ? "bg-accent/50 border-2 border-dashed border-accent-foreground/20"
+            : ""
+        }`}
+      >
+        <div className="flex gap-2 items-center">
+          <Box className="w-4 h-4 mb-1" />
+          <p className="font-semibold text-base">{areaItem.Name}</p>
+        </div>
       </div>
-      <div className="mt-1">
+
+      <div className="mt-1 ml-2">
         {lists.map((list) => (
           <SidebarMenuItem key={list.ID}>
             <ListItem list={list} />
