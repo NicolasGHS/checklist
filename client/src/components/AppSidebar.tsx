@@ -29,25 +29,25 @@ const items = [
     title: "Inbox",
     url: "/inbox",
     icon: Inbox,
-    listId: 1, // Assuming Inbox has ID 1
+    listId: 1,
   },
   {
     title: "Today",
     url: "/today",
     icon: Star,
-    listId: 0, // Special ID for Today
+    listId: 0,
   },
   {
     title: "Upcoming",
     url: "/upcoming",
     icon: Calendar,
-    listId: 0, // Special ID for Upcoming
+    listId: 0,
   },
   {
     title: "Projects",
     url: "/projects",
     icon: FolderOpen,
-    listId: 0, // Special ID for Projects
+    listId: 0,
   },
 ];
 
@@ -117,7 +117,6 @@ export function AppSidebar() {
     };
 
     const handleTaskMoved = () => {
-      // Also refresh sidebar when tasks are moved
       loadLists();
     };
 

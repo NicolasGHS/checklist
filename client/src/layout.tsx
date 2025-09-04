@@ -29,15 +29,11 @@ const Layout: React.FC = () => {
     const { active } = event;
     console.log("Drag started:", active.id);
 
-    // Check if we're dragging a task
     if (active.id.toString().startsWith("task-")) {
       const taskId = parseInt(active.id.toString().replace("task-", ""));
       setDraggedTask({ id: taskId, name: "Task" });
       console.log("Dragging task:", taskId);
-    }
-    // Check if we're dragging a list
-    else if (active.id.toString().startsWith("list-")) {
-      // For now, we'll just track that a list is being dragged
+    } else if (active.id.toString().startsWith("list-")) {
       setDraggedList({
         ID: parseInt(active.id.toString().replace("list-", "")),
       } as List);
@@ -74,7 +70,6 @@ const Layout: React.FC = () => {
           `Successfully moved task ${taskId} to list ${targetListId}`
         );
 
-        // Dispatch a custom event to notify components to refresh their data
         window.dispatchEvent(
           new CustomEvent("taskMoved", {
             detail: { taskId, targetListId },
@@ -83,9 +78,7 @@ const Layout: React.FC = () => {
       } catch (error) {
         console.error("Failed to move task to list:", error);
       }
-    }
-    // Check if we're dropping a list over an area
-    else if (
+    } else if (
       active.id.toString().startsWith("list-") &&
       over.id.toString().startsWith("area-")
     ) {

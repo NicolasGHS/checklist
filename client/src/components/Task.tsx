@@ -16,7 +16,7 @@ export const Task = ({ todo, onToggle }: TaskProps) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: `task-${todo.ID}`,
-      disabled: todo.Completed, // Disable dragging for completed tasks
+      disabled: todo.Completed,
     });
   const style = {
     transform: CSS.Translate.toString(transform),
