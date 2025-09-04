@@ -31,7 +31,7 @@ export const Page = ({ title, id }: PageProps) => {
   const handleToggle = async (id: number) => {
     console.log("id van todo: ", id);
     setTodos((prev) =>
-      prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t)),
+      prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t))
     );
 
     try {
@@ -39,7 +39,7 @@ export const Page = ({ title, id }: PageProps) => {
     } catch (error) {
       console.error(error);
       setTodos((prev) =>
-        prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t)),
+        prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t))
       );
     }
   };
@@ -60,6 +60,18 @@ export const Page = ({ title, id }: PageProps) => {
     loadTodos();
   }, [id]);
 
+  // Listen for task move events
+  useEffect(() => {
+    const handleTaskMoved = () => {
+      loadTodos();
+    };
+
+    window.addEventListener("taskMoved", handleTaskMoved);
+    return () => {
+      window.removeEventListener("taskMoved", handleTaskMoved);
+    };
+  }, []);
+
   useEffect(() => {
     const listener = (e: KeyboardEvent) => handleKeyDown(e);
     window.addEventListener("keydown", listener);
@@ -77,7 +89,7 @@ export const Page = ({ title, id }: PageProps) => {
           <ul>
             {todos.map((todo: Todo, index) => (
               <li key={index} className="text-white mb-2">
-                <Task todo={todo} onToggle={handleToggle} />
+                <Task todo={todo} onToggle={handleToggle} currentListId={id} />
               </li>
             ))}
           </ul>

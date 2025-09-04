@@ -33,3 +33,15 @@ func ToggleTodo(id uint) error {
 	db.DB.Save(&todo)
 	return nil
 }
+
+func UpdateTodoList(id uint, listID uint) error {
+	var todo models.Todo
+
+	err := db.DB.Where("id = ?", id).First(&todo).Error
+	if err != nil {
+		return err
+	}
+
+	todo.ListID = listID
+	return db.DB.Save(&todo).Error
+}

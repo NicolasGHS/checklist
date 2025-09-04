@@ -1,12 +1,7 @@
 import { Calendar, Inbox, Star, FolderOpen, Hash } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Separator } from "./ui/separator";
-import {
-  DndContext,
-  DragEndEvent,
-  DragOverlay,
-  DragStartEvent,
-} from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
 
 import {
   Sidebar,
@@ -22,7 +17,7 @@ import {
 import { SettingsButton } from "./SettingsButton";
 import { NewListButton } from "./NewListButton";
 import { ListItem } from "./ListItem";
-import { GetLists, GetAreas, UpdateListArea } from "../../wailsjs/go/main/App";
+import { GetLists, GetAreas } from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { List } from "../types/list";
 import { Area } from "../types/areas";
@@ -34,23 +29,61 @@ const items = [
     title: "Inbox",
     url: "/inbox",
     icon: Inbox,
+    listId: 1, // Assuming Inbox has ID 1
   },
   {
     title: "Today",
     url: "/today",
     icon: Star,
+    listId: 0, // Special ID for Today
   },
   {
     title: "Upcoming",
     url: "/upcoming",
     icon: Calendar,
+    listId: 0, // Special ID for Upcoming
   },
   {
     title: "Projects",
     url: "/projects",
     icon: FolderOpen,
+    listId: 0, // Special ID for Projects
   },
 ];
+
+// Component for droppable menu items
+const DroppableMenuItem = ({ item }: { item: (typeof items)[0] }) => {
+  const location = useLocation();
+  const { isOver, setNodeRef } = useDroppable({
+    id: `drop-list-${item.listId}`,
+  });
+
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        asChild
+        isActive={
+          location.pathname === item.url ||
+          (location.pathname === "/" && item.url === "/inbox")
+        }
+      >
+        <div
+          ref={setNodeRef}
+          className={`transition-all duration-200 rounded-md ${
+            isOver && item.listId > 0
+              ? "bg-accent/50 border-2 border-dashed border-primary/50 p-1 scale-105"
+              : "hover:bg-accent/20"
+          }`}
+        >
+          <Link to={item.url} className="flex items-center gap-2 w-full p-2">
+            <item.icon />
+            <span>{item.title}</span>
+          </Link>
+        </div>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
 
 export function AppSidebar() {
   const location = useLocation();
@@ -59,7 +92,6 @@ export function AppSidebar() {
   const [showAreaCreation, setShowAreaCreation] = useState<boolean>(false);
   const [showListCreation, setShowListCreation] = useState<boolean>(false);
   const [updateTrigger, setUpdateTrigger] = useState<number>(0);
-  const [activeList, setActiveList] = useState<List | null>(null);
 
   const loadLists = async () => {
     const result = (await GetLists()) as unknown as List[];
@@ -74,6 +106,28 @@ export function AppSidebar() {
   useEffect(() => {
     loadLists();
     loadAreas();
+  }, []);
+
+  // Listen for list move events
+  useEffect(() => {
+    const handleListMoved = () => {
+      loadLists();
+      loadAreas();
+      setUpdateTrigger((prev) => prev + 1);
+    };
+
+    const handleTaskMoved = () => {
+      // Also refresh sidebar when tasks are moved
+      loadLists();
+    };
+
+    window.addEventListener("listMoved", handleListMoved);
+    window.addEventListener("taskMoved", handleTaskMoved);
+
+    return () => {
+      window.removeEventListener("listMoved", handleListMoved);
+      window.removeEventListener("taskMoved", handleTaskMoved);
+    };
   }, []);
 
   const areaCreation = () => {
@@ -92,102 +146,49 @@ export function AppSidebar() {
     setShowListCreation(false);
   };
 
-  const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event;
-    const draggedList = lists.find((list) => list.ID === active.id);
-    setActiveList(draggedList || null);
-  };
-
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
-    setActiveList(null);
-
-    if (!over) return;
-
-    // Check if we're dropping over an area
-    if (over.id.toString().startsWith("area-")) {
-      const areaId = parseInt(over.id.toString().replace("area-", ""));
-      const listId = parseInt(active.id.toString());
-
-      try {
-        await UpdateListArea(listId, areaId);
-        // Reload data to reflect changes
-        await loadLists();
-        await loadAreas();
-        setUpdateTrigger((prev) => prev + 1);
-      } catch (error) {
-        console.error("Failed to update list area:", error);
-      }
-    }
-  };
-
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <Sidebar>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>Application</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <div>
-                  {items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={
-                          location.pathname === item.url ||
-                          (location.pathname === "/" && item.url === "/inbox")
-                        }
-                      >
-                        <Link to={item.url}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </div>
+    <Sidebar>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <div>
+                {items.map((item) => (
+                  <DroppableMenuItem key={item.title} item={item} />
+                ))}
+              </div>
 
-                <div className="mt-3">
-                  {areas.map((area) => (
-                    <AreaList
-                      key={`${area.ID}-${updateTrigger}`}
-                      areaItem={area}
-                    />
-                  ))}
-                </div>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
-          <Separator />
-          <div className="flex items-center justify-between mr-1 ml-1">
-            <NewListButton
-              addArea={areaCreation}
-              addList={listCreation}
-              showAreaCreation={showAreaCreation}
-              showListCreation={showListCreation}
-              closeAreaCreation={closeAreaCreation}
-              closeListCreation={closeListCreation}
-              reloadData={() => {
-                loadLists();
-                loadAreas();
-              }}
-            />
-            <SettingsButton />
-          </div>
-        </SidebarFooter>
-      </Sidebar>
-
-      <DragOverlay>
-        {activeList ? (
-          <div className="flex items-center gap-2 bg-background border rounded px-2 py-1 shadow-lg">
-            <Hash className="w-4 h-4" />
-            {activeList.Name}
-          </div>
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+              <div className="mt-3">
+                {areas.map((area) => (
+                  <AreaList
+                    key={`${area.ID}-${updateTrigger}`}
+                    areaItem={area}
+                  />
+                ))}
+              </div>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        <Separator />
+        <div className="flex items-center justify-between mr-1 ml-1">
+          <NewListButton
+            addArea={areaCreation}
+            addList={listCreation}
+            showAreaCreation={showAreaCreation}
+            showListCreation={showListCreation}
+            closeAreaCreation={closeAreaCreation}
+            closeListCreation={closeListCreation}
+            reloadData={() => {
+              loadLists();
+              loadAreas();
+            }}
+          />
+          <SettingsButton />
+        </div>
+      </SidebarFooter>
+    </Sidebar>
   );
 }

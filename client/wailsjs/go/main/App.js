@@ -53,3 +53,7 @@ export function ToggleTodo(arg1) {
 export function UpdateListArea(arg1, arg2) {
   return window['go']['main']['App']['UpdateListArea'](arg1, arg2);
 }
+
+export function UpdateTodoList(arg1, arg2) {
+  return window['go']['main']['App']['UpdateTodoList'](arg1, arg2);
+}
