@@ -53,6 +53,10 @@ func (a *App) ToggleTodo(id uint) error {
 	return todo.ToggleTodo(id)
 }
 
+func (a *App) UpdateTodoList(id uint, listID uint) error {
+	return todo.UpdateTodoList(id, listID)
+}
+
 // List
 func (a *App) GetLists() ([]models.List, error) {
 	return list.GetLists()
@@ -72,6 +76,10 @@ func (a *App) GetListsByArea(id uint) ([]models.List, error) {
 
 func (a *App) DeleteList(id uint) error {
 	return list.DeleteList(id)
+}
+
+func (a *App) UpdateListArea(id uint, areaID uint) error {
+	return list.UpdateListArea(id, areaID)
 }
 
 // Area

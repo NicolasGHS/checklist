@@ -47,3 +47,7 @@ func AddList(name, description string) error {
 func DeleteList(id uint) error {
 	return db.DB.Delete(&models.List{}, id).Error
 }
+
+func UpdateListArea(id uint, areaID uint) error {
+	return db.DB.Model(&models.List{}).Where("id = ?", id).Update("area_id", areaID).Error
+}
