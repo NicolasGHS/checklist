@@ -106,6 +106,7 @@ body {
   --chart-4: 35.7576 76.7442% 74.7059%;
   --chart-5: 215.8209 54.4715% 75.8824%;
   --sidebar: 252 20.0000% 9.8039%;
+  --sidebar-background: 252, 20%, 10%;
   --sidebar-foreground: 250.0000 36.0000% 90.1961%;
   --sidebar-primary: 263.0769 32.5000% 68.6275%;
   --sidebar-primary-foreground: 250.9091 18.6441% 11.5686%;
@@ -126,6 +127,7 @@ body {
   --shadow-xl: 1px 2px 5px 1px hsl(0 0% 0% / 0.06), 1px 8px 10px 0px hsl(0 0% 0% / 0.06);
   --shadow-2xl: 1px 2px 5px 1px hsl(0 0% 0% / 0.15);
 }
+
 }
 
 
