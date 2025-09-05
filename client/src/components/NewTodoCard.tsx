@@ -10,7 +10,12 @@ import { Checkbox } from "./ui/checkbox";
 import { Textarea } from "./ui/textarea";
 
 type NewTodoCardProps = {
-  AddTodoFunction: (name: string, description: string) => void;
+  AddTodoFunction: (
+    name: string,
+    description: string,
+    today: boolean,
+    deadline: string
+  ) => void;
 };
 
 const formSchema = z.object({
@@ -39,7 +44,7 @@ export const NewTodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
   }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    AddTodoFunction(values.name, values.description || "");
+    AddTodoFunction(values.name, values.description || "", false, ""); // TODO: deadline functionality
     form.reset({
       name: "",
       description: "",

@@ -25,9 +25,10 @@ import {
 import { DeleteList } from "../../wailsjs/go/main/App";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { models } from "wailsjs/go/models";
 
 type ListItemProps = {
-  list: List;
+  list: models.List;
 };
 
 export const ListItem = ({ list }: ListItemProps) => {

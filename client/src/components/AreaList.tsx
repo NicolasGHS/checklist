@@ -6,13 +6,14 @@ import { ListItem } from "./ListItem";
 import { List } from "../types/list";
 import { Box } from "lucide-react";
 import { useDroppable } from "@dnd-kit/core";
+import { models } from "wailsjs/go/models";
 
 type AreaListProps = {
-  areaItem: Area;
+  areaItem: models.Area;
 };
 
 export const AreaList = ({ areaItem }: AreaListProps) => {
-  const [lists, setLists] = useState<List[]>([]);
+  const [lists, setLists] = useState<models.List[]>([]);
   const { isOver, setNodeRef } = useDroppable({
     id: `area-${areaItem.ID}`,
   });

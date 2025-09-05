@@ -2,6 +2,7 @@ import { Calendar, Inbox, Star, FolderOpen, Layers } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Separator } from "./ui/separator";
 import { useDroppable } from "@dnd-kit/core";
+import { models } from "wailsjs/go/models";
 
 import {
   Sidebar,
@@ -91,19 +92,19 @@ const DroppableMenuItem = ({ item }: { item: (typeof items)[0] }) => {
 
 export function AppSidebar() {
   const location = useLocation();
-  const [lists, setLists] = useState<List[]>([]);
-  const [areas, setAreas] = useState<Area[]>([]);
+  const [lists, setLists] = useState<models.List[]>([]);
+  const [areas, setAreas] = useState<models.Area[]>([]);
   const [showAreaCreation, setShowAreaCreation] = useState<boolean>(false);
   const [showListCreation, setShowListCreation] = useState<boolean>(false);
   const [updateTrigger, setUpdateTrigger] = useState<number>(0);
 
   const loadLists = async () => {
-    const result = (await GetLists()) as unknown as List[];
+    const result = (await GetLists()) as unknown as models.List[];
     setLists(result);
   };
 
   const loadAreas = async () => {
-    const result = (await GetAreas()) as unknown as Area[];
+    const result = (await GetAreas()) as unknown as models.Area[];
     setAreas(result);
   };
 

@@ -5,9 +5,10 @@ import { GetTodoById } from "../../wailsjs/go/main/App";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
+import { models } from "wailsjs/go/models";
 
 type TaskProps = {
-  todo: Todo;
+  todo: models.Todo;
   onToggle: (id: number) => void;
   currentListId?: number;
 };

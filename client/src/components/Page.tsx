@@ -4,6 +4,7 @@ import { Todo } from "../types/todo";
 import { Task } from "./Task";
 import { AddTodo, GetTodosByList, ToggleTodo } from "../../wailsjs/go/main/App";
 import { NewTaskButton } from "./NewTaskButton";
+import { models } from "wailsjs/go/models";
 
 type PageProps = {
   title: string;
@@ -11,7 +12,7 @@ type PageProps = {
 };
 
 export const Page = ({ title, id }: PageProps) => {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<models.Todo[]>([]);
   const [showNewTaskCard, setShowNewTaskCard] = useState<boolean>(false);
 
   const showCard = () => {
@@ -23,15 +24,26 @@ export const Page = ({ title, id }: PageProps) => {
     setTodos(result);
   };
 
-  const createTodo = async (name: string, description: string) => {
-    await AddTodo(name, description, id);
+  const createTodo = async (
+    name: string,
+    description: string,
+    today: boolean,
+    deadline: string
+  ) => {
+    await AddTodo(name, description, id, today, deadline);
     loadTodos();
   };
 
   const handleToggle = async (id: number) => {
     console.log("id van todo: ", id);
     setTodos((prev) =>
-      prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t))
+      prev.map((t) =>
+        t.ID === id
+          ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
+              Completed: !t.Completed,
+            })
+          : t
+      )
     );
 
     try {
@@ -39,7 +51,13 @@ export const Page = ({ title, id }: PageProps) => {
     } catch (error) {
       console.error(error);
       setTodos((prev) =>
-        prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t))
+        prev.map((t) =>
+          t.ID === id
+            ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
+                Completed: !t.Completed,
+              })
+            : t
+        )
       );
     }
     loadTodos();
@@ -88,7 +106,7 @@ export const Page = ({ title, id }: PageProps) => {
         <div>
           {showNewTaskCard && <NewTodoCard AddTodoFunction={createTodo} />}
           <ul>
-            {todos.map((todo: Todo, index) => (
+            {todos.map((todo: models.Todo, index) => (
               <li key={index} className="text-white mb-2">
                 <Task todo={todo} onToggle={handleToggle} currentListId={id} />
               </li>
