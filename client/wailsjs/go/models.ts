@@ -88,6 +88,9 @@ export namespace models {
 	    Description: string;
 	    Completed: boolean;
 	    ListID: number;
+	    Today: boolean;
+	    // Go type: time
+	    Deadline: any;
 	    // Go type: time
 	    CreatedAt: any;
 	    // Go type: time
@@ -104,6 +107,8 @@ export namespace models {
 	        this.Description = source["Description"];
 	        this.Completed = source["Completed"];
 	        this.ListID = source["ListID"];
+	        this.Today = source["Today"];
+	        this.Deadline = this.convertValues(source["Deadline"], null);
 	        this.CreatedAt = this.convertValues(source["CreatedAt"], null);
 	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], null);
 	    }

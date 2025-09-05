@@ -8,6 +8,8 @@ type Todo struct {
 	Description string    `bson:"description"`
 	Completed   bool      `bson:"completed"`
 	ListID      uint      `bson:"list_id"`
+	Today       bool      `bson:"today"`
+	Deadline    time.Time `bson:"deadline"`
 	CreatedAt   time.Time `bson:"created"`
 	UpdatedAt   time.Time `bson:"created"`
 }
