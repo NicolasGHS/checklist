@@ -2,9 +2,15 @@ import { useEffect, useState } from "react";
 import { NewTodoCard } from "./NewTodoCard";
 import { Todo } from "../types/todo";
 import { Task } from "./Task";
-import { AddTodo, GetTodosByList, ToggleTodo } from "../../wailsjs/go/main/App";
+import {
+  AddTodo,
+  GetTodayTodos,
+  GetTodosByList,
+  ToggleTodo,
+} from "../../wailsjs/go/main/App";
 import { NewTaskButton } from "./NewTaskButton";
 import { models } from "wailsjs/go/models";
+import { useLocation } from "react-router-dom";
 
 type PageProps = {
   title: string;
@@ -14,6 +20,9 @@ type PageProps = {
 export const Page = ({ title, id }: PageProps) => {
   const [todos, setTodos] = useState<models.Todo[]>([]);
   const [showNewTaskCard, setShowNewTaskCard] = useState<boolean>(false);
+  const location = useLocation();
+
+  console.log("location: ", location);
 
   const showCard = () => {
     setShowNewTaskCard(!showNewTaskCard);
@@ -21,6 +30,12 @@ export const Page = ({ title, id }: PageProps) => {
 
   const loadTodos = async () => {
     const result = await GetTodosByList(id);
+    setTodos(result);
+  };
+
+  const loadTodayTodos = async () => {
+    const result = await GetTodayTodos();
+    console.log("today todos: ", result);
     setTodos(result);
   };
 
@@ -76,7 +91,11 @@ export const Page = ({ title, id }: PageProps) => {
   };
 
   useEffect(() => {
-    loadTodos();
+    if (location.pathname === "/today") {
+      loadTodayTodos();
+    } else {
+      loadTodos();
+    }
   }, [id]);
 
   // Listen for task move events
