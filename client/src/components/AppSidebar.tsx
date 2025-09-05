@@ -1,4 +1,4 @@
-import { Calendar, Inbox, Star, FolderOpen, Hash } from "lucide-react";
+import { Calendar, Inbox, Star, FolderOpen, Layers } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Separator } from "./ui/separator";
 import { useDroppable } from "@dnd-kit/core";
@@ -22,7 +22,6 @@ import { List } from "../types/list";
 import { Area } from "../types/areas";
 import { AreaList } from "./AreaList";
 
-// Menu items.
 const items = [
   {
     title: "Inbox",
@@ -43,9 +42,15 @@ const items = [
     listId: 0,
   },
   {
-    title: "Projects",
-    url: "/projects",
+    title: "Anytime",
+    url: "/anytime",
     icon: FolderOpen,
+    listId: 0,
+  },
+  {
+    title: "Someday",
+    url: "/someday",
+    icon: Layers,
     listId: 0,
   },
 ];
