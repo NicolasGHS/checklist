@@ -3,6 +3,7 @@ package todo
 import (
 	"checklist/core/db"
 	"checklist/core/models"
+	"time"
 )
 
 func GetTodos() ([]models.Todo, error) {
@@ -19,8 +20,8 @@ func GetTodosByList(id uint) ([]models.Todo, error) {
 	return todos, nil
 }
 
-func AddTodo(name, description string, list_id uint) error {
-	return db.DB.Create(&models.Todo{Name: name, Completed: false, Description: description, ListID: list_id}).Error
+func AddTodo(name, description string, list_id uint, today bool, deadline time.Time) error {
+	return db.DB.Create(&models.Todo{Name: name, Completed: false, Description: description, ListID: list_id, Today: today, Deadline: deadline}).Error
 }
 
 func ToggleTodo(id uint) error {

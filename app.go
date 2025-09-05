@@ -8,6 +8,7 @@ import (
 	"checklist/core/todo"
 	"context"
 	"log"
+	"time"
 )
 
 // App struct
@@ -33,8 +34,8 @@ func (a *App) startup(ctx context.Context) {
 }
 
 // Todo
-func (a *App) AddTodo(name, description string, list_id uint) error {
-	return todo.AddTodo(name, description, list_id)
+func (a *App) AddTodo(name, description string, list_id uint, today bool, deadline time.Time) error {
+	return todo.AddTodo(name, description, list_id, today, deadline)
 }
 
 func (a *App) GetTodos() ([]models.Todo, error) {
