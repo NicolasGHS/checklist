@@ -20,6 +20,13 @@ func GetTodosByList(id uint) ([]models.Todo, error) {
 	return todos, nil
 }
 
+func GetTodayTodos() ([]models.Todo, error) {
+	var todos []models.Todo
+
+	_ = db.DB.Where("today = 1").Order("completed asc").Find(&todos)
+	return todos, nil
+}
+
 func AddTodo(name, description string, list_id uint, today bool, deadline time.Time) error {
 	return db.DB.Create(&models.Todo{Name: name, Completed: false, Description: description, ListID: list_id, Today: today, Deadline: deadline}).Error
 }

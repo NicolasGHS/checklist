@@ -34,6 +34,10 @@ export function GetListsByArea(arg1) {
   return window['go']['main']['App']['GetListsByArea'](arg1);
 }
 
+export function GetTodayTodos() {
+  return window['go']['main']['App']['GetTodayTodos']();
+}
+
 export function GetTodoById(arg1) {
   return window['go']['main']['App']['GetTodoById'](arg1);
 }

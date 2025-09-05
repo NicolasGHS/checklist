@@ -50,6 +50,10 @@ func (a *App) GetTodosByList(id uint) ([]models.Todo, error) {
 	return todo.GetTodosByList(id)
 }
 
+func (a *App) GetTodayTodos() ([]models.Todo, error) {
+	return todo.GetTodayTodos()
+}
+
 func (a *App) ToggleTodo(id uint) error {
 	return todo.ToggleTodo(id)
 }
