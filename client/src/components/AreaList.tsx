@@ -27,7 +27,7 @@ export const AreaList = ({ areaItem }: AreaListProps) => {
   }, [areaItem.ID]);
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 ml-2">
       <div
         ref={setNodeRef}
         className={`transition-colors duration-200 rounded-md p-2 ${
