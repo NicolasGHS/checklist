@@ -42,6 +42,7 @@ export const Page = ({ title, id }: PageProps) => {
         prev.map((t) => (t.ID === id ? { ...t, Completed: !t.Completed } : t))
       );
     }
+    loadTodos();
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
