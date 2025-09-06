@@ -11,6 +11,7 @@ import {
 import { NewTaskButton } from "./NewTaskButton";
 import { models } from "wailsjs/go/models";
 import { useLocation } from "react-router-dom";
+import { TodoCard } from "./TaskCard";
 
 type PageProps = {
   title: string;
@@ -20,9 +21,8 @@ type PageProps = {
 export const Page = ({ title, id }: PageProps) => {
   const [todos, setTodos] = useState<models.Todo[]>([]);
   const [showNewTaskCard, setShowNewTaskCard] = useState<boolean>(false);
+  const [openTodoId, setOpenTodoId] = useState<number>();
   const location = useLocation();
-
-  console.log("location: ", location);
 
   const showCard = () => {
     setShowNewTaskCard(!showNewTaskCard);
@@ -43,7 +43,7 @@ export const Page = ({ title, id }: PageProps) => {
     name: string,
     description: string,
     today: boolean,
-    deadline: string
+    deadline: string,
   ) => {
     await AddTodo(name, description, id, today, deadline);
     loadTodos();
@@ -57,8 +57,8 @@ export const Page = ({ title, id }: PageProps) => {
           ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
               Completed: !t.Completed,
             })
-          : t
-      )
+          : t,
+      ),
     );
 
     try {
@@ -71,8 +71,8 @@ export const Page = ({ title, id }: PageProps) => {
             ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
                 Completed: !t.Completed,
               })
-            : t
-        )
+            : t,
+        ),
       );
     }
     loadTodos();
@@ -88,6 +88,11 @@ export const Page = ({ title, id }: PageProps) => {
       e.preventDefault();
       setShowNewTaskCard(true);
     }
+  };
+
+  const toggleTodoCard = (id: number) => {
+    console.log(`opened task ${id}`);
+    setOpenTodoId(id);
   };
 
   useEffect(() => {
@@ -127,7 +132,16 @@ export const Page = ({ title, id }: PageProps) => {
           <ul>
             {todos.map((todo: models.Todo, index) => (
               <li key={index} className="text-white mb-2">
-                <Task todo={todo} onToggle={handleToggle} currentListId={id} />
+                {todo.ID !== openTodoId ? (
+                  <Task
+                    todo={todo}
+                    onToggle={handleToggle}
+                    currentListId={id}
+                    openCard={toggleTodoCard}
+                  />
+                ) : (
+                  <TodoCard />
+                )}
               </li>
             ))}
           </ul>

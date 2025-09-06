@@ -10,10 +10,11 @@ import { models } from "wailsjs/go/models";
 type TaskProps = {
   todo: models.Todo;
   onToggle: (id: number) => void;
+  openCard: (id: number) => void;
   currentListId?: number;
 };
 
-export const Task = ({ todo, onToggle }: TaskProps) => {
+export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: `task-${todo.ID}`,
@@ -32,6 +33,7 @@ export const Task = ({ todo, onToggle }: TaskProps) => {
       className="flex gap-3 items-center ml-6 group"
       ref={setNodeRef}
       style={style}
+      onClick={() => openCard(todo.ID)}
     >
       <GripVertical
         className={`w-4 h-4 transition-opacity ${
