@@ -8,6 +8,7 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { useForm } from "react-hook-form";
 import { Form } from "./ui/form";
+import { models } from "wailsjs/go/models";
 
 type TodoCardProps = {
   UpdateTodoFunction: (
@@ -18,6 +19,7 @@ type TodoCardProps = {
     today: boolean,
     deadline: string,
   ) => void;
+  Task: models.Todo;
 };
 
 const formSchema = z.object({
@@ -25,12 +27,12 @@ const formSchema = z.object({
   description: z.string().max(255).optional(),
 });
 
-export const TodoCard = ({ UpdateTodoFunction }: TodoCardProps) => {
+export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: Task.Name,
+      description: Task.Description,
     },
   });
 

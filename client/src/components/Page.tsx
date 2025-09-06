@@ -151,7 +151,7 @@ export const Page = ({ title, id }: PageProps) => {
                     openCard={toggleTodoCard}
                   />
                 ) : (
-                  <TodoCard AddTodoFunction={updateTodo} />
+                  <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
                 )}
               </li>
             ))}
