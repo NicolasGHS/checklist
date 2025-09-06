@@ -49,6 +49,17 @@ export const Page = ({ title, id }: PageProps) => {
     loadTodos();
   };
 
+  const updateTodo = async (
+    id: number,
+    name: string,
+    description: string,
+    list_id: number,
+    today: boolean,
+    deadline: string,
+  ) => {
+    await updateTodo(id, name, description, list_id, today, deadline);
+  };
+
   const handleToggle = async (id: number) => {
     console.log("id van todo: ", id);
     setTodos((prev) =>
@@ -140,7 +151,7 @@ export const Page = ({ title, id }: PageProps) => {
                     openCard={toggleTodoCard}
                   />
                 ) : (
-                  <TodoCard />
+                  <TodoCard AddTodoFunction={updateTodo} />
                 )}
               </li>
             ))}
