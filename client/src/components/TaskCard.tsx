@@ -9,8 +9,8 @@ import { Textarea } from "./ui/textarea";
 import { useForm } from "react-hook-form";
 import { Form } from "./ui/form";
 
-type NewTodoCardProps = {
-  AddTodoFunction: (
+type TodoCardProps = {
+  UpdateTodoFunction: (
     id: number,
     name: string,
     description: string,
@@ -25,7 +25,7 @@ const formSchema = z.object({
   description: z.string().max(255).optional(),
 });
 
-export const TodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
+export const TodoCard = ({ UpdateTodoFunction }: TodoCardProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,7 +46,7 @@ export const TodoCard = ({ AddTodoFunction }: NewTodoCardProps) => {
   }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    AddTodoFunction(1, values.name, values.description || "", 1, false, ""); // TODO: deadline functionality & replace 1's
+    UpdateTodoFunction(1, values.name, values.description || "", 1, false, ""); // TODO: deadline functionality & replace 1's
     form.reset({
       name: "",
       description: "",
