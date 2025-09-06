@@ -58,6 +58,10 @@ func (a *App) ToggleTodo(id uint) error {
 	return todo.ToggleTodo(id)
 }
 
+func (a *App) UpdateTodo(id uint, name string, description string, list_id uint, today bool, deadline time.Time) error {
+	return todo.UpdateTodo(id, name, description, list_id, today, deadline)
+}
+
 func (a *App) UpdateTodoList(id uint, listID uint) error {
 	return todo.UpdateTodoList(id, listID)
 }

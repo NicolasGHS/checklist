@@ -31,4 +31,6 @@ export function ToggleTodo(arg1:number):Promise<void>;
 
 export function UpdateListArea(arg1:number,arg2:number):Promise<void>;
 
+export function UpdateTodo(arg1:number,arg2:string,arg3:string,arg4:number,arg5:boolean,arg6:time.Time):Promise<void>;
+
 export function UpdateTodoList(arg1:number,arg2:number):Promise<void>;
