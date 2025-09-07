@@ -33,7 +33,7 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
       className="flex gap-3 items-center ml-6 group"
       ref={setNodeRef}
       style={style}
-      onClick={() => openCard(todo.ID)}
+      onDoubleClick={() => openCard(todo.ID)}
     >
       <GripVertical
         className={`w-4 h-4 transition-opacity ${
