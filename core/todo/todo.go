@@ -61,16 +61,29 @@ func UpdateTodoList(id uint, listID uint) error {
 	return db.DB.Save(&todo).Error
 }
 
-func CalculateDaysLeft(id uint) (float64, error) {
-	var todo models.Todo
+func CalculateDaysLeft(id uint) (int, error) {
+	var t models.Todo
 
-	err := db.DB.Where("id = ?", id).Find(&todo).Error
-
-	if err != nil {
+	// Gebruik First in plaats van Find; Find geeft geen error bij "niet gevonden".
+	if err := db.DB.First(&t, id).Error; err != nil {
 		return 0, err
 	}
+	if t.Deadline == nil {
+		return 0, nil
+	}
 
-	timeRemaining := time.Until(*todo.Deadline)
-	daysLeft := timeRemaining.Hours() / 24
-	return math.Floor(daysLeft), nil
+	loc := time.Local // of een expliciete locatie indien je die opslaat
+	now := time.Now().In(loc)
+	dl := t.Deadline.In(loc)
+
+	// Strip tijdcomponent
+	y1, m1, d1 := now.Date()
+	y2, m2, d2 := dl.Date()
+
+	start := time.Date(y1, m1, d1, 0, 0, 0, 0, loc)
+	end := time.Date(y2, m2, d2, 0, 0, 0, 0, loc)
+
+	days := int(end.Sub(start).Hours() / 24)
+
+	return days, nil
 }

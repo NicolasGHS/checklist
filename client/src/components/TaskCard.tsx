@@ -73,7 +73,17 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
       values.description || "",
       Task.ListID,
       false,
-      date ? date.toISOString() : "",
+      date
+        ? new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            23,
+            59,
+            59,
+            999,
+          ).toISOString()
+        : "",
     );
   }
 
