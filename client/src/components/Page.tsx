@@ -95,6 +95,11 @@ export const Page = ({ title, id }: PageProps) => {
       setShowNewTaskCard(false);
     }
 
+    if (e.key === "Escape" && openTodoId !== 0) {
+      e.preventDefault();
+      setOpenTodoId(0);
+    }
+
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "n") {
       e.preventDefault();
       setShowNewTaskCard(true);
