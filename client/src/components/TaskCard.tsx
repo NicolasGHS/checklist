@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import z from "zod/v3";
 import { Card, CardContent } from "./ui/card";
 import { FormControl, FormField, FormItem } from "./ui/form";
@@ -9,6 +9,9 @@ import { Textarea } from "./ui/textarea";
 import { useForm } from "react-hook-form";
 import { Form } from "./ui/form";
 import { models } from "wailsjs/go/models";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Button } from "./ui/button";
+import { Calendar } from "./ui/calendar";
 
 type TodoCardProps = {
   UpdateTodoFunction: (
@@ -28,6 +31,8 @@ const formSchema = z.object({
 });
 
 export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
+  const [showCalendar, setShowCalendar] = useState<boolean>(false);
+  const [date, setDate] = useState<Date | undefined>();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,6 +40,12 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
       description: Task.Description,
     },
   });
+
+  console.log("selected date: ", date);
+
+  const toggleCalendar = () => {
+    setShowCalendar(!showCalendar);
+  };
 
   // Focus on input when opening card
   useEffect(() => {
@@ -107,6 +118,17 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
               />
             </form>
           </Form>
+          <Button variant="secondary" size="icon" onClick={toggleCalendar}>
+            <CalendarIcon className="w-4" />
+          </Button>
+          {showCalendar && (
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              className="rounded-lg border"
+            />
+          )}
         </CardContent>
       </Card>
     </div>
