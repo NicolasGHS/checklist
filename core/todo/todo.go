@@ -3,6 +3,7 @@ package todo
 import (
 	"checklist/core/db"
 	"checklist/core/models"
+	"math"
 	"time"
 )
 
@@ -58,4 +59,18 @@ func UpdateTodoList(id uint, listID uint) error {
 
 	todo.ListID = listID
 	return db.DB.Save(&todo).Error
+}
+
+func CalculateDaysLeft(id uint) (float64, error) {
+	var todo models.Todo
+
+	err := db.DB.Where("id = ?", id).Find(&todo).Error
+
+	if err != nil {
+		return 0, err
+	}
+
+	timeRemaining := time.Until(*todo.Deadline)
+	daysLeft := timeRemaining.Hours() / 24
+	return math.Floor(daysLeft), nil
 }

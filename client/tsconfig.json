@@ -21,11 +21,13 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "wailsjs/*": ["wailsjs/*"]
     }
   },
   "include": [
-    "src"
+    "src",
+    "wailsjs"
   ],
   "references": [
     {

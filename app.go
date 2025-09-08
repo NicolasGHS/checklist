@@ -82,6 +82,10 @@ func (a *App) UpdateTodoList(id uint, listID uint) error {
 	return todo.UpdateTodoList(id, listID)
 }
 
+func (a *App) CalculateRemainingTime(id uint) (float64, error) {
+	return todo.CalculateDaysLeft(id)
+}
+
 // List
 func (a *App) GetLists() ([]models.List, error) {
 	return list.GetLists()

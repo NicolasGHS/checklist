@@ -8,6 +8,8 @@ export function AddList(arg1:string,arg2:string):Promise<void>;
 
 export function AddTodo(arg1:string,arg2:string,arg3:number,arg4:boolean,arg5:string):Promise<void>;
 
+export function CalculateRemainingTime(arg1:number):Promise<number>;
+
 export function DeleteList(arg1:number):Promise<void>;
 
 export function GetAreas():Promise<Array<models.Area>>;

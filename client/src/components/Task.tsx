@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Todo } from "../types/todo";
 import { Checkbox } from "./ui/checkbox";
-import { GetTodoById } from "../../wailsjs/go/main/App";
+import { CalculateRemainingTime, GetTodoById } from "../../wailsjs/go/main/App";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
@@ -15,6 +15,7 @@ type TaskProps = {
 };
 
 export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
+  const [daysLeft, setDaysLeft] = useState<number>();
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: `task-${todo.ID}`,
@@ -27,6 +28,16 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
   const handleChange = () => {
     onToggle(todo.ID);
   };
+
+  const calculateTime = async () => {
+    const result = await CalculateRemainingTime(todo.ID);
+    console.log("result: ", result);
+    setDaysLeft(result);
+  };
+
+  useEffect(() => {
+    calculateTime();
+  });
 
   return (
     <div
@@ -54,6 +65,7 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
       >
         {todo.Name}
       </p>
+      {daysLeft && <p>{daysLeft} days left</p>}
     </div>
   );
 };

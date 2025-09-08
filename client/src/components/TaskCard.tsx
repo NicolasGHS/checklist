@@ -9,9 +9,10 @@ import { Textarea } from "./ui/textarea";
 import { useForm } from "react-hook-form";
 import { Form } from "./ui/form";
 import { models } from "wailsjs/go/models";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Flag } from "lucide-react";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
+import { CalculateRemainingTime } from "wailsjs/go/main/App";
 
 type TodoCardProps = {
   UpdateTodoFunction: (
@@ -44,6 +45,15 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   const toggleCalendar = () => {
     setShowCalendar(!showCalendar);
   };
+
+  const calculateTime = async () => {
+    const result = await CalculateRemainingTime(Task.ID);
+    console.log("result: ", result);
+  };
+
+  useEffect(() => {
+    calculateTime();
+  }, []);
 
   // Focus on input when opening card
   useEffect(() => {
@@ -123,8 +133,8 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
               />
             </form>
           </Form>
-          <Button variant="secondary" size="icon" onClick={toggleCalendar}>
-            <CalendarIcon className="w-4" />
+          <Button size="icon" onClick={toggleCalendar}>
+            <Flag className="w-4" />
           </Button>
           {showCalendar && (
             <Calendar
