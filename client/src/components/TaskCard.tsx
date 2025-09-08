@@ -75,10 +75,6 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
       false,
       date ? date.toISOString() : "",
     );
-    form.reset({
-      name: "",
-      description: "",
-    });
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
