@@ -4,8 +4,10 @@ export namespace models {
 	    ID: number;
 	    Name: string;
 	    Slug: string;
-	    CreatedAt: time.Time;
-	    UpdatedAt: time.Time;
+	    // Go type: time
+	    CreatedAt: any;
+	    // Go type: time
+	    UpdatedAt: any;
 	
 	    static createFrom(source: any = {}) {
 	        return new Area(source);
@@ -16,8 +18,8 @@ export namespace models {
 	        this.ID = source["ID"];
 	        this.Name = source["Name"];
 	        this.Slug = source["Slug"];
-	        this.CreatedAt = this.convertValues(source["CreatedAt"], time.Time);
-	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], time.Time);
+	        this.CreatedAt = this.convertValues(source["CreatedAt"], null);
+	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], null);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -43,8 +45,10 @@ export namespace models {
 	    Name: string;
 	    Slug: string;
 	    AreaID: number;
-	    CreatedAt: time.Time;
-	    UpdatedAt: time.Time;
+	    // Go type: time
+	    CreatedAt: any;
+	    // Go type: time
+	    UpdatedAt: any;
 	
 	    static createFrom(source: any = {}) {
 	        return new List(source);
@@ -56,8 +60,8 @@ export namespace models {
 	        this.Name = source["Name"];
 	        this.Slug = source["Slug"];
 	        this.AreaID = source["AreaID"];
-	        this.CreatedAt = this.convertValues(source["CreatedAt"], time.Time);
-	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], time.Time);
+	        this.CreatedAt = this.convertValues(source["CreatedAt"], null);
+	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], null);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -85,9 +89,12 @@ export namespace models {
 	    Completed: boolean;
 	    ListID: number;
 	    Today: boolean;
-	    Deadline: time.Time;
-	    CreatedAt: time.Time;
-	    UpdatedAt: time.Time;
+	    // Go type: time
+	    Deadline?: any;
+	    // Go type: time
+	    CreatedAt: any;
+	    // Go type: time
+	    UpdatedAt: any;
 	
 	    static createFrom(source: any = {}) {
 	        return new Todo(source);
@@ -101,9 +108,9 @@ export namespace models {
 	        this.Completed = source["Completed"];
 	        this.ListID = source["ListID"];
 	        this.Today = source["Today"];
-	        this.Deadline = this.convertValues(source["Deadline"], time.Time);
-	        this.CreatedAt = this.convertValues(source["CreatedAt"], time.Time);
-	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], time.Time);
+	        this.Deadline = this.convertValues(source["Deadline"], null);
+	        this.CreatedAt = this.convertValues(source["CreatedAt"], null);
+	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], null);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -123,23 +130,6 @@ export namespace models {
 		    }
 		    return a;
 		}
-	}
-
-}
-
-export namespace time {
-	
-	export class Time {
-	
-	
-	    static createFrom(source: any = {}) {
-	        return new Time(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	
-	    }
 	}
 
 }

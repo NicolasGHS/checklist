@@ -27,11 +27,11 @@ func GetTodayTodos() ([]models.Todo, error) {
 	return todos, nil
 }
 
-func AddTodo(name, description string, list_id uint, today bool, deadline time.Time) error {
+func AddTodo(name, description string, list_id uint, today bool, deadline *time.Time) error {
 	return db.DB.Create(&models.Todo{Name: name, Completed: false, Description: description, ListID: list_id, Today: today, Deadline: deadline}).Error
 }
 
-func UpdateTodo(id uint, name string, description string, list_id uint, today bool, deadline time.Time) error {
+func UpdateTodo(id uint, name string, description string, list_id uint, today bool, deadline *time.Time) error {
 	result := db.DB.Model(&models.Todo{}).Where("id = ?", id).Updates(&models.Todo{Name: name, Description: description, ListID: list_id, Today: today, Deadline: deadline})
 
 	return result.Error

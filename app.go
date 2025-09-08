@@ -34,8 +34,16 @@ func (a *App) startup(ctx context.Context) {
 }
 
 // Todo
-func (a *App) AddTodo(name, description string, list_id uint, today bool, deadline time.Time) error {
-	return todo.AddTodo(name, description, list_id, today, deadline)
+func (a *App) AddTodo(name, description string, list_id uint, today bool, deadline string) error {
+	var deadlinePtr *time.Time
+	if deadline != "" {
+		parsedTime, err := time.Parse(time.RFC3339, deadline)
+		if err != nil {
+			return err
+		}
+		deadlinePtr = &parsedTime
+	}
+	return todo.AddTodo(name, description, list_id, today, deadlinePtr)
 }
 
 func (a *App) GetTodos() ([]models.Todo, error) {
@@ -58,8 +66,16 @@ func (a *App) ToggleTodo(id uint) error {
 	return todo.ToggleTodo(id)
 }
 
-func (a *App) UpdateTodo(id uint, name string, description string, list_id uint, today bool, deadline time.Time) error {
-	return todo.UpdateTodo(id, name, description, list_id, today, deadline)
+func (a *App) UpdateTodo(id uint, name string, description string, list_id uint, today bool, deadline string) error {
+	var deadlinePtr *time.Time
+	if deadline != "" {
+		parsedTime, err := time.Parse(time.RFC3339, deadline)
+		if err != nil {
+			return err
+		}
+		deadlinePtr = &parsedTime
+	}
+	return todo.UpdateTodo(id, name, description, list_id, today, deadlinePtr)
 }
 
 func (a *App) UpdateTodoList(id uint, listID uint) error {
