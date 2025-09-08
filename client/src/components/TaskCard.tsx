@@ -41,8 +41,6 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
     },
   });
 
-  console.log("selected date: ", date);
-
   const toggleCalendar = () => {
     setShowCalendar(!showCalendar);
   };
@@ -59,7 +57,14 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    UpdateTodoFunction(1, values.name, values.description || "", 1, false, ""); // TODO: deadline functionality & replace 1's
+    UpdateTodoFunction(
+      Task.ID,
+      values.name,
+      values.description || "",
+      Task.ListID,
+      false,
+      date ? date.toISOString() : "",
+    );
     form.reset({
       name: "",
       description: "",

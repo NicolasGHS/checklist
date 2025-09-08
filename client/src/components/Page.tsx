@@ -6,6 +6,7 @@ import {
   AddTodo,
   GetTodayTodos,
   GetTodosByList,
+  UpdateTodo,
   ToggleTodo,
 } from "../../wailsjs/go/main/App";
 import { NewTaskButton } from "./NewTaskButton";
@@ -35,7 +36,6 @@ export const Page = ({ title, id }: PageProps) => {
 
   const loadTodayTodos = async () => {
     const result = await GetTodayTodos();
-    console.log("today todos: ", result);
     setTodos(result);
   };
 
@@ -43,7 +43,7 @@ export const Page = ({ title, id }: PageProps) => {
     name: string,
     description: string,
     today: boolean,
-    deadline: string
+    deadline: string,
   ) => {
     await AddTodo(name, description, id, today, deadline);
     loadTodos();
@@ -55,21 +55,20 @@ export const Page = ({ title, id }: PageProps) => {
     description: string,
     list_id: number,
     today: boolean,
-    deadline: string
+    deadline: string,
   ) => {
-    await updateTodo(id, name, description, list_id, today, deadline);
+    await UpdateTodo(id, name, description, list_id, today, deadline);
   };
 
   const handleToggle = async (id: number) => {
-    console.log("id van todo: ", id);
     setTodos((prev) =>
       prev.map((t) =>
         t.ID === id
           ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
               Completed: !t.Completed,
             })
-          : t
-      )
+          : t,
+      ),
     );
 
     try {
@@ -82,8 +81,8 @@ export const Page = ({ title, id }: PageProps) => {
             ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
                 Completed: !t.Completed,
               })
-            : t
-        )
+            : t,
+        ),
       );
     }
     loadTodos();
@@ -107,7 +106,6 @@ export const Page = ({ title, id }: PageProps) => {
   };
 
   const toggleTodoCard = (id: number) => {
-    console.log(`opened task ${id}`);
     setOpenTodoId(id);
   };
 
