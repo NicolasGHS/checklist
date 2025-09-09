@@ -13,6 +13,7 @@ import { Flag } from "lucide-react";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { CalculateRemainingTime } from "../../wailsjs/go/main/App";
+import { formatDateYMD } from "@/utils/dates";
 
 type TodoCardProps = {
   UpdateTodoFunction: (
@@ -21,7 +22,7 @@ type TodoCardProps = {
     description: string,
     list_id: number,
     today: boolean,
-    deadline: string,
+    deadline: string
   ) => void;
   Task: models.Todo;
 };
@@ -59,7 +60,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   useEffect(() => {
     const nameField = form.getFieldState("name");
     const inputElement = document.querySelector(
-      'input[name="name"]',
+      'input[name="name"]'
     ) as HTMLInputElement;
     if (inputElement) {
       inputElement.focus();
@@ -81,9 +82,9 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
             23,
             59,
             59,
-            999,
+            999
           ).toISOString()
-        : "",
+        : ""
     );
   }
 
@@ -142,6 +143,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
           <Button size="icon" onClick={toggleCalendar}>
             <Flag className="w-4" />
           </Button>
+          {Task.Deadline && <p>deadline: {formatDateYMD(Task.Deadline)}</p>}
           {showCalendar && (
             <Calendar
               mode="single"
