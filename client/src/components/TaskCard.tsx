@@ -12,7 +12,7 @@ import { models } from "wailsjs/go/models";
 import { Flag } from "lucide-react";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
-import { CalculateRemainingTime } from "wailsjs/go/main/App";
+import { CalculateRemainingTime } from "../../wailsjs/go/main/App";
 
 type TodoCardProps = {
   UpdateTodoFunction: (
@@ -146,7 +146,10 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
             <Calendar
               mode="single"
               selected={date}
-              onSelect={setDate}
+              onSelect={(selectedDate) => {
+                setDate(selectedDate);
+                setShowCalendar(false);
+              }}
               className="rounded-lg border"
             />
           )}

@@ -3,7 +3,6 @@ package todo
 import (
 	"checklist/core/db"
 	"checklist/core/models"
-	"math"
 	"time"
 )
 
