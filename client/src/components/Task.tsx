@@ -6,6 +6,7 @@ import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 import { models } from "wailsjs/go/models";
+import { Flag } from "lucide-react";
 
 type TaskProps = {
   todo: models.Todo;
@@ -41,7 +42,7 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
 
   return (
     <div
-      className="flex gap-3 items-center ml-6 group"
+      className="flex gap-3 items-center ml-6 mr-10 group"
       ref={setNodeRef}
       style={style}
       onDoubleClick={() => openCard(todo.ID)}
@@ -65,8 +66,13 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
       >
         {todo.Name}
       </p>
-      {daysLeft !== 0 && daysLeft !== -1 && <p>{daysLeft} days left</p>}
-      {daysLeft === 0 && <p>Today</p>}
+      {daysLeft !== 0 && daysLeft !== -1 && (
+        <div className="flex ml-auto gap-2">
+          <Flag className="w-4" />
+          <p className="">{daysLeft} days left</p>
+        </div>
+      )}
+      {daysLeft === 0 && <p className="ml-auto">Today</p>}
     </div>
   );
 };
