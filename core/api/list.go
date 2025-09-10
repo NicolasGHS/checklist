@@ -1,4 +1,4 @@
-package list
+package api
 
 import (
 	"checklist/core/db"
