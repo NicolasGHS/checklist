@@ -163,21 +163,25 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
             ) : (
               <p></p>
             )}
-            <Button size="icon" onClick={toggleCalendar}>
-              <Flag className="w-4" />
-            </Button>
+            <div className="relative">
+              <Button size="icon" onClick={toggleCalendar}>
+                <Flag className="w-4" />
+              </Button>
+              {showCalendar && (
+                <div className="absolute top-full right-0 z-50 mt-2">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={(selectedDate) => {
+                      setDate(selectedDate);
+                      setShowCalendar(false);
+                    }}
+                    className="rounded-lg border bg-background shadow-lg"
+                  />
+                </div>
+              )}
+            </div>
           </div>
-          {showCalendar && (
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(selectedDate) => {
-                setDate(selectedDate);
-                setShowCalendar(false);
-              }}
-              className="rounded-lg border"
-            />
-          )}
         </CardContent>
       </Card>
     </div>
