@@ -12,7 +12,10 @@ import { models } from "wailsjs/go/models";
 import { Flag } from "lucide-react";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
-import { CalculateRemainingTime } from "../../wailsjs/go/main/App";
+import {
+  CalculateRemainingTime,
+  DeleteDeadline,
+} from "../../wailsjs/go/main/App";
 import { Deadline } from "./Deadline";
 
 type TodoCardProps = {
@@ -72,6 +75,14 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
         : ""
     );
   }
+
+  const deleteDeadline = async () => {
+    try {
+      const result = await DeleteDeadline(Task.ID);
+    } catch (error) {
+      console.error("Failed removing deadline: ", error);
+    }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -143,7 +154,9 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
           <Button size="icon" onClick={toggleCalendar}>
             <Flag className="w-4" />
           </Button>
-          {Task.Deadline && <Deadline taskId={Task.ID} date={Task.Deadline} />}
+          {Task.Deadline && (
+            <Deadline date={Task.Deadline} deleteDeadline={deleteDeadline} />
+          )}
           {showCalendar && (
             <Calendar
               mode="single"
