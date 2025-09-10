@@ -186,8 +186,28 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
                     mode="single"
                     selected={date}
                     onSelect={(selectedDate) => {
-                      setDate(selectedDate);
-                      setShowCalendar(false);
+                      if (selectedDate) {
+                        setDate(selectedDate);
+                        setShowCalendar(false);
+
+                        // direct updaten van de deadline
+                        UpdateTodoFunction(
+                          taskItem.ID,
+                          form.getValues("name"), // huidige name uit form
+                          form.getValues("description") || "",
+                          taskItem.ListID,
+                          false,
+                          new Date(
+                            selectedDate.getFullYear(),
+                            selectedDate.getMonth(),
+                            selectedDate.getDate(),
+                            23,
+                            59,
+                            59,
+                            999
+                          ).toISOString()
+                        );
+                      }
                     }}
                     className="rounded-lg border bg-background shadow-lg"
                   />
