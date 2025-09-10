@@ -190,10 +190,10 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
                         setDate(selectedDate);
                         setShowCalendar(false);
 
-                        // direct updaten van de deadline
+                        // Update deadline directly
                         UpdateTodoFunction(
                           taskItem.ID,
-                          form.getValues("name"), // huidige name uit form
+                          form.getValues("name"),
                           form.getValues("description") || "",
                           taskItem.ListID,
                           false,
