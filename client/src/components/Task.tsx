@@ -65,7 +65,7 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
       >
         {todo.Name}
       </p>
-      {daysLeft && <p>{daysLeft} days left</p>}
+      {daysLeft !== 0 && <p>{daysLeft} days left</p>}
     </div>
   );
 };
