@@ -69,10 +69,10 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
       {daysLeft !== 0 && daysLeft !== -1 && (
         <div className="flex ml-auto gap-2">
           <Flag className="w-4" />
-          <p className="">{daysLeft} days left</p>
+          <p className="text-foreground">{daysLeft} days left</p>
         </div>
       )}
-      {daysLeft === 0 && <p className="ml-auto">Today</p>}
+      {daysLeft === 0 && <p className="ml-auto text-foreground">Today</p>}
     </div>
   );
 };
