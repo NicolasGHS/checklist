@@ -1,9 +1,7 @@
-import { Area } from "../types/areas";
 import { GetListsByArea } from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { SidebarMenuItem } from "./ui/sidebar";
 import { ListItem } from "./ListItem";
-import { List } from "../types/list";
 import { Box } from "lucide-react";
 import { useDroppable } from "@dnd-kit/core";
 import { models } from "wailsjs/go/models";

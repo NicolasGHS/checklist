@@ -10,5 +10,14 @@
   "author": {
     "name": "NicolasGHS",
     "email": "60781933+NicolasGHS@users.noreply.github.com"
+  },
+  "info": {
+    "fileAssociations": [
+      {
+        "name": "Checklist",
+        "iconName": "appicon",
+        "role": "Editor"
+      }
+    ]
   }
 }

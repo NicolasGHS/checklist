@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Todo } from "../types/todo";
 import { Checkbox } from "./ui/checkbox";
-import { CalculateRemainingTime, GetTodoById } from "../../wailsjs/go/main/App";
+import { CalculateRemainingTime } from "../../wailsjs/go/main/App";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";

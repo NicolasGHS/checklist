@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { GetListBySlug } from "../../wailsjs/go/main/App";
-import { List } from "../types/list";
 import { Page } from "../components/Page";
 import { models } from "wailsjs/go/models";
 

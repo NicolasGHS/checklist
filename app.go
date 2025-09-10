@@ -1,11 +1,9 @@
 package main
 
 import (
-	"checklist/core/area"
+	"checklist/core/api"
 	"checklist/core/db"
-	"checklist/core/list"
 	"checklist/core/models"
-	"checklist/core/todo"
 	"context"
 	"log"
 	"time"
@@ -43,27 +41,27 @@ func (a *App) AddTodo(name, description string, list_id uint, today bool, deadli
 		}
 		deadlinePtr = &parsedTime
 	}
-	return todo.AddTodo(name, description, list_id, today, deadlinePtr)
+	return api.AddTodo(name, description, list_id, today, deadlinePtr)
 }
 
 func (a *App) GetTodos() ([]models.Todo, error) {
-	return todo.GetTodos()
+	return api.GetTodos()
 }
 
 func (a *App) GetTodoById(id uint) ([]models.Todo, error) {
-	return todo.GetTodosByList(id)
+	return api.GetTodosByList(id)
 }
 
 func (a *App) GetTodosByList(id uint) ([]models.Todo, error) {
-	return todo.GetTodosByList(id)
+	return api.GetTodosByList(id)
 }
 
 func (a *App) GetTodayTodos() ([]models.Todo, error) {
-	return todo.GetTodayTodos()
+	return api.GetTodayTodos()
 }
 
 func (a *App) ToggleTodo(id uint) error {
-	return todo.ToggleTodo(id)
+	return api.ToggleTodo(id)
 }
 
 func (a *App) UpdateTodo(id uint, name string, description string, list_id uint, today bool, deadline string) error {
@@ -75,51 +73,51 @@ func (a *App) UpdateTodo(id uint, name string, description string, list_id uint,
 		}
 		deadlinePtr = &parsedTime
 	}
-	return todo.UpdateTodo(id, name, description, list_id, today, deadlinePtr)
+	return api.UpdateTodo(id, name, description, list_id, today, deadlinePtr)
 }
 
 func (a *App) DeleteDeadline(id uint) (models.Todo, error) {
-	return todo.DeleteDeadline(id)
+	return api.DeleteDeadline(id)
 }
 
 func (a *App) UpdateTodoList(id uint, listID uint) error {
-	return todo.UpdateTodoList(id, listID)
+	return api.UpdateTodoList(id, listID)
 }
 
 func (a *App) CalculateRemainingTime(id uint) (int, error) {
-	return todo.CalculateDaysLeft(id)
+	return api.CalculateDaysLeft(id)
 }
 
 // List
 func (a *App) GetLists() ([]models.List, error) {
-	return list.GetLists()
+	return api.GetLists()
 }
 
 func (a *App) GetListBySlug(slug string) (models.List, error) {
-	return list.GetListBySlug(slug)
+	return api.GetListBySlug(slug)
 }
 
 func (a *App) AddList(name, description string) error {
-	return list.AddList(name, description)
+	return api.AddList(name, description)
 }
 
 func (a *App) GetListsByArea(id uint) ([]models.List, error) {
-	return list.GetListsByArea(id)
+	return api.GetListsByArea(id)
 }
 
 func (a *App) DeleteList(id uint) error {
-	return list.DeleteList(id)
+	return api.DeleteList(id)
 }
 
 func (a *App) UpdateListArea(id uint, areaID uint) error {
-	return list.UpdateListArea(id, areaID)
+	return api.UpdateListArea(id, areaID)
 }
 
 // Area
 func (a *App) GetAreas() ([]models.Area, error) {
-	return area.GetAreas()
+	return api.GetAreas()
 }
 
 func (a *App) AddArea(name string) error {
-	return area.AddArea(name)
+	return api.AddArea(name)
 }

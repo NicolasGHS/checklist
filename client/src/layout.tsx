@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "../src/components/ui/sidebar";
 import { AppSidebar } from "./components/AppSidebar";
 import { ThemeProvider } from "./components/theme-provider";
-import { Separator } from "./components/ui/separator";
-import { Toolbar } from "./components/Toolbar";
 import {
   DndContext,
   DragEndEvent,
@@ -12,18 +10,15 @@ import {
   DragStartEvent,
 } from "@dnd-kit/core";
 import { UpdateTodoList, UpdateListArea } from "../wailsjs/go/main/App";
-import { Todo } from "./types/todo";
-import { List } from "./types/list";
 import { Hash } from "lucide-react";
+import { models } from "wailsjs/go/models";
 
 const Layout: React.FC = () => {
   const [draggedTask, setDraggedTask] = useState<{
     id: number;
     name?: string;
   } | null>(null);
-  const [draggedList, setDraggedList] = useState<List | null>(null);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [draggedList, setDraggedList] = useState<models.List | null>(null);
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -36,7 +31,7 @@ const Layout: React.FC = () => {
     } else if (active.id.toString().startsWith("list-")) {
       setDraggedList({
         ID: parseInt(active.id.toString().replace("list-", "")),
-      } as List);
+      } as models.List);
       console.log("Dragging list:", active.id);
     }
   };

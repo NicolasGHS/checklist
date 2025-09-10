@@ -1,4 +1,4 @@
-package area
+package api
 
 import (
 	"checklist/core/db"
