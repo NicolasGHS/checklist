@@ -143,7 +143,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
           <Button size="icon" onClick={toggleCalendar}>
             <Flag className="w-4" />
           </Button>
-          {Task.Deadline && <Deadline date={Task.Deadline} />}
+          {Task.Deadline && <Deadline taskId={Task.ID} date={Task.Deadline} />}
           {showCalendar && (
             <Calendar
               mode="single"
