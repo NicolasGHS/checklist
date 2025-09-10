@@ -81,7 +81,7 @@ func CalculateDaysLeft(id uint) (int, error) {
 		return 0, err
 	}
 	if t.Deadline == nil {
-		return 0, nil
+		return -1, nil
 	}
 
 	loc := time.Local // of een expliciete locatie indien je die opslaat

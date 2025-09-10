@@ -31,7 +31,7 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
 
   const calculateTime = async () => {
     const result = await CalculateRemainingTime(todo.ID);
-    console.log("result: ", result);
+    console.log("result in calculateTime: ", result);
     setDaysLeft(result);
   };
 
@@ -65,7 +65,8 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
       >
         {todo.Name}
       </p>
-      {daysLeft !== 0 && <p>{daysLeft} days left</p>}
+      {daysLeft !== 0 && daysLeft !== -1 && <p>{daysLeft} days left</p>}
+      {daysLeft === 0 && <p>Today</p>}
     </div>
   );
 };
