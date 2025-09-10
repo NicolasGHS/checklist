@@ -22,9 +22,16 @@ func GetTodosByList(id uint) ([]models.Todo, error) {
 
 func GetTodayTodos() ([]models.Todo, error) {
 	var todos []models.Todo
+	var result []models.Todo
 
-	_ = db.DB.Where("today = 1").Order("completed asc").Find(&todos)
-	return todos, nil
+	_ = db.DB.Find(&todos)
+
+	for _, todo := range todos {
+		if IsToday(todo.Deadline) {
+			result = append(result, todo)
+		}
+	}
+	return result, nil
 }
 
 func AddTodo(name, description string, list_id uint, today bool, deadline *time.Time) error {
@@ -98,4 +105,17 @@ func CalculateDaysLeft(id uint) (int, error) {
 	days := int(end.Sub(start).Hours() / 24)
 
 	return days, nil
+}
+
+func IsToday(t *time.Time) bool {
+	if t == nil {
+		return false
+	}
+
+	now := time.Now().In(t.Location())
+
+	y1, m1, d1 := t.Date()
+	y2, m2, d2 := now.Date()
+
+	return y1 == y2 && m1 == m2 && d1 == d2
 }
