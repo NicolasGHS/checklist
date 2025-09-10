@@ -18,6 +18,10 @@ export function CalculateRemainingTime(arg1) {
   return window['go']['main']['App']['CalculateRemainingTime'](arg1);
 }
 
+export function DeleteDeadline(arg1) {
+  return window['go']['main']['App']['DeleteDeadline'](arg1);
+}
+
 export function DeleteList(arg1) {
   return window['go']['main']['App']['DeleteList'](arg1);
 }

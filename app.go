@@ -78,6 +78,10 @@ func (a *App) UpdateTodo(id uint, name string, description string, list_id uint,
 	return todo.UpdateTodo(id, name, description, list_id, today, deadlinePtr)
 }
 
+func (a *App) DeleteDeadline(id uint) error {
+	return todo.DeleteDeadline(id)
+}
+
 func (a *App) UpdateTodoList(id uint, listID uint) error {
 	return todo.UpdateTodoList(id, listID)
 }

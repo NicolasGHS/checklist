@@ -1,6 +1,7 @@
 import { formatDateYMD } from "@/utils/dates";
 import { X } from "lucide-react";
 import { Button } from "./ui/button";
+import { DeleteDeadline } from "../../wailsjs/go/main/App";
 
 type DeadlineProps = {
   taskId: number;
@@ -9,7 +10,11 @@ type DeadlineProps = {
 
 export const Deadline = ({ taskId, date }: DeadlineProps) => {
   const deleteDeadline = async () => {
-    console.log(`delete from id: ${taskId}`);
+    try {
+      const result = await DeleteDeadline(taskId);
+    } catch (error) {
+      console.error("Failed removing deadline: ", error);
+    }
   };
 
   return (
