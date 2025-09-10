@@ -52,21 +52,6 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
     console.log("result: ", result);
   };
 
-  useEffect(() => {
-    calculateTime();
-  }, []);
-
-  // Focus on input when opening card
-  useEffect(() => {
-    const nameField = form.getFieldState("name");
-    const inputElement = document.querySelector(
-      'input[name="name"]'
-    ) as HTMLInputElement;
-    if (inputElement) {
-      inputElement.focus();
-    }
-  }, []);
-
   function onSubmit(values: z.infer<typeof formSchema>) {
     UpdateTodoFunction(
       Task.ID,
@@ -94,6 +79,21 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
       form.handleSubmit(onSubmit)();
     }
   };
+
+  useEffect(() => {
+    calculateTime();
+  }, []);
+
+  // Focus on input when opening card
+  useEffect(() => {
+    const nameField = form.getFieldState("name");
+    const inputElement = document.querySelector(
+      'input[name="name"]'
+    ) as HTMLInputElement;
+    if (inputElement) {
+      inputElement.focus();
+    }
+  }, []);
 
   return (
     <div>
