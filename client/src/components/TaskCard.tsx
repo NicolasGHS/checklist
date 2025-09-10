@@ -13,7 +13,7 @@ import { Flag } from "lucide-react";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { CalculateRemainingTime } from "../../wailsjs/go/main/App";
-import { formatDateYMD } from "@/utils/dates";
+import { Deadline } from "./Deadline";
 
 type TodoCardProps = {
   UpdateTodoFunction: (
@@ -143,7 +143,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
           <Button size="icon" onClick={toggleCalendar}>
             <Flag className="w-4" />
           </Button>
-          {Task.Deadline && <p>deadline: {formatDateYMD(Task.Deadline)}</p>}
+          {Task.Deadline && <Deadline date={Task.Deadline} />}
           {showCalendar && (
             <Calendar
               mode="single"
