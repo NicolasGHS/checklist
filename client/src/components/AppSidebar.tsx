@@ -16,11 +16,8 @@ import {
 } from "./ui/sidebar";
 import { SettingsButton } from "./SettingsButton";
 import { NewListButton } from "./NewListButton";
-import { ListItem } from "./ListItem";
 import { GetLists, GetAreas } from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
-import { List } from "../types/list";
-import { Area } from "../types/areas";
 import { AreaList } from "./AreaList";
 import { ScrollArea } from "./ui/scroll-area";
 

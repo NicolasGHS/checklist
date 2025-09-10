@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { NewTodoCard } from "./NewTodoCard";
-import { Todo } from "../types/todo";
 import { Task } from "./Task";
 import {
   AddTodo,
@@ -43,7 +42,7 @@ export const Page = ({ title, id }: PageProps) => {
     name: string,
     description: string,
     today: boolean,
-    deadline: string,
+    deadline: string
   ) => {
     await AddTodo(name, description, id, today, deadline);
     loadTodos();
@@ -55,7 +54,7 @@ export const Page = ({ title, id }: PageProps) => {
     description: string,
     list_id: number,
     today: boolean,
-    deadline: string,
+    deadline: string
   ) => {
     await UpdateTodo(id, name, description, list_id, today, deadline);
   };
@@ -67,8 +66,8 @@ export const Page = ({ title, id }: PageProps) => {
           ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
               Completed: !t.Completed,
             })
-          : t,
-      ),
+          : t
+      )
     );
 
     try {
@@ -81,8 +80,8 @@ export const Page = ({ title, id }: PageProps) => {
             ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
                 Completed: !t.Completed,
               })
-            : t,
-        ),
+            : t
+        )
       );
     }
     loadTodos();

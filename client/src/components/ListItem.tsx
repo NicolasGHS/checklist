@@ -1,5 +1,4 @@
 import { Link, useLocation } from "react-router-dom";
-import { List } from "../types/list";
 import { SidebarMenuButton } from "./ui/sidebar";
 import { Ellipsis, Hash } from "lucide-react";
 import {
@@ -20,7 +19,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { DeleteList } from "../../wailsjs/go/main/App";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
