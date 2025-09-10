@@ -38,6 +38,7 @@ const formSchema = z.object({
 export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [date, setDate] = useState<Date | undefined>();
+  const [daysLeft, setDaysLeft] = useState<number>();
   const [taskItem, setTaskItem] = useState<models.Todo>(Task);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,6 +55,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   const calculateTime = async () => {
     const result = await CalculateRemainingTime(taskItem.ID);
     console.log("result: ", result);
+    setDaysLeft(result);
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -156,13 +158,24 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
           </Form>
           <div className="flex items-center justify-between">
             {taskItem.Deadline ? (
-              <Deadline
-                date={taskItem.Deadline}
-                deleteDeadline={deleteDeadline}
-              />
+              <div className="group flex items-center gap-2">
+                <Deadline
+                  date={taskItem.Deadline}
+                  deleteDeadline={deleteDeadline}
+                />
+                {daysLeft !== 0 && daysLeft !== -1 && (
+                  <p className="text-foreground group-hover:hidden">
+                    {daysLeft} days left
+                  </p>
+                )}
+                {daysLeft === 0 && (
+                  <p className="text-foreground group-hover:hidden">Today</p>
+                )}
+              </div>
             ) : (
               <p></p>
             )}
+
             <div className="relative">
               <Button size="icon" onClick={toggleCalendar}>
                 <Flag className="w-4" />
