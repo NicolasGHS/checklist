@@ -37,9 +37,17 @@ func UpdateTodo(id uint, name string, description string, list_id uint, today bo
 	return result.Error
 }
 
-func DeleteDeadline(id uint) error {
+func DeleteDeadline(id uint) (models.Todo, error) {
+	var todo models.Todo
+
 	result := db.DB.Model(&models.Todo{}).Where("id = ?", id).Update("deadline", nil)
-	return result.Error
+	if result.Error != nil {
+		return models.Todo{}, result.Error
+	}
+
+	_ = db.DB.Where("id = ?", id).Find(&todo)
+
+	return todo, result.Error
 }
 
 func ToggleTodo(id uint) error {

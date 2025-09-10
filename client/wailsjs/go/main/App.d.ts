@@ -10,7 +10,7 @@ export function AddTodo(arg1:string,arg2:string,arg3:number,arg4:boolean,arg5:st
 
 export function CalculateRemainingTime(arg1:number):Promise<number>;
 
-export function DeleteDeadline(arg1:number):Promise<void>;
+export function DeleteDeadline(arg1:number):Promise<models.Todo>;
 
 export function DeleteList(arg1:number):Promise<void>;
 

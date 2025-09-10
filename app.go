@@ -78,7 +78,7 @@ func (a *App) UpdateTodo(id uint, name string, description string, list_id uint,
 	return todo.UpdateTodo(id, name, description, list_id, today, deadlinePtr)
 }
 
-func (a *App) DeleteDeadline(id uint) error {
+func (a *App) DeleteDeadline(id uint) (models.Todo, error) {
 	return todo.DeleteDeadline(id)
 }
 

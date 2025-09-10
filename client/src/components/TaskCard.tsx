@@ -38,11 +38,12 @@ const formSchema = z.object({
 export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [date, setDate] = useState<Date | undefined>();
+  const [taskItem, setTaskItem] = useState<models.Todo>(Task);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: Task.Name,
-      description: Task.Description,
+      name: taskItem.Name,
+      description: taskItem.Description,
     },
   });
 
@@ -51,16 +52,16 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   };
 
   const calculateTime = async () => {
-    const result = await CalculateRemainingTime(Task.ID);
+    const result = await CalculateRemainingTime(taskItem.ID);
     console.log("result: ", result);
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     UpdateTodoFunction(
-      Task.ID,
+      taskItem.ID,
       values.name,
       values.description || "",
-      Task.ListID,
+      taskItem.ListID,
       false,
       date
         ? new Date(
@@ -79,6 +80,8 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   const deleteDeadline = async () => {
     try {
       const result = await DeleteDeadline(Task.ID);
+      setTaskItem(result);
+      console.log("result: ", result);
     } catch (error) {
       console.error("Failed removing deadline: ", error);
     }
@@ -154,8 +157,11 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
           <Button size="icon" onClick={toggleCalendar}>
             <Flag className="w-4" />
           </Button>
-          {Task.Deadline && (
-            <Deadline date={Task.Deadline} deleteDeadline={deleteDeadline} />
+          {taskItem.Deadline && (
+            <Deadline
+              date={taskItem.Deadline}
+              deleteDeadline={deleteDeadline}
+            />
           )}
           {showCalendar && (
             <Calendar
