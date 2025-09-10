@@ -154,15 +154,19 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
               />
             </form>
           </Form>
-          <Button size="icon" onClick={toggleCalendar}>
-            <Flag className="w-4" />
-          </Button>
-          {taskItem.Deadline && (
-            <Deadline
-              date={taskItem.Deadline}
-              deleteDeadline={deleteDeadline}
-            />
-          )}
+          <div className="flex items-center justify-between">
+            {taskItem.Deadline ? (
+              <Deadline
+                date={taskItem.Deadline}
+                deleteDeadline={deleteDeadline}
+              />
+            ) : (
+              <p></p>
+            )}
+            <Button size="icon" onClick={toggleCalendar}>
+              <Flag className="w-4" />
+            </Button>
+          </div>
           {showCalendar && (
             <Calendar
               mode="single"
