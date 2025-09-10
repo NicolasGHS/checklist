@@ -3,6 +3,7 @@ package api
 import (
 	"checklist/core/db"
 	"checklist/core/models"
+	"checklist/core/utils"
 	"time"
 )
 
@@ -27,7 +28,7 @@ func GetTodayTodos() ([]models.Todo, error) {
 	_ = db.DB.Find(&todos)
 
 	for _, todo := range todos {
-		if IsToday(todo.Deadline) {
+		if utils.IsToday(todo.Deadline) {
 			result = append(result, todo)
 		}
 	}
@@ -105,17 +106,4 @@ func CalculateDaysLeft(id uint) (int, error) {
 	days := int(end.Sub(start).Hours() / 24)
 
 	return days, nil
-}
-
-func IsToday(t *time.Time) bool {
-	if t == nil {
-		return false
-	}
-
-	now := time.Now().In(t.Location())
-
-	y1, m1, d1 := t.Date()
-	y2, m2, d2 := now.Date()
-
-	return y1 == y2 && m1 == m2 && d1 == d2
 }
