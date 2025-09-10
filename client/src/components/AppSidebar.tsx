@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { List } from "../types/list";
 import { Area } from "../types/areas";
 import { AreaList } from "./AreaList";
+import { ScrollArea } from "./ui/scroll-area";
 
 const items = [
   {
@@ -162,14 +163,16 @@ export function AppSidebar() {
                 ))}
               </div>
 
-              <div className="mt-3">
-                {areas.map((area) => (
-                  <AreaList
-                    key={`${area.ID}-${updateTrigger}`}
-                    areaItem={area}
-                  />
-                ))}
-              </div>
+              <ScrollArea>
+                <div className="mt-3">
+                  {areas.map((area) => (
+                    <AreaList
+                      key={`${area.ID}-${updateTrigger}`}
+                      areaItem={area}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
