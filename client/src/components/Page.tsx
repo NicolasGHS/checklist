@@ -143,7 +143,7 @@ export const Page = ({ title, id }: PageProps) => {
         <div>
           {showNewTaskCard && <NewTodoCard AddTodoFunction={createTodo} />}
           <ul>
-            {todos.map((todo: models.Todo, index) => (
+            {todos?.map((todo: models.Todo, index) => (
               <li key={index} className="text-white mb-2">
                 {todo.ID !== openTodoId ? (
                   <Task
