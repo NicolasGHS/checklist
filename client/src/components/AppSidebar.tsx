@@ -148,6 +148,7 @@ export function AppSidebar() {
     }
 
     loadLists();
+    setUpdateTrigger((prev) => prev + 1);
   };
 
   useEffect(() => {
@@ -219,7 +220,7 @@ export function AppSidebar() {
                     <AreaList
                       key={`${area.ID}-${updateTrigger}`}
                       areaItem={area}
-                      deleteList={() => handleDelete}
+                      deleteList={handleDelete}
                     />
                   ))}
                 </div>

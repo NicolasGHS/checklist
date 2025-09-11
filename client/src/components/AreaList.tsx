@@ -8,7 +8,7 @@ import { models } from "wailsjs/go/models";
 
 type AreaListProps = {
   areaItem: models.Area;
-  deleteList: () => void;
+  deleteList: (id: number) => void;
 };
 
 export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
@@ -45,7 +45,14 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
       <div className="mt-1 ml-2">
         {lists.map((list) => (
           <SidebarMenuItem key={list.ID}>
-            <ListItem list={list} onDelete={deleteList} />
+            <ListItem
+              list={list}
+              onDelete={(id) => {
+                deleteList(id);
+                // Remove the deleted list from local state
+                setLists((prev) => prev.filter((l) => l.ID !== id));
+              }}
+            />
           </SidebarMenuItem>
         ))}
       </div>
