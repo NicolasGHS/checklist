@@ -113,6 +113,10 @@ func (a *App) GetListsByArea(id uint) ([]models.List, error) {
 	return api.GetListsByArea(id)
 }
 
+func (a *App) GetListsWithoutArea() ([]models.List, error) {
+	return api.GetListsWithoutArea()
+}
+
 func (a *App) DeleteList(id uint) error {
 	return api.DeleteList(id)
 }

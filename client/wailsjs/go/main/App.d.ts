@@ -24,6 +24,8 @@ export function GetLists():Promise<Array<models.List>>;
 
 export function GetListsByArea(arg1:number):Promise<Array<models.List>>;
 
+export function GetListsWithoutArea():Promise<Array<models.List>>;
+
 export function GetTodayCount():Promise<number>;
 
 export function GetTodayTodos():Promise<Array<models.Todo>>;

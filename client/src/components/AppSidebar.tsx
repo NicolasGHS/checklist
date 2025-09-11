@@ -21,10 +21,12 @@ import {
   GetAreas,
   GetTodayCount,
   GetListCount,
+  GetListsWithoutArea,
 } from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { AreaList } from "./AreaList";
 import { ScrollArea } from "./ui/scroll-area";
+import { ListItem } from "./ListItem";
 
 const items = [
   {
@@ -118,14 +120,18 @@ const DroppableMenuItem = ({ item }: { item: (typeof items)[0] }) => {
 export function AppSidebar() {
   const location = useLocation();
   const [lists, setLists] = useState<models.List[]>([]);
+  const [listsWithoutArea, setListsWithoutArea] = useState<models.List[]>([]);
   const [areas, setAreas] = useState<models.Area[]>([]);
   const [showAreaCreation, setShowAreaCreation] = useState<boolean>(false);
   const [showListCreation, setShowListCreation] = useState<boolean>(false);
   const [updateTrigger, setUpdateTrigger] = useState<number>(0);
 
   const loadLists = async () => {
-    const result = (await GetLists()) as unknown as models.List[];
+    let result = (await GetLists()) as unknown as models.List[];
     setLists(result);
+
+    result = (await GetListsWithoutArea()) as unknown as models.List[];
+    setListsWithoutArea(result);
   };
 
   const loadAreas = async () => {
@@ -188,6 +194,11 @@ export function AppSidebar() {
               </div>
 
               <ScrollArea>
+                <div className="mt-3">
+                  {listsWithoutArea.map((list) => (
+                    <ListItem list={list} />
+                  ))}
+                </div>
                 <div className="mt-3">
                   {areas.map((area) => (
                     <AreaList
