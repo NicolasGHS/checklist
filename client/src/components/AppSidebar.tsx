@@ -183,17 +183,17 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent className="mt-5">
-            <SidebarMenu>
-              <div>
-                {items.map((item) => (
-                  <DroppableMenuItem key={item.title} item={item} />
-                ))}
-              </div>
+      <SidebarContent className="overflow-hidden">
+        <ScrollArea className="h-full">
+          <SidebarGroup>
+            <SidebarGroupContent className="mt-5">
+              <SidebarMenu>
+                <div>
+                  {items.map((item) => (
+                    <DroppableMenuItem key={item.title} item={item} />
+                  ))}
+                </div>
 
-              <ScrollArea>
                 <div className="mt-3">
                   {listsWithoutArea.map((list) => (
                     <ListItem list={list} />
@@ -207,10 +207,10 @@ export function AppSidebar() {
                     />
                   ))}
                 </div>
-              </ScrollArea>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </ScrollArea>
       </SidebarContent>
       <SidebarFooter>
         <Separator />
