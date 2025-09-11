@@ -3,6 +3,7 @@ package api
 import (
 	"checklist/core/db"
 	"checklist/core/models"
+	"fmt"
 
 	"github.com/gosimple/slug"
 )
@@ -44,6 +45,15 @@ func GetListsWithoutArea() ([]models.List, error) {
 }
 
 func MakeSlug(name string) string {
+	var lists []models.List
+
+	_ = db.DB.Where("name = ?", name).Find(&lists)
+
+	if len(lists) != 0 {
+		newSlug := slug.Make(fmt.Sprintf("%s%d", name, len(lists)))
+		return newSlug
+	}
+
 	newSlug := slug.Make(name)
 
 	return newSlug

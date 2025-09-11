@@ -194,7 +194,7 @@ export function AppSidebar() {
                   ))}
                 </div>
 
-                <div className="mt-3">
+                <div className="mt-3 ml-2">
                   {listsWithoutArea.map((list) => (
                     <ListItem list={list} />
                   ))}
