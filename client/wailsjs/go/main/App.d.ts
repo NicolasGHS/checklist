@@ -22,6 +22,8 @@ export function GetLists():Promise<Array<models.List>>;
 
 export function GetListsByArea(arg1:number):Promise<Array<models.List>>;
 
+export function GetTodayCount():Promise<number>;
+
 export function GetTodayTodos():Promise<Array<models.Todo>>;
 
 export function GetTodoById(arg1:number):Promise<Array<models.Todo>>;

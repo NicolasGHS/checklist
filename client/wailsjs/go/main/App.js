@@ -42,6 +42,10 @@ export function GetListsByArea(arg1) {
   return window['go']['main']['App']['GetListsByArea'](arg1);
 }
 
+export function GetTodayCount() {
+  return window['go']['main']['App']['GetTodayCount']();
+}
+
 export function GetTodayTodos() {
   return window['go']['main']['App']['GetTodayTodos']();
 }

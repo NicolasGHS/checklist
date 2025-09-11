@@ -60,6 +60,10 @@ func (a *App) GetTodayTodos() ([]models.Todo, error) {
 	return api.GetTodayTodos()
 }
 
+func (a *App) GetTodayCount() (int, error) {
+	return api.GetTodayCount()
+}
+
 func (a *App) ToggleTodo(id uint) error {
 	return api.ToggleTodo(id)
 }

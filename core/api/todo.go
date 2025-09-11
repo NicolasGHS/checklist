@@ -45,6 +45,19 @@ func GetTodayTodos() ([]models.Todo, error) {
 	return result, nil
 }
 
+func GetTodayCount() (int, error) {
+	var todos []models.Todo
+
+	todos, err := GetTodayTodos()
+
+	if err != nil {
+		return 0, err
+	}
+
+	number := len(todos)
+	return number, nil
+}
+
 func GetIncompletedTodayTodos(date string) ([]models.Todo, error) {
 	var todos []models.Todo
 
