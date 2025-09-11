@@ -41,7 +41,7 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
 
   return (
     <div
-      className="flex gap-3 items-center ml-6 mr-10 group"
+      className="flex gap-3 items-center ml-6 mr-10 group hover:cursor-pointer"
       ref={setNodeRef}
       style={style}
       onDoubleClick={() => openCard(todo.ID)}
