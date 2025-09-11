@@ -99,9 +99,14 @@ const DroppableMenuItem = ({ item }: { item: (typeof items)[0] }) => {
               : "hover:bg-accent/20"
           }`}
         >
-          <Link to={item.url} className="flex items-center gap-2 w-full p-2">
-            <item.icon className="w-5" />
-            <span>{item.title}</span>
+          <Link
+            to={item.url}
+            className="flex items-center justify-between gap-2 w-full p-2"
+          >
+            <div className="flex items-center gap-2">
+              <item.icon className="w-5" />
+              <span>{item.title}</span>
+            </div>
             {["Today", "Inbox"].includes(item.title) && <p>{count}</p>}
           </Link>
         </div>
