@@ -34,6 +34,7 @@ body {
 @layer base {
   :root {
   --background: 260 23.0769% 97.4510%;
+  --background-hover: 258.0000 15.1515% 87.0588%;
   --foreground: 243.1579 13.6691% 27.2549%;
   --card: 0 0% 100%;
   --card-foreground: 243.1579 13.6691% 27.2549%;
@@ -82,6 +83,7 @@ body {
 }
   .dark {
   --background: 250.9091 18.6441% 11.5686%;
+  --background-hover: 254.1176 20.9877% 15.8824%;
   --foreground: 250.0000 36.0000% 90.1961%;
   --card: 251.2500 20% 15.6863%;
   --card-foreground: 250.0000 36.0000% 90.1961%;
