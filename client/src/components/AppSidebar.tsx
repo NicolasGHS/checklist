@@ -176,7 +176,7 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <Separator />
-        <div className="flex items-center justify-between mr-1 ml-1">
+        <div className="flex mt-1 items-center justify-between mr-1 ml-1">
           <NewListButton
             addArea={areaCreation}
             addList={listCreation}

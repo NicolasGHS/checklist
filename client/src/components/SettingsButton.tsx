@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 
 export const SettingsButton = () => {
   return (
-    <Link to="/settings">
-      <Settings2 />
+    <Link to="/settings" className="hover:bg-background_hover p-1 rounded">
+      <Settings2 className="w-5" />
     </Link>
   );
 };

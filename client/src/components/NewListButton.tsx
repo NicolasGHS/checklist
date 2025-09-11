@@ -59,8 +59,8 @@ export const NewListButton = ({
     <div>
       <Popover>
         <PopoverTrigger>
-          <div className="flex items-center gap-2">
-            <Plus />
+          <div className="flex items-center gap-2 pl-1 pr-2 pt-1 pb-1  rounded hover:bg-background_hover">
+            <Plus className="w-5" />
             <p>New List</p>
           </div>
         </PopoverTrigger>
