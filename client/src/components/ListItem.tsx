@@ -27,9 +27,10 @@ import { models } from "wailsjs/go/models";
 
 type ListItemProps = {
   list: models.List;
+  onDelete: (id: number) => void;
 };
 
-export const ListItem = ({ list }: ListItemProps) => {
+export const ListItem = ({ list, onDelete }: ListItemProps) => {
   const location = useLocation();
   const [open, setOpen] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -45,10 +46,6 @@ export const ListItem = ({ list }: ListItemProps) => {
   const style = {
     transform: CSS.Translate.toString(transform),
     opacity: isDragging ? 0.5 : 1,
-  };
-
-  const handleDelete = async () => {
-    await DeleteList(list.ID);
   };
 
   return (
@@ -113,7 +110,7 @@ export const ListItem = ({ list }: ListItemProps) => {
               <AlertDialogCancel onClick={() => setOpen(false)}>
                 Cancel
               </AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete}>
+              <AlertDialogAction onClick={() => onDelete(list.ID)}>
                 Continue
               </AlertDialogAction>
             </AlertDialogFooter>

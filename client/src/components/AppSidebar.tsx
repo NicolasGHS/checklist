@@ -22,6 +22,7 @@ import {
   GetTodayCount,
   GetListCount,
   GetListsWithoutArea,
+  DeleteList,
 } from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { AreaList } from "./AreaList";
@@ -139,6 +140,16 @@ export function AppSidebar() {
     setAreas(result);
   };
 
+  const handleDelete = async (id: number) => {
+    try {
+      await DeleteList(id);
+    } catch (error) {
+      console.error("Error deleting list: ", error);
+    }
+
+    loadLists();
+  };
+
   useEffect(() => {
     loadLists();
     loadAreas();
@@ -196,7 +207,11 @@ export function AppSidebar() {
 
                 <div className="mt-3 ml-2">
                   {listsWithoutArea.map((list) => (
-                    <ListItem list={list} />
+                    <ListItem
+                      key={list.ID}
+                      list={list}
+                      onDelete={() => handleDelete(list.ID)}
+                    />
                   ))}
                 </div>
                 <div className="mt-3">
@@ -204,6 +219,7 @@ export function AppSidebar() {
                     <AreaList
                       key={`${area.ID}-${updateTrigger}`}
                       areaItem={area}
+                      deleteList={() => handleDelete}
                     />
                   ))}
                 </div>

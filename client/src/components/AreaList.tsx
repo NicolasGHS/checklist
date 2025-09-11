@@ -8,9 +8,10 @@ import { models } from "wailsjs/go/models";
 
 type AreaListProps = {
   areaItem: models.Area;
+  deleteList: () => void;
 };
 
-export const AreaList = ({ areaItem }: AreaListProps) => {
+export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
   const [lists, setLists] = useState<models.List[]>([]);
   const { isOver, setNodeRef } = useDroppable({
     id: `area-${areaItem.ID}`,
@@ -44,7 +45,7 @@ export const AreaList = ({ areaItem }: AreaListProps) => {
       <div className="mt-1 ml-2">
         {lists.map((list) => (
           <SidebarMenuItem key={list.ID}>
-            <ListItem list={list} />
+            <ListItem list={list} onDelete={deleteList} />
           </SidebarMenuItem>
         ))}
       </div>
