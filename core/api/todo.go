@@ -25,7 +25,17 @@ func GetTodayTodos() ([]models.Todo, error) {
 	var todos []models.Todo
 	var result []models.Todo
 
+	todayDate := time.Now()
+
 	_ = db.DB.Find(&todos)
+
+	incompoletedTasks, err := GetIncompletedTodayTodos(todayDate.String())
+
+	if err != nil {
+		return nil, err
+	}
+
+	result = append(result, incompoletedTasks...)
 
 	for _, todo := range todos {
 		if utils.IsToday(todo.Deadline) {
@@ -33,6 +43,16 @@ func GetTodayTodos() ([]models.Todo, error) {
 		}
 	}
 	return result, nil
+}
+
+func GetIncompletedTodayTodos(date string) ([]models.Todo, error) {
+	var todos []models.Todo
+
+	result := db.DB.Where("completed = 0 AND deadline <= ?", date).Find(&todos)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return todos, nil
 }
 
 func AddTodo(name, description string, list_id uint, today bool, deadline *time.Time) error {
