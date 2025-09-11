@@ -16,7 +16,12 @@ import {
 } from "./ui/sidebar";
 import { SettingsButton } from "./SettingsButton";
 import { NewListButton } from "./NewListButton";
-import { GetLists, GetAreas, GetTodayCount } from "../../wailsjs/go/main/App";
+import {
+  GetLists,
+  GetAreas,
+  GetTodayCount,
+  GetListCount,
+} from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { AreaList } from "./AreaList";
 import { ScrollArea } from "./ui/scroll-area";
@@ -61,15 +66,21 @@ const DroppableMenuItem = ({ item }: { item: (typeof items)[0] }) => {
     id: `drop-list-${item.listId}`,
   });
   const [count, setCount] = useState<number>(0);
+  const isToday = item.title == "Today";
 
   const getCount = async () => {
-    const count = await GetTodayCount();
-    setCount(count);
+    if (isToday) {
+      const count = await GetTodayCount();
+      setCount(count);
+    } else {
+      const count = await GetListCount(item.listId);
+      setCount(count);
+    }
   };
 
   useEffect(() => {
     getCount();
-  }, []);
+  }, [item]);
 
   return (
     <SidebarMenuItem>
@@ -91,7 +102,7 @@ const DroppableMenuItem = ({ item }: { item: (typeof items)[0] }) => {
           <Link to={item.url} className="flex items-center gap-2 w-full p-2">
             <item.icon className="w-5" />
             <span>{item.title}</span>
-            {item.title == "Today" && <p>{count}</p>}
+            {["Today", "Inbox"].includes(item.title) && <p>{count}</p>}
           </Link>
         </div>
       </SidebarMenuButton>

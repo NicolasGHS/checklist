@@ -34,6 +34,10 @@ export function GetListBySlug(arg1) {
   return window['go']['main']['App']['GetListBySlug'](arg1);
 }
 
+export function GetListCount(arg1) {
+  return window['go']['main']['App']['GetListCount'](arg1);
+}
+
 export function GetLists() {
   return window['go']['main']['App']['GetLists']();
 }

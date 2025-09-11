@@ -64,6 +64,10 @@ func (a *App) GetTodayCount() (int, error) {
 	return api.GetTodayCount()
 }
 
+func (a *App) GetListCount(id uint) (int, error) {
+	return api.GetListCount(id)
+}
+
 func (a *App) ToggleTodo(id uint) error {
 	return api.ToggleTodo(id)
 }
