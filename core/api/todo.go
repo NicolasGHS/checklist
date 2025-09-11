@@ -60,12 +60,20 @@ func GetTodayCount() (int, error) {
 
 func GetListCount(id uint) (int, error) {
 	var todos []models.Todo
+	var result []models.Todo
 
 	todos, err := GetTodosByList(id)
 	if err != nil {
 		return 0, err
 	}
-	number := len(todos)
+
+	for _, todo := range todos {
+		if !todo.Completed {
+			result = append(result, todo)
+		}
+	}
+
+	number := len(result)
 	return number, nil
 }
 
