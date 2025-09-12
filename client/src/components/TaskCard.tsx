@@ -164,7 +164,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
                   date={taskItem.Deadline}
                   deleteDeadline={deleteDeadline}
                 />
-                <DaysLeft difference={daysLeft} />
+                {!taskItem.Completed && <DaysLeft difference={daysLeft} />}
               </div>
             ) : (
               <p></p>
