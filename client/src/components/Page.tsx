@@ -22,6 +22,7 @@ export const Page = ({ title, id }: PageProps) => {
   const [todos, setTodos] = useState<models.Todo[]>([]);
   const [showNewTaskCard, setShowNewTaskCard] = useState<boolean>(false);
   const [openTodoId, setOpenTodoId] = useState<number>();
+  const [showCompleted, setShowCompleted] = useState<boolean>(false);
   const location = useLocation();
 
   const showCard = () => {
@@ -108,6 +109,10 @@ export const Page = ({ title, id }: PageProps) => {
     setOpenTodoId(id);
   };
 
+  const toggleShowCompletedTasks = () => {
+    setShowCompleted(!showCompleted);
+  };
+
   useEffect(() => {
     if (location.pathname === "/today") {
       loadTodayTodos();
@@ -143,20 +148,47 @@ export const Page = ({ title, id }: PageProps) => {
         <div>
           {showNewTaskCard && <NewTodoCard AddTodoFunction={createTodo} />}
           <ul>
-            {todos?.map((todo: models.Todo, index) => (
-              <li key={index} className="text-white mb-2">
-                {todo.ID !== openTodoId ? (
-                  <Task
-                    todo={todo}
-                    onToggle={handleToggle}
-                    currentListId={id}
-                    openCard={toggleTodoCard}
-                  />
-                ) : (
-                  <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
-                )}
-              </li>
-            ))}
+            {todos
+              ?.filter((todo) => !todo.Completed)
+              .map((todo: models.Todo, index) => (
+                <li key={index} className="text-white mb-2">
+                  {todo.ID !== openTodoId ? (
+                    <Task
+                      todo={todo}
+                      onToggle={handleToggle}
+                      currentListId={id}
+                      openCard={toggleTodoCard}
+                    />
+                  ) : (
+                    <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
+                  )}
+                </li>
+              ))}
+          </ul>
+          <p
+            className="text-muted-foreground hover:cursor-pointer"
+            onClick={toggleShowCompletedTasks}
+          >
+            {`${showCompleted ? "Hide" : "Show"} completed tasks`}
+          </p>
+          <ul>
+            {showCompleted &&
+              todos
+                ?.filter((todo) => todo.Completed)
+                .map((todo: models.Todo, index) => (
+                  <li key={index} className="text-white mb-2">
+                    {todo.ID !== openTodoId ? (
+                      <Task
+                        todo={todo}
+                        onToggle={handleToggle}
+                        currentListId={id}
+                        openCard={toggleTodoCard}
+                      />
+                    ) : (
+                      <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
+                    )}
+                  </li>
+                ))}
           </ul>
         </div>
       </div>
