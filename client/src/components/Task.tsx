@@ -6,6 +6,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 import { models } from "wailsjs/go/models";
 import { Flag } from "lucide-react";
+import { DaysLeft } from "./DaysLeft";
 
 type TaskProps = {
   todo: models.Todo;
@@ -65,15 +66,7 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
       >
         {todo.Name}
       </p>
-      {daysLeft !== undefined && daysLeft > 0 && (
-        <div className="flex ml-auto gap-2">
-          <Flag className="w-4" />
-          <p className="text-foreground">{daysLeft} days left</p>
-        </div>
-      )}
-      {daysLeft !== undefined && (daysLeft === 0 || daysLeft <= 0) && (
-        <p className="ml-auto text-foreground">Today</p>
-      )}
+      <DaysLeft difference={daysLeft} />
     </div>
   );
 };

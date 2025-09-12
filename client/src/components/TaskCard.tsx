@@ -17,6 +17,7 @@ import {
   DeleteDeadline,
 } from "../../wailsjs/go/main/App";
 import { Deadline } from "./Deadline";
+import { DaysLeft } from "./DaysLeft";
 
 type TodoCardProps = {
   UpdateTodoFunction: (
@@ -38,7 +39,7 @@ const formSchema = z.object({
 export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [date, setDate] = useState<Date | undefined>();
-  const [daysLeft, setDaysLeft] = useState<number | null>();
+  const [daysLeft, setDaysLeft] = useState<number>();
   const [taskItem, setTaskItem] = useState<models.Todo>(Task);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -163,17 +164,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
                   date={taskItem.Deadline}
                   deleteDeadline={deleteDeadline}
                 />
-                {typeof daysLeft === "number" &&
-                  daysLeft !== 0 &&
-                  daysLeft >= 0 && (
-                    <p className="text-foreground group-hover:hidden">
-                      {daysLeft} days left
-                    </p>
-                  )}
-                {(daysLeft === 0 ||
-                  (typeof daysLeft === "number" && daysLeft <= 0)) && (
-                  <p className="text-foreground group-hover:hidden">Today</p>
-                )}
+                <DaysLeft difference={daysLeft} />
               </div>
             ) : (
               <p></p>
