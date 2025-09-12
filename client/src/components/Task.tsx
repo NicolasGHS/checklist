@@ -42,30 +42,32 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
 
   return (
     <div
-      className="flex gap-3 items-center ml-6 mr-10 group hover:cursor-pointer"
+      className="flex gap-3 items-center justify-between ml-6 mr-10 group hover:cursor-pointer"
       ref={setNodeRef}
       style={style}
       onDoubleClick={() => openCard(todo.ID)}
     >
-      <GripVertical
-        className={`w-4 h-4 transition-opacity ${
-          todo.Completed
-            ? "text-muted-foreground/50 cursor-not-allowed"
-            : "cursor-grab active:cursor-grabbing text-muted-foreground opacity-0 group-hover:opacity-100"
-        }`}
-        {...(!todo.Completed ? listeners : {})}
-        {...(!todo.Completed ? attributes : {})}
-      />
-      <Checkbox checked={todo.Completed} onCheckedChange={handleChange} />
-      <p
-        className={` ${
-          todo.Completed
-            ? "line-through text-muted-foreground"
-            : "text-foreground"
-        }`}
-      >
-        {todo.Name}
-      </p>
+      <div className="flex gap-3 items-center">
+        <GripVertical
+          className={`w-4 h-4 transition-opacity ${
+            todo.Completed
+              ? "text-muted-foreground/50 cursor-not-allowed"
+              : "cursor-grab active:cursor-grabbing text-muted-foreground opacity-0 group-hover:opacity-100"
+          }`}
+          {...(!todo.Completed ? listeners : {})}
+          {...(!todo.Completed ? attributes : {})}
+        />
+        <Checkbox checked={todo.Completed} onCheckedChange={handleChange} />
+        <p
+          className={` ${
+            todo.Completed
+              ? "line-through text-muted-foreground"
+              : "text-foreground"
+          }`}
+        >
+          {todo.Name}
+        </p>
+      </div>
       <DaysLeft difference={daysLeft} />
     </div>
   );
