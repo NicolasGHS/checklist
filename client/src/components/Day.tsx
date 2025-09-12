@@ -10,7 +10,13 @@ type DayProps = {
   openCard: (id: number) => void;
 };
 
-export const Day = ({ dayNumber, weekday, todos = [], onToggle, openCard }: DayProps) => {
+export const Day = ({
+  dayNumber,
+  weekday,
+  todos = [],
+  onToggle,
+  openCard,
+}: DayProps) => {
   return (
     <div className="flex gap-2 min-h-28">
       <p className="text-2xl">{dayNumber}</p>

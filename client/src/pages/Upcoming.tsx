@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { GetNextSevenDays, GetTodosByDeadline, ToggleTodo } from "../../wailsjs/go/main/App";
+import {
+  GetNextSevenDays,
+  GetTodosByDeadline,
+  ToggleTodo,
+} from "../../wailsjs/go/main/App";
 import { formatDateStrings } from "@/utils/dates";
 import { Day } from "@/components/Day";
 import { models } from "wailsjs/go/models";
@@ -7,7 +11,9 @@ import { models } from "wailsjs/go/models";
 const Upcoming = () => {
   const [days, setDays] = useState<Date[]>();
   const [weekdays, setWeekdays] = useState<[string, string][]>();
-  const [todosByDay, setTodosByDay] = useState<{ [key: string]: models.Todo[] }>({});
+  const [todosByDay, setTodosByDay] = useState<{
+    [key: string]: models.Todo[];
+  }>({});
   const [selectedTodo, setSelectedTodo] = useState<models.Todo | null>(null);
 
   const getNextDays = async () => {
@@ -16,17 +22,17 @@ const Upcoming = () => {
     const days = formatDateStrings(dates);
     setDays(dates);
     setWeekdays(days);
-    
+
     // Fetch todos for each day
     const todosMap: { [key: string]: models.Todo[] } = {};
     for (const date of dates) {
       try {
         const todos = await GetTodosByDeadline(date);
-        const dateKey = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+        const dateKey = date.toISOString().split("T")[0]; // YYYY-MM-DD format
         todosMap[dateKey] = todos;
       } catch (error) {
         console.error(`Failed to fetch todos for ${date}:`, error);
-        const dateKey = date.toISOString().split('T')[0];
+        const dateKey = date.toISOString().split("T")[0];
         todosMap[dateKey] = [];
       }
     }
@@ -62,13 +68,13 @@ const Upcoming = () => {
       <h1 className="text-3xl text-foreground font-bold mb-6">Upcoming</h1>
       {weekdays?.map((day, index) => {
         const date = days?.[index];
-        const dateKey = date?.toISOString().split('T')[0] || '';
+        const dateKey = date?.toISOString().split("T")[0] || "";
         const todosForDay = todosByDay[dateKey] || [];
-        
+
         return (
-          <Day 
-            dayNumber={day[0]} 
-            weekday={day[1]} 
+          <Day
+            dayNumber={day[0]}
+            weekday={day[1]}
             key={index}
             todos={todosForDay}
             onToggle={handleToggle}
