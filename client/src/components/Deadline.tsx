@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Flag } from "lucide-react";
 
 type DeadlineProps = {
-  date: string;
+  date: Date;
   deleteDeadline: () => void;
 };
 

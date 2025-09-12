@@ -161,7 +161,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
             {taskItem.Deadline ? (
               <div className="group flex items-center gap-2">
                 <Deadline
-                  date={taskItem.Deadline}
+                  date={new Date(taskItem.Deadline as any)}
                   deleteDeadline={deleteDeadline}
                 />
                 {!taskItem.Completed && <DaysLeft difference={daysLeft} />}
