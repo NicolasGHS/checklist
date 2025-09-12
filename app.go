@@ -60,6 +60,10 @@ func (a *App) GetTodayTodos() ([]models.Todo, error) {
 	return api.GetTodayTodos()
 }
 
+func (a *App) GetTodosByDeadline(date time.Time) ([]models.Todo, error) {
+	return api.GetTodosByDeadline(date)
+}
+
 func (a *App) GetTodayCount() (int, error) {
 	return api.GetTodayCount()
 }
