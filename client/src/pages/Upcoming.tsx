@@ -1,9 +1,24 @@
-import { Page } from "../components/Page";
+import { useEffect, useState } from "react";
+import { GetNextSevenDays } from "../../wailsjs/go/main/App";
 
 const Upcoming = () => {
+  const [days, setDays] = useState<Date[]>();
+
+  const getNextDays = async () => {
+    const result = await GetNextSevenDays();
+    const dates = result.map((t: any) => new Date(t));
+    setDays(dates);
+  };
+
+  useEffect(() => {
+    getNextDays();
+  }, []);
+
   return (
     <div>
-      <Page title="Upcoming" id={0} />
+      {days?.map((day) => (
+        <p>{day.toLocaleDateString()}</p>
+      ))}
     </div>
   );
 };

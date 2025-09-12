@@ -50,6 +50,10 @@ export function GetListsWithoutArea() {
   return window['go']['main']['App']['GetListsWithoutArea']();
 }
 
+export function GetNextSevenDays() {
+  return window['go']['main']['App']['GetNextSevenDays']();
+}
+
 export function GetTodayCount() {
   return window['go']['main']['App']['GetTodayCount']();
 }

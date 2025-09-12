@@ -133,3 +133,9 @@ func (a *App) GetAreas() ([]models.Area, error) {
 func (a *App) AddArea(name string) error {
 	return api.AddArea(name)
 }
+
+// Time
+
+func (a *App) GetNextSevenDays() []time.Time {
+	return api.GetNextSevenDays()
+}
