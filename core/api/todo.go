@@ -133,15 +133,14 @@ func UpdateTodoList(id uint, listID uint) error {
 	return db.DB.Save(&todo).Error
 }
 
-func CalculateDaysLeft(id uint) (int, error) {
+func CalculateDaysLeft(id uint) (*int, error) {
 	var t models.Todo
 
-	// Gebruik First in plaats van Find; Find geeft geen error bij "niet gevonden".
 	if err := db.DB.First(&t, id).Error; err != nil {
-		return 0, err
+		return nil, err
 	}
 	if t.Deadline == nil {
-		return -1, nil
+		return nil, nil
 	}
 
 	loc := time.Local // of een expliciete locatie indien je die opslaat
@@ -157,5 +156,5 @@ func CalculateDaysLeft(id uint) (int, error) {
 
 	days := int(end.Sub(start).Hours() / 24)
 
-	return days, nil
+	return &days, nil
 }

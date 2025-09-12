@@ -65,13 +65,15 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
       >
         {todo.Name}
       </p>
-      {daysLeft !== 0 && daysLeft !== -1 && (
+      {daysLeft !== undefined && daysLeft > 0 && (
         <div className="flex ml-auto gap-2">
           <Flag className="w-4" />
           <p className="text-foreground">{daysLeft} days left</p>
         </div>
       )}
-      {daysLeft === 0 && <p className="ml-auto text-foreground">Today</p>}
+      {daysLeft !== undefined && (daysLeft === 0 || daysLeft <= 0) && (
+        <p className="ml-auto text-foreground">Today</p>
+      )}
     </div>
   );
 };

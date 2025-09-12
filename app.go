@@ -92,7 +92,7 @@ func (a *App) UpdateTodoList(id uint, listID uint) error {
 	return api.UpdateTodoList(id, listID)
 }
 
-func (a *App) CalculateRemainingTime(id uint) (int, error) {
+func (a *App) CalculateRemainingTime(id uint) (*int, error) {
 	return api.CalculateDaysLeft(id)
 }
 
