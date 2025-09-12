@@ -12,6 +12,7 @@ import { NewTaskButton } from "./NewTaskButton";
 import { models } from "wailsjs/go/models";
 import { useLocation } from "react-router-dom";
 import { TodoCard } from "./TaskCard";
+import { Button } from "./ui/button";
 
 type PageProps = {
   title: string;
@@ -165,12 +166,13 @@ export const Page = ({ title, id }: PageProps) => {
                 </li>
               ))}
           </ul>
-          <p
+          <Button
+            variant="ghost"
             className="text-muted-foreground hover:cursor-pointer"
             onClick={toggleShowCompletedTasks}
           >
             {`${showCompleted ? "Hide" : "Show"} completed tasks`}
-          </p>
+          </Button>
           <ul>
             {showCompleted &&
               todos
