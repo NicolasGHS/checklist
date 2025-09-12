@@ -5,7 +5,6 @@ import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 import { models } from "wailsjs/go/models";
-import { Flag } from "lucide-react";
 import { DaysLeft } from "./DaysLeft";
 
 type TaskProps = {
