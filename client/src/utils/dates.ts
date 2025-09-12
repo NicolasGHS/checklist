@@ -7,3 +7,16 @@ export const formatDateYMD = (dateInput: string | Date) => {
 
   return `${year}-${month}-${day}`;
 };
+
+export const formatDateStrings = (dates: Date[]): [string, string][] => {
+  console.log("dates in formatDateStrings: ", dates);
+  const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  
+  return dates.map((date, index) => {
+    const day = date.getDate();
+    const weekday = index === 0 ? "Tomorrow" : weekdays[date.getDay()];
+
+    return [day.toString(), weekday]; 
+  });
+}
+
