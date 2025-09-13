@@ -63,7 +63,7 @@ const Upcoming = () => {
   }, []);
 
   return (
-    <div className="mt-10 flex flex-col h-full relative">
+    <div className="mt-10 flex flex-col min-h-full relative">
       <h1 className="text-3xl text-foreground font-bold mb-6">Upcoming</h1>
       {weekdays?.map((day, index) => {
         const date = days?.[index];

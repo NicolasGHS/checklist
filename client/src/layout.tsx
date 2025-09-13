@@ -106,14 +106,14 @@ const Layout: React.FC = () => {
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <SidebarProvider>
-          <div className="flex h-screen w-screen">
+          <div className="flex min-h-screen w-screen bg-background">
             <AppSidebar />
 
             <div className="flex items-start p-4">
               <SidebarTrigger />
             </div>
-            <main className="flex-1 flex flex-col">
-              <div className="flex-1">
+            <main className="flex-1 flex flex-col bg-background">
+              <div className="flex-1 bg-background">
                 <Outlet />
               </div>
             </main>
