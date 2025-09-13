@@ -42,7 +42,6 @@ const Upcoming = () => {
   const handleToggle = async (id: number) => {
     try {
       await ToggleTodo(id);
-      // Refresh todos after toggling
       getNextDays();
     } catch (error) {
       console.error("Failed to toggle todo:", error);
