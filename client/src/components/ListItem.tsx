@@ -1,120 +1,74 @@
-import { Link, useLocation } from "react-router-dom";
-import { SidebarMenuButton } from "./ui/sidebar";
-import { Ellipsis, Hash } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { DeleteList } from "../../wailsjs/go/main/App";
-import { useDraggable, useDroppable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
+import { useEffect, useState } from "react";
+import { GetLists, GetTodosByList } from "../../wailsjs/go/main/App";
 import { models } from "wailsjs/go/models";
+import { Hash } from "lucide-react";
+import { Task } from "./Task";
 
-type ListItemProps = {
-  list: models.List;
-  onDelete: (id: number) => void;
-};
+export default function ListItem() {
+  const [lists, setLists] = useState<models.List[]>([]);
+  const [todosByList, setTodosByList] = useState<Record<number, models.Todo[]>>(
+    {}
+  );
+  const [openTodoId, setOpenTodoId] = useState<number>();
 
-export const ListItem = ({ list, onDelete }: ListItemProps) => {
-  const location = useLocation();
-  const [open, setOpen] = useState<boolean>(false);
-  const [isHovered, setIsHovered] = useState<boolean>(false);
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: `list-${list.ID}`,
-    });
+  const loadLists = async () => {
+    try {
+      const result = await GetLists();
+      setLists(result);
 
-  const { isOver, setNodeRef: setDroppableNodeRef } = useDroppable({
-    id: `drop-list-${list.ID}`,
-  });
-
-  const style = {
-    transform: CSS.Translate.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
+      for (const list of result) {
+        await loadTodos(list.ID);
+      }
+    } catch (error) {
+      console.error("Failed to fetch lists", error);
+    }
   };
 
+  const loadTodos = async (listID: number) => {
+    try {
+      const result = await GetTodosByList(listID);
+      setTodosByList((prev) => ({
+        ...prev,
+        [listID]: result,
+      }));
+    } catch (error) {
+      console.error("Failed to fetch todo's: ", error);
+    }
+  };
+
+  const handleToggle = async (id: number) => {
+    console.log("asda");
+  };
+
+  const toggleTodoCard = (id: number) => {
+    setOpenTodoId(id);
+  };
+
+  useEffect(() => {
+    loadLists();
+  }, []);
+
   return (
-    <SidebarMenuButton
-      asChild
-      isActive={
-        location.pathname === `/list/${list.Slug}` ||
-        (location.pathname === "/" && list.Slug === "inbox")
-      }
-    >
-      <div
-        className={`flex items-center justify-between transition-all duration-200 rounded-md ${
-          isOver
-            ? "bg-accent/50 border-2 border-dashed border-primary/50 p-1 scale-105"
-            : "hover:bg-accent/20"
-        }`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        ref={(node) => {
-          setNodeRef(node);
-          setDroppableNodeRef(node);
-        }}
-        style={style}
-      >
-        <Link to={`list/${list.Slug}`} className="flex-1 py-1">
-          <span className="flex items-center gap-2">
-            <Hash
-              className="w-4 h-4 cursor-grab active:cursor-grabbing"
-              {...listeners}
-              {...attributes}
-            />
-            {list.Name}
-          </span>
-        </Link>
+    <div>
+      {lists.map((list) => (
+        <div key={list.ID} className="mb-4">
+          <div className="flex items-center gap-2">
+            <Hash className="w-5" />
+            <h1 className="text-xl">{list.Name}</h1>
+          </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Ellipsis
-              className={`w-4 transition-opacity duration-200 ${
-                isHovered ? "opacity-100" : "opacity-0"
-              }`}
-            />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setOpen(true)}>
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <AlertDialog open={open} onOpenChange={setOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setOpen(false)}>
-                Cancel
-              </AlertDialogCancel>
-              <AlertDialogAction onClick={() => onDelete(list.ID)}>
-                Continue
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-    </SidebarMenuButton>
+          <div className="ml-6 mt-2">
+            {(todosByList[list.ID] ?? []).map((todo) => (
+              <Task
+                todo={todo}
+                onToggle={handleToggle}
+                currentListId={list.ID}
+                openCard={toggleTodoCard}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
-};
+}
