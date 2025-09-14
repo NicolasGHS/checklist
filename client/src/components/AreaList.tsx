@@ -6,6 +6,14 @@ import { Box } from "lucide-react";
 import { useDroppable } from "@dnd-kit/core";
 import { models } from "wailsjs/go/models";
 import { Plus, Ellipsis } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type AreaListProps = {
   areaItem: models.Area;
@@ -15,6 +23,7 @@ type AreaListProps = {
 export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
   const [lists, setLists] = useState<models.List[]>([]);
   const [hovered, setHovered] = useState<boolean>(false);
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const { isOver, setNodeRef } = useDroppable({
     id: `area-${areaItem.ID}`,
   });
@@ -45,10 +54,20 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
             <Box className="w-4 h-4 mb-1" />
             <p className="font-semibold text-base">{areaItem.Name}</p>
           </div>
-          {hovered && (
+          {(hovered || dropdownOpen) && (
             <div className="flex gap-2">
               <Plus className="w-4" />
-              <Ellipsis className="w-4" />
+              <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+                <DropdownMenuTrigger>
+                  <Ellipsis className="w-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Edit</DropdownMenuItem>
+                  <DropdownMenuItem>Delete</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           )}
         </div>
