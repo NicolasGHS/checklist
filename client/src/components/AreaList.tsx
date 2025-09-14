@@ -14,6 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 
 type AreaListProps = {
   areaItem: models.Area;
@@ -24,6 +26,7 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
   const [lists, setLists] = useState<models.List[]>([]);
   const [hovered, setHovered] = useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [showNewList, setShowNewList] = useState<boolean>(false);
   const { isOver, setNodeRef } = useDroppable({
     id: `area-${areaItem.ID}`,
   });
@@ -33,9 +36,21 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
     setLists(result);
   };
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Escape" && showNewList) {
+      e.preventDefault();
+      setShowNewList(false);
+    }
+  };
+
   useEffect(() => {
     loadLists();
   }, [areaItem.ID]);
+
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => handleKeyDown(e);
+    window.addEventListener("keydown", listener);
+  }, [showNewList]);
 
   return (
     <div className="mb-4 ml-2">
@@ -56,7 +71,14 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
           </div>
           {(hovered || dropdownOpen) && (
             <div className="flex gap-2">
-              <Plus className="w-4" />
+              <Button
+                variant="outline"
+                size="icon"
+                className="size-6"
+                onClick={() => setShowNewList(true)}
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
               <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger>
                   <Ellipsis className="w-4" />
@@ -74,6 +96,12 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
       </div>
 
       <div className="mt-1 ml-2">
+        {showNewList && (
+          <div className="mb-2">
+            <Input placeholder="New list" />
+          </div>
+        )}
+
         {lists.map((list) => (
           <SidebarMenuItem key={list.ID}>
             <ListItem
