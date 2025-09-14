@@ -5,6 +5,7 @@ import { ListItem } from "./ListItem";
 import { Box } from "lucide-react";
 import { useDroppable } from "@dnd-kit/core";
 import { models } from "wailsjs/go/models";
+import { Plus, Ellipsis } from "lucide-react";
 
 type AreaListProps = {
   areaItem: models.Area;
@@ -13,6 +14,7 @@ type AreaListProps = {
 
 export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
   const [lists, setLists] = useState<models.List[]>([]);
+  const [hovered, setHovered] = useState<boolean>(false);
   const { isOver, setNodeRef } = useDroppable({
     id: `area-${areaItem.ID}`,
   });
@@ -35,10 +37,20 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
             ? "bg-accent/50 border-2 border-dashed border-accent-foreground/20"
             : ""
         }`}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
-        <div className="flex gap-2 items-center">
-          <Box className="w-4 h-4 mb-1" />
-          <p className="font-semibold text-base">{areaItem.Name}</p>
+        <div className="flex justify-between items-center">
+          <div className="flex gap-2 items-center">
+            <Box className="w-4 h-4 mb-1" />
+            <p className="font-semibold text-base">{areaItem.Name}</p>
+          </div>
+          {hovered && (
+            <div className="flex gap-2">
+              <Plus className="w-4" />
+              <Ellipsis className="w-4" />
+            </div>
+          )}
         </div>
       </div>
 
