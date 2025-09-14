@@ -20,6 +20,9 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
     useDraggable({
       id: `task-${todo.ID}`,
       disabled: todo.Completed,
+      data: {
+        todo,
+      },
     });
   const style = {
     transform: CSS.Translate.toString(transform),

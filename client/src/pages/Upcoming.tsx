@@ -3,10 +3,12 @@ import {
   GetNextSevenDays,
   GetTodosByDeadline,
   ToggleTodo,
+  UpdateTodo,
 } from "../../wailsjs/go/main/App";
 import { formatDateStrings } from "@/utils/dates";
 import { Day } from "@/components/Day";
 import { models } from "wailsjs/go/models";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 
 const Upcoming = () => {
   const [days, setDays] = useState<Date[]>();
@@ -58,30 +60,71 @@ const Upcoming = () => {
     }
   };
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || !active.data.current) {
+      return;
+    }
+
+    const todo = active.data.current.todo as models.Todo;
+    const targetDayNumber = over.id as string;
+
+    const targetDate = days?.find((date, index) => {
+      const dayInfo = weekdays?.[index];
+      return dayInfo && dayInfo[0] === targetDayNumber;
+    });
+
+    if (!targetDate) {
+      console.error("Could not find target date for day:", targetDayNumber);
+      return;
+    }
+
+    const newDeadline = new Date(targetDate);
+    newDeadline.setHours(0, 0, 0, 0);
+
+    try {
+      await UpdateTodo(
+        todo.ID,
+        todo.Name,
+        todo.Description || "",
+        todo.ListID,
+        todo.Today,
+        newDeadline.toISOString()
+      );
+
+      await getNextDays();
+    } catch (error) {
+      console.error("Failed to update todo deadline:", error);
+    }
+  };
+
   useEffect(() => {
     getNextDays();
   }, []);
 
   return (
-    <div className="mt-10 flex flex-col min-h-full relative">
-      <h1 className="text-3xl text-foreground font-bold mb-6">Upcoming</h1>
-      {weekdays?.map((day, index) => {
-        const date = days?.[index];
-        const dateKey = date?.toISOString().split("T")[0] || "";
-        const todosForDay = todosByDay[dateKey] || [];
+    <DndContext onDragEnd={handleDragEnd}>
+      <div className="mt-10 flex flex-col min-h-full relative">
+        <h1 className="text-3xl text-foreground font-bold mb-6">Upcoming</h1>
+        {weekdays?.map((day, index) => {
+          const date = days?.[index];
+          const dateKey = date?.toISOString().split("T")[0] || "";
+          const todosForDay = todosByDay[dateKey] || [];
 
-        return (
-          <Day
-            dayNumber={day[0]}
-            weekday={day[1]}
-            key={index}
-            todos={todosForDay}
-            onToggle={handleToggle}
-            openCard={openCard}
-          />
-        );
-      })}
-    </div>
+          return (
+            <Day
+              dayNumber={day[0]}
+              weekday={day[1]}
+              key={index}
+              todos={todosForDay}
+              onToggle={handleToggle}
+              openCard={openCard}
+            />
+          );
+        })}
+      </div>
+    </DndContext>
   );
 };
 

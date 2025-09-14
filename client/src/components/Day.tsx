@@ -1,6 +1,7 @@
 import { Separator } from "./ui/separator";
 import { Task } from "./Task";
 import { models } from "wailsjs/go/models";
+import { useDroppable } from "@dnd-kit/core";
 
 type DayProps = {
   dayNumber: string;
@@ -17,8 +18,17 @@ export const Day = ({
   onToggle,
   openCard,
 }: DayProps) => {
+  const { setNodeRef, isOver } = useDroppable({
+    id: dayNumber,
+  });
+
   return (
-    <div className="flex gap-2 min-h-28">
+    <div
+      className={`flex gap-2 min-h-28 transition-colors ${
+        isOver ? "bg-muted/50 rounded-lg" : ""
+      }`}
+      ref={setNodeRef}
+    >
       <p className="text-2xl">{dayNumber}</p>
       <div className="w-full flex flex-col items-start mr-3">
         <Separator />
