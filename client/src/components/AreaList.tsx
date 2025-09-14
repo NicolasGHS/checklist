@@ -114,8 +114,6 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
                   <Ellipsis className="w-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
                   <DropdownMenuItem>Edit</DropdownMenuItem>
                   <DropdownMenuItem>Delete</DropdownMenuItem>
                 </DropdownMenuContent>

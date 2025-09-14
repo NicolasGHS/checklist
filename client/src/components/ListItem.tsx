@@ -90,8 +90,6 @@ export const ListItem = ({ list, onDelete }: ListItemProps) => {
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => setOpen(true)}>
               Delete
             </DropdownMenuItem>
