@@ -113,6 +113,10 @@ func (a *App) AddList(name, description string) error {
 	return api.AddList(name, description)
 }
 
+func (a *App) AddListWithArea(name, description string, areaId int32) error {
+	return api.AddListWithArea(name, description, areaId)
+}
+
 func (a *App) GetListsByArea(id uint) ([]models.List, error) {
 	return api.GetListsByArea(id)
 }

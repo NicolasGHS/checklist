@@ -7,6 +7,8 @@ export function AddArea(arg1:string):Promise<void>;
 
 export function AddList(arg1:string,arg2:string):Promise<void>;
 
+export function AddListWithArea(arg1:string,arg2:string,arg3:number):Promise<void>;
+
 export function AddTodo(arg1:string,arg2:string,arg3:number,arg4:boolean,arg5:string):Promise<void>;
 
 export function CalculateRemainingTime(arg1:number):Promise<any>;

@@ -1,4 +1,8 @@
-import { GetListsByArea } from "../../wailsjs/go/main/App";
+import {
+  AddList,
+  AddListWithArea,
+  GetListsByArea,
+} from "../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { SidebarMenuItem } from "./ui/sidebar";
 import { ListItem } from "./ListItem";
@@ -16,11 +20,28 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 type AreaListProps = {
   areaItem: models.Area;
   deleteList: (id: number) => void;
 };
+
+const formSchema = z.object({
+  name: z.string().min(2).max(50),
+  description: z.string(),
+});
 
 export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
   const [lists, setLists] = useState<models.List[]>([]);
@@ -31,9 +52,26 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
     id: `area-${areaItem.ID}`,
   });
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
+  });
+
   const loadLists = async () => {
     const result = await GetListsByArea(areaItem.ID);
     setLists(result);
+  };
+
+  const addList = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await AddListWithArea(values.name, values.description, areaItem.ID);
+      loadLists();
+    } catch (error) {
+      console.error("Failed to add list: ", error);
+    }
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -97,8 +135,31 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
 
       <div className="mt-1 ml-2">
         {showNewList && (
-          <div className="mb-2">
-            <Input placeholder="New list" />
+          // <div className="mb-2">
+          //   <Input placeholder="New list" />
+          // </div>
+          <div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(addList)} className="space-y-8">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="shadcn" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        This is your public display name.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit">Submit</Button>
+              </form>
+            </Form>
           </div>
         )}
 
