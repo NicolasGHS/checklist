@@ -135,29 +135,31 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
 
       <div className="mt-1 ml-2">
         {showNewList && (
-          // <div className="mb-2">
-          //   <Input placeholder="New list" />
-          // </div>
-          <div>
+          <div className="mb-2">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(addList)} className="space-y-8">
+              <form onSubmit={form.handleSubmit(addList)} className="space-y-2">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input
+                          placeholder="New list"
+                          {...field}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              form.handleSubmit(addList)();
+                              setShowNewList(false);
+                              form.reset();
+                            }
+                          }}
+                        />
                       </FormControl>
-                      <FormDescription>
-                        This is your public display name.
-                      </FormDescription>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit">Submit</Button>
               </form>
             </Form>
           </div>
