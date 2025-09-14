@@ -6,6 +6,7 @@ import Upcoming from "../pages/Upcoming";
 import Projects from "../pages/Projects";
 import Settings from "../pages/Settings";
 import { ListPage } from "../pages/List";
+import Someday from "@/pages/Someday";
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
       {
         path: "upcoming",
         element: <Upcoming />,
+      },
+      {
+        path: "someday",
+        element: <Someday />,
       },
       {
         path: "projects",
