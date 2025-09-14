@@ -1,6 +1,6 @@
 import { Calendar, Inbox, Star, FolderOpen, Layers } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { Separator } from "./ui/separator";
+import { Separator } from "../ui/separator";
 import { useDroppable } from "@dnd-kit/core";
 import { models } from "wailsjs/go/models";
 
@@ -13,7 +13,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "./ui/sidebar";
+} from "../ui/sidebar";
 import { SettingsButton } from "./SettingsButton";
 import { NewListButton } from "./NewListButton";
 import {
@@ -23,10 +23,10 @@ import {
   GetListCount,
   GetListsWithoutArea,
   DeleteList,
-} from "../../wailsjs/go/main/App";
+} from "../../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
 import { AreaList } from "./AreaList";
-import { ScrollArea } from "./ui/scroll-area";
+import { ScrollArea } from "../ui/scroll-area";
 import { ListItem } from "./ListItem";
 
 const items = [

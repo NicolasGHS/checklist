@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "../src/components/ui/sidebar";
-import { AppSidebar } from "./components/AppSidebar";
+import { AppSidebar } from "./components/Sidebar/AppSidebar";
 import { ThemeProvider } from "./components/theme-provider";
 import {
   DndContext,
@@ -54,7 +54,7 @@ const Layout: React.FC = () => {
     ) {
       const taskId = parseInt(active.id.toString().replace("task-", ""));
       const targetListId = parseInt(
-        over.id.toString().replace("drop-list-", "")
+        over.id.toString().replace("drop-list-", ""),
       );
 
       console.log(`Attempting to move task ${taskId} to list ${targetListId}`);
@@ -62,13 +62,13 @@ const Layout: React.FC = () => {
       try {
         await UpdateTodoList(taskId, targetListId);
         console.log(
-          `Successfully moved task ${taskId} to list ${targetListId}`
+          `Successfully moved task ${taskId} to list ${targetListId}`,
         );
 
         window.dispatchEvent(
           new CustomEvent("taskMoved", {
             detail: { taskId, targetListId },
-          })
+          }),
         );
       } catch (error) {
         console.error("Failed to move task to list:", error);
@@ -90,14 +90,14 @@ const Layout: React.FC = () => {
         window.dispatchEvent(
           new CustomEvent("listMoved", {
             detail: { listId, areaId },
-          })
+          }),
         );
       } catch (error) {
         console.error("Failed to move list to area:", error);
       }
     } else {
       console.log(
-        "Drop target not recognized or incompatible drag/drop combination"
+        "Drop target not recognized or incompatible drag/drop combination",
       );
     }
   };

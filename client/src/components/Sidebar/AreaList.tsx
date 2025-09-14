@@ -2,9 +2,9 @@ import {
   AddList,
   AddListWithArea,
   GetListsByArea,
-} from "../../wailsjs/go/main/App";
+} from "../../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
-import { SidebarMenuItem } from "./ui/sidebar";
+import { SidebarMenuItem } from "../ui/sidebar";
 import { ListItem } from "./ListItem";
 import { Box } from "lucide-react";
 import { useDroppable } from "@dnd-kit/core";
@@ -18,8 +18,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
