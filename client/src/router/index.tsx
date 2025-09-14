@@ -7,6 +7,7 @@ import Projects from "../pages/Projects";
 import Settings from "../pages/Settings";
 import { ListPage } from "../pages/List";
 import Someday from "@/pages/Someday";
+import Anytime from "@/pages/Anytime";
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
       {
         path: "someday",
         element: <Someday />,
+      },
+      {
+        path: "anytime",
+        element: <Anytime />,
       },
       {
         path: "projects",
