@@ -31,6 +31,7 @@ import { ListItem } from "./ListItem";
 
 const items = [
   {
+    id: 1,
     title: "Inbox",
     url: "/inbox",
     icon: Inbox,
@@ -43,18 +44,21 @@ const items = [
     listId: 0,
   },
   {
+    id: 2,
     title: "Upcoming",
     url: "/upcoming",
     icon: Calendar,
     listId: 0,
   },
   {
+    id: 3,
     title: "Anytime",
     url: "/anytime",
     icon: FolderOpen,
     listId: 0,
   },
   {
+    id: 4,
     title: "Someday",
     url: "/someday",
     icon: Layers,
@@ -66,7 +70,7 @@ const items = [
 const DroppableMenuItem = ({ item }: { item: (typeof items)[0] }) => {
   const location = useLocation();
   const { isOver, setNodeRef } = useDroppable({
-    id: `drop-list-${item.listId}`,
+    id: `drop-list-${item.id}`,
   });
   const [count, setCount] = useState<number>(0);
   const isToday = item.title == "Today";
@@ -97,7 +101,7 @@ const DroppableMenuItem = ({ item }: { item: (typeof items)[0] }) => {
         <div
           ref={setNodeRef}
           className={`transition-all duration-200 rounded-md ${
-            isOver && item.listId > 0
+            isOver
               ? "bg-accent/50 border-2 border-dashed border-primary/50 p-1 scale-105"
               : "hover:bg-accent/20"
           }`}
