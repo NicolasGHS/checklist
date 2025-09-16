@@ -28,46 +28,10 @@ import { useEffect, useState } from "react";
 import { AreaList } from "./AreaList";
 import { ScrollArea } from "../ui/scroll-area";
 import { ListItem } from "./ListItem";
-
-const items = [
-  {
-    id: 1,
-    title: "Inbox",
-    url: "/inbox",
-    icon: Inbox,
-    listId: 1,
-  },
-  {
-    title: "Today",
-    url: "/today",
-    icon: Star,
-    listId: 0,
-  },
-  {
-    id: 2,
-    title: "Upcoming",
-    url: "/upcoming",
-    icon: Calendar,
-    listId: 0,
-  },
-  {
-    id: 3,
-    title: "Anytime",
-    url: "/anytime",
-    icon: FolderOpen,
-    listId: 0,
-  },
-  {
-    id: 4,
-    title: "Someday",
-    url: "/someday",
-    icon: Layers,
-    listId: 0,
-  },
-];
+import { sidebarItems } from "@/constants/sidebarItems";
 
 // Component for droppable menu items
-const DroppableMenuItem = ({ item }: { item: (typeof items)[0] }) => {
+const DroppableMenuItem = ({ item }: { item: (typeof sidebarItems)[0] }) => {
   const location = useLocation();
   const { isOver, setNodeRef } = useDroppable({
     id: `drop-list-${item.id}`,
@@ -205,7 +169,7 @@ export function AppSidebar() {
             <SidebarGroupContent className="mt-5">
               <SidebarMenu>
                 <div>
-                  {items.map((item) => (
+                  {sidebarItems.map((item) => (
                     <DroppableMenuItem key={item.title} item={item} />
                   ))}
                 </div>
