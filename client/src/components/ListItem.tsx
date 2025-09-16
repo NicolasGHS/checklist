@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
-import { GetLists, GetTodosByList } from "../../wailsjs/go/main/App";
+import {
+  GetLists,
+  GetTodosByList,
+  UpdateTodo,
+  ToggleTodo,
+} from "../../wailsjs/go/main/App";
 import { models } from "wailsjs/go/models";
 import { Hash } from "lucide-react";
 import { Task } from "./Task";
+import { TodoCard } from "./TaskCard";
 
 export default function ListItem() {
   const [lists, setLists] = useState<models.List[]>([]);
@@ -37,16 +43,81 @@ export default function ListItem() {
   };
 
   const handleToggle = async (id: number) => {
-    console.log("asda");
+    let listIdWithTodo: number | undefined = undefined;
+    for (const [listId, todos] of Object.entries(todosByList)) {
+      if (todos.some((t) => t.ID === id)) {
+        listIdWithTodo = Number(listId);
+        break;
+      }
+    }
+    if (listIdWithTodo === undefined) return;
+
+    setTodosByList((prev) => {
+      const todos = prev[listIdWithTodo!].map((t) =>
+        t.ID === id
+          ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
+              Completed: !t.Completed,
+            })
+          : t
+      );
+      return { ...prev, [listIdWithTodo!]: todos };
+    });
+
+    try {
+      await ToggleTodo(id);
+    } catch (error) {
+      console.error(error);
+      setTodosByList((prev) => {
+        const todos = prev[listIdWithTodo!].map((t) =>
+          t.ID === id
+            ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
+                Completed: !t.Completed,
+              })
+            : t
+        );
+        return { ...prev, [listIdWithTodo!]: todos };
+      });
+    }
+    await loadTodos(listIdWithTodo);
+  };
+
+  const updateTodo = async (
+    id: number,
+    name: string,
+    description: string,
+    list_id: number,
+    today: boolean,
+    deadline: string
+  ) => {
+    await UpdateTodo(id, name, description, list_id, today, deadline);
+    // Reload todos after update
+    for (const list of lists) {
+      await loadTodos(list.ID);
+    }
   };
 
   const toggleTodoCard = (id: number) => {
     setOpenTodoId(id);
   };
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Escape" && openTodoId) {
+      e.preventDefault();
+      setOpenTodoId(undefined);
+    }
+  };
+
   useEffect(() => {
     loadLists();
   }, []);
+
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => handleKeyDown(e);
+    window.addEventListener("keydown", listener);
+    return () => {
+      window.removeEventListener("keydown", listener);
+    };
+  }, [openTodoId]);
 
   return (
     <div>
@@ -59,12 +130,18 @@ export default function ListItem() {
 
           <div className="ml-6 mt-2">
             {(todosByList[list.ID] ?? []).map((todo) => (
-              <Task
-                todo={todo}
-                onToggle={handleToggle}
-                currentListId={list.ID}
-                openCard={toggleTodoCard}
-              />
+              <div key={todo.ID}>
+                {todo.ID !== openTodoId ? (
+                  <Task
+                    todo={todo}
+                    onToggle={handleToggle}
+                    currentListId={list.ID}
+                    openCard={toggleTodoCard}
+                  />
+                ) : (
+                  <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
+                )}
+              </div>
             ))}
           </div>
         </div>
