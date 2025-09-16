@@ -17,7 +17,7 @@ func GetTodos() ([]models.Todo, error) {
 func GetTodosByList(id uint) ([]models.Todo, error) {
 	var todos []models.Todo
 
-	_ = db.DB.Where("list_id = ?", id).Order("completed asc").Find(&todos)
+	_ = db.DB.Where("list_id = ? AND archive = 0", id).Order("completed asc").Find(&todos)
 	return todos, nil
 }
 
@@ -95,6 +95,17 @@ func GetTodosByDeadline(date time.Time) ([]models.Todo, error) {
 	endOfDay := time.Date(date.Year(), date.Month(), date.Day(), 23, 59, 59, 999999999, date.Location())
 
 	result := db.DB.Where("deadline >= ? AND deadline <= ?", startOfDay, endOfDay).Order("completed asc").Find(&todos)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return todos, nil
+}
+
+func GetArchivedTodos() ([]models.Todo, error) {
+	var todos []models.Todo
+
+	result := db.DB.Where("archive = 1").Find(&todos)
+
 	if result.Error != nil {
 		return nil, result.Error
 	}

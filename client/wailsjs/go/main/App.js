@@ -30,6 +30,10 @@ export function DeleteList(arg1) {
   return window['go']['main']['App']['DeleteList'](arg1);
 }
 
+export function GetArchivedTodos() {
+  return window['go']['main']['App']['GetArchivedTodos']();
+}
+
 export function GetAreas() {
   return window['go']['main']['App']['GetAreas']();
 }

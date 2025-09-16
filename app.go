@@ -72,6 +72,10 @@ func (a *App) GetListCount(id uint) (int, error) {
 	return api.GetListCount(id)
 }
 
+func (a *App) GetArchivedTodos() ([]models.Todo, error) {
+	return api.GetArchivedTodos()
+}
+
 func (a *App) ToggleTodo(id uint) error {
 	return api.ToggleTodo(id)
 }

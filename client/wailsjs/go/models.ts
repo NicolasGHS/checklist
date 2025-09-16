@@ -86,6 +86,7 @@ export namespace models {
 	    ListID: number;
 	    Today: boolean;
 	    Deadline?: time.Time;
+	    Archive: boolean;
 	    CreatedAt: time.Time;
 	    UpdatedAt: time.Time;
 	
@@ -102,6 +103,7 @@ export namespace models {
 	        this.ListID = source["ListID"];
 	        this.Today = source["Today"];
 	        this.Deadline = this.convertValues(source["Deadline"], time.Time);
+	        this.Archive = source["Archive"];
 	        this.CreatedAt = this.convertValues(source["CreatedAt"], time.Time);
 	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], time.Time);
 	    }

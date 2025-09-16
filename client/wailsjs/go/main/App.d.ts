@@ -17,6 +17,8 @@ export function DeleteDeadline(arg1:number):Promise<models.Todo>;
 
 export function DeleteList(arg1:number):Promise<void>;
 
+export function GetArchivedTodos():Promise<Array<models.Todo>>;
+
 export function GetAreas():Promise<Array<models.Area>>;
 
 export function GetListBySlug(arg1:string):Promise<models.List>;
