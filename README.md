@@ -9,7 +9,7 @@ Organize your tasks quick and neatly so you can focus on what matters.
 
 ## Mission
 
-**task managers should not be something you have to pay for**.  
+**Task managers should not be something you have to pay for**.  
 The mission of Checklist is to create a high-quality, user-friendly application that **will always remain free for everyone**.
 
 ## Contributing
