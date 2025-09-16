@@ -112,6 +112,18 @@ func GetArchivedTodos() ([]models.Todo, error) {
 	return todos, nil
 }
 
+func GetArchivedTodosByList(id uint) ([]models.Todo, error) {
+	var todos []models.Todo
+
+	result := db.DB.Where("archive = 1 AND list_id = ?", id).Find(&todos)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return todos, nil
+}
+
 func AddTodo(name, description string, list_id uint, today bool, deadline *time.Time) error {
 	return db.DB.Create(&models.Todo{Name: name, Completed: false, Description: description, ListID: list_id, Today: today, Deadline: deadline}).Error
 }

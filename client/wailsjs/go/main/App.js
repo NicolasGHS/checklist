@@ -34,6 +34,10 @@ export function GetArchivedTodos() {
   return window['go']['main']['App']['GetArchivedTodos']();
 }
 
+export function GetArchivedTodosByList(arg1) {
+  return window['go']['main']['App']['GetArchivedTodosByList'](arg1);
+}
+
 export function GetAreas() {
   return window['go']['main']['App']['GetAreas']();
 }

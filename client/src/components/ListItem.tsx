@@ -4,12 +4,14 @@ import {
   GetTodosByList,
   UpdateTodo,
   ToggleTodo,
+  GetArchivedTodosByList,
 } from "../../wailsjs/go/main/App";
 import { models } from "../../wailsjs/go/models";
 import { Hash } from "lucide-react";
 import { Task } from "./Task";
 import { TodoCard } from "./TaskCard";
 import { Separator } from "./ui/separator";
+import { useLocation } from "react-router-dom";
 
 type ListItemProps = {
   list: models.List;
@@ -20,14 +22,23 @@ export default function ListItem({ list }: ListItemProps) {
     {}
   );
   const [openTodoId, setOpenTodoId] = useState<number>();
+  const location = useLocation();
 
   const loadTodos = async () => {
     try {
-      const result = await GetTodosByList(list.ID);
-      setTodosByList((prev) => ({
-        ...prev,
-        [list.ID]: result,
-      }));
+      if (location.pathname === "/someday") {
+        const result = await GetArchivedTodosByList(list.ID);
+        setTodosByList((prev) => ({
+          ...prev,
+          [list.ID]: result,
+        }));
+      } else {
+        const result = await GetTodosByList(list.ID);
+        setTodosByList((prev) => ({
+          ...prev,
+          [list.ID]: result,
+        }));
+      }
     } catch (error) {
       console.error("Failed to fetch todo's: ", error);
     }
