@@ -1,4 +1,6 @@
-![](build/appicon.png)
+<p align="center">
+  <img src="build/appicon.png" alt="Checklist App Icon">
+</p>
 
 # Checklist
 
