@@ -5,38 +5,28 @@ import {
   UpdateTodo,
   ToggleTodo,
 } from "../../wailsjs/go/main/App";
-import { models } from "wailsjs/go/models";
+import { models } from "../../wailsjs/go/models";
 import { Hash } from "lucide-react";
 import { Task } from "./Task";
 import { TodoCard } from "./TaskCard";
 import { Separator } from "./ui/separator";
 
-export default function ListItem() {
-  const [lists, setLists] = useState<models.List[]>([]);
+type ListItemProps = {
+  list: models.List;
+};
+
+export default function ListItem({ list }: ListItemProps) {
   const [todosByList, setTodosByList] = useState<Record<number, models.Todo[]>>(
     {}
   );
   const [openTodoId, setOpenTodoId] = useState<number>();
 
-  const loadLists = async () => {
+  const loadTodos = async () => {
     try {
-      const result = await GetLists();
-      setLists(result);
-
-      for (const list of result) {
-        await loadTodos(list.ID);
-      }
-    } catch (error) {
-      console.error("Failed to fetch lists", error);
-    }
-  };
-
-  const loadTodos = async (listID: number) => {
-    try {
-      const result = await GetTodosByList(listID);
+      const result = await GetTodosByList(list.ID);
       setTodosByList((prev) => ({
         ...prev,
-        [listID]: result,
+        [list.ID]: result,
       }));
     } catch (error) {
       console.error("Failed to fetch todo's: ", error);
@@ -79,7 +69,7 @@ export default function ListItem() {
         return { ...prev, [listIdWithTodo!]: todos };
       });
     }
-    await loadTodos(listIdWithTodo);
+    await loadTodos();
   };
 
   const updateTodo = async (
@@ -91,10 +81,7 @@ export default function ListItem() {
     deadline: string
   ) => {
     await UpdateTodo(id, name, description, list_id, today, deadline);
-    // Reload todos after update
-    for (const list of lists) {
-      await loadTodos(list.ID);
-    }
+    await loadTodos();
   };
 
   const toggleTodoCard = (id: number) => {
@@ -109,10 +96,6 @@ export default function ListItem() {
   };
 
   useEffect(() => {
-    loadLists();
-  }, []);
-
-  useEffect(() => {
     const listener = (e: KeyboardEvent) => handleKeyDown(e);
     window.addEventListener("keydown", listener);
     return () => {
@@ -120,33 +103,35 @@ export default function ListItem() {
     };
   }, [openTodoId]);
 
+  useEffect(() => {
+    loadTodos();
+  }, []);
+
   return (
     <div>
-      {lists.map((list) => (
-        <div key={list.ID} className="mb-4">
-          <div className="flex items-center gap-2">
-            <Hash className="w-5" />
-            <h1 className="text-xl">{list.Name}</h1>
-          </div>
-          <Separator className="mr-4" />
-          <div className="ml-6 mt-2">
-            {(todosByList[list.ID] ?? []).map((todo) => (
-              <div key={todo.ID}>
-                {todo.ID !== openTodoId ? (
-                  <Task
-                    todo={todo}
-                    onToggle={handleToggle}
-                    currentListId={list.ID}
-                    openCard={toggleTodoCard}
-                  />
-                ) : (
-                  <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
-                )}
-              </div>
-            ))}
-          </div>
+      <div key={list.ID} className="mb-4">
+        <div className="flex items-center gap-2">
+          <Hash className="w-5" />
+          <h1 className="text-xl">{list.Name}</h1>
         </div>
-      ))}
+        <Separator className="mr-4" />
+        <div className="ml-6 mt-2">
+          {(todosByList[list.ID] ?? []).map((todo) => (
+            <div key={todo.ID}>
+              {todo.ID !== openTodoId ? (
+                <Task
+                  todo={todo}
+                  onToggle={handleToggle}
+                  currentListId={list.ID}
+                  openCard={toggleTodoCard}
+                />
+              ) : (
+                <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
