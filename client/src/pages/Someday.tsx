@@ -1,20 +1,28 @@
 import { useEffect, useState } from "react";
 import {
   GetArchivedTodos,
+  GetLists,
   ToggleTodo,
   UpdateTodo,
 } from "../../wailsjs/go/main/App";
 import { models } from "../../wailsjs/go/models";
 import { Task } from "@/components/Task";
 import { TodoCard } from "@/components/TaskCard";
+import ListItem from "@/components/ListItem";
 
 export default function Someday() {
   const [todos, setTodos] = useState<models.Todo[]>([]);
+  const [lists, setLists] = useState<models.List[]>([]);
   const [openTodoId, setOpenTodoId] = useState<number>();
 
   const loadTodos = async () => {
     const result = await GetArchivedTodos();
     setTodos(result);
+  };
+
+  const loadLists = async () => {
+    const result = await GetLists();
+    setLists(result);
   };
 
   const toggleTodoCard = (id: number) => {
@@ -77,26 +85,15 @@ export default function Someday() {
 
   useEffect(() => {
     loadTodos();
+    loadLists();
   }, []);
 
   return (
     <div className="mt-10 flex flex-col min-h-full">
       <h1 className="text-3xl text-foreground font-bold mb-6">Someday</h1>
-      {todos
-        ?.filter((todo) => !todo.Completed)
-        .map((todo) => (
-          <div key={todo.ID} className="text-white mb-2">
-            {todo.ID !== openTodoId ? (
-              <Task
-                todo={todo}
-                onToggle={handleToggle}
-                openCard={toggleTodoCard}
-              />
-            ) : (
-              <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
-            )}
-          </div>
-        ))}
+      {lists?.map((list, index) => (
+        <ListItem list={list} key={index} />
+      ))}
     </div>
   );
 }
