@@ -60,6 +60,21 @@ export default function Someday() {
     loadTodos();
   };
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Escape" && openTodoId !== 0) {
+      e.preventDefault();
+      setOpenTodoId(0);
+    }
+  };
+
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => handleKeyDown(e);
+    window.addEventListener("keydown", listener);
+    return () => {
+      window.removeEventListener("keydown", listener);
+    };
+  }, [openTodoId]);
+
   useEffect(() => {
     loadTodos();
   }, []);
