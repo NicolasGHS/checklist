@@ -70,7 +70,7 @@ export default function Someday() {
       {todos
         ?.filter((todo) => !todo.Completed)
         .map((todo) => (
-          <li key={todo.ID} className="text-white mb-2">
+          <div key={todo.ID} className="text-white mb-2">
             {todo.ID !== openTodoId ? (
               <Task
                 todo={todo}
@@ -80,7 +80,7 @@ export default function Someday() {
             ) : (
               <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
             )}
-          </li>
+          </div>
         ))}
     </div>
   );
