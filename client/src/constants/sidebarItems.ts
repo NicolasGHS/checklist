@@ -9,6 +9,7 @@ export const sidebarItems = [
     listId: 1,
   },
   {
+    id: 5,
     title: "Today",
     url: "/today",
     icon: Star,

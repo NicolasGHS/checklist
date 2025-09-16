@@ -9,7 +9,11 @@ import {
   DragOverlay,
   DragStartEvent,
 } from "@dnd-kit/core";
-import { UpdateTodoList, UpdateListArea } from "../wailsjs/go/main/App";
+import {
+  UpdateTodoList,
+  UpdateListArea,
+  UpdateTodo,
+} from "../wailsjs/go/main/App";
 import { Hash } from "lucide-react";
 import { models } from "wailsjs/go/models";
 
@@ -54,24 +58,69 @@ const Layout: React.FC = () => {
     ) {
       const taskId = parseInt(active.id.toString().replace("task-", ""));
       const targetListId = parseInt(
-        over.id.toString().replace("drop-list-", ""),
+        over.id.toString().replace("drop-list-", "")
       );
 
       console.log(`Attempting to move task ${taskId} to list ${targetListId}`);
 
-      try {
-        await UpdateTodoList(taskId, targetListId);
-        console.log(
-          `Successfully moved task ${taskId} to list ${targetListId}`,
-        );
+      // Special handling for Today item (ID 5)
+      if (targetListId === 5) {
+        console.log(`Setting deadline to today for task ${taskId}`);
 
-        window.dispatchEvent(
-          new CustomEvent("taskMoved", {
-            detail: { taskId, targetListId },
-          }),
-        );
-      } catch (error) {
-        console.error("Failed to move task to list:", error);
+        try {
+          // Get the task data to preserve other properties
+          const taskData = active.data.current?.todo;
+          if (taskData) {
+            // Set deadline to today at end of day (23:59:59)
+            const today = new Date();
+            const todayDeadline = new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              today.getDate(),
+              23,
+              59,
+              59,
+              999
+            );
+
+            await UpdateTodo(
+              taskId,
+              taskData.Name,
+              taskData.Description || "",
+              taskData.ListID,
+              false, // today flag
+              todayDeadline.toISOString()
+            );
+
+            console.log(
+              `Successfully set deadline to today for task ${taskId}`
+            );
+
+            window.dispatchEvent(
+              new CustomEvent("taskMoved", {
+                detail: { taskId, targetListId, deadlineSet: true },
+              })
+            );
+          }
+        } catch (error) {
+          console.error("Failed to set deadline for task:", error);
+        }
+      } else {
+        // Regular list move
+        try {
+          await UpdateTodoList(taskId, targetListId);
+          console.log(
+            `Successfully moved task ${taskId} to list ${targetListId}`
+          );
+
+          window.dispatchEvent(
+            new CustomEvent("taskMoved", {
+              detail: { taskId, targetListId },
+            })
+          );
+        } catch (error) {
+          console.error("Failed to move task to list:", error);
+        }
       }
     } else if (
       active.id.toString().startsWith("list-") &&
@@ -90,14 +139,14 @@ const Layout: React.FC = () => {
         window.dispatchEvent(
           new CustomEvent("listMoved", {
             detail: { listId, areaId },
-          }),
+          })
         );
       } catch (error) {
         console.error("Failed to move list to area:", error);
       }
     } else {
       console.log(
-        "Drop target not recognized or incompatible drag/drop combination",
+        "Drop target not recognized or incompatible drag/drop combination"
       );
     }
   };
@@ -123,7 +172,9 @@ const Layout: React.FC = () => {
           {draggedTask ? (
             <div className="flex gap-3 items-center bg-background border rounded px-3 py-2 shadow-lg opacity-90">
               <div className="w-4 h-4 border border-border rounded bg-muted"></div>
-              <p className="text-foreground">Moving task to list...</p>
+              <p className="text-foreground">
+                Drag to Today to set deadline...
+              </p>
             </div>
           ) : draggedList ? (
             <div className="flex items-center gap-2 bg-background border rounded px-2 py-1 shadow-lg">
