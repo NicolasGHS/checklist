@@ -9,6 +9,7 @@ import { models } from "wailsjs/go/models";
 import { Hash } from "lucide-react";
 import { Task } from "./Task";
 import { TodoCard } from "./TaskCard";
+import { Separator } from "./ui/separator";
 
 export default function ListItem() {
   const [lists, setLists] = useState<models.List[]>([]);
@@ -127,7 +128,7 @@ export default function ListItem() {
             <Hash className="w-5" />
             <h1 className="text-xl">{list.Name}</h1>
           </div>
-
+          <Separator className="mr-4" />
           <div className="ml-6 mt-2">
             {(todosByList[list.ID] ?? []).map((todo) => (
               <div key={todo.ID}>
