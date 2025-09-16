@@ -26,20 +26,22 @@ export default function ListItem({ list }: ListItemProps) {
         </div>
         <Separator className="mr-4" />
         <div className="ml-6 mt-2">
-          {todos.map((todo) => (
-            <div key={todo.ID}>
-              {todo.ID !== openTodoId ? (
-                <Task
-                  todo={todo}
-                  onToggle={toggleTodo}
-                  currentListId={list.ID}
-                  openCard={open}
-                />
-              ) : (
-                <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
-              )}
-            </div>
-          ))}
+          {todos
+            ?.filter((todo) => !todo.Completed)
+            .map((todo) => (
+              <div key={todo.ID}>
+                {todo.ID !== openTodoId ? (
+                  <Task
+                    todo={todo}
+                    onToggle={toggleTodo}
+                    currentListId={list.ID}
+                    openCard={open}
+                  />
+                ) : (
+                  <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
+                )}
+              </div>
+            ))}
         </div>
       </div>
     </div>
