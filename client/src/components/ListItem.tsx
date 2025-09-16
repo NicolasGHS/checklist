@@ -1,122 +1,21 @@
-import { useEffect, useState } from "react";
-import {
-  GetLists,
-  GetTodosByList,
-  UpdateTodo,
-  ToggleTodo,
-  GetArchivedTodosByList,
-} from "../../wailsjs/go/main/App";
 import { models } from "../../wailsjs/go/models";
 import { Hash } from "lucide-react";
 import { Task } from "./Task";
 import { TodoCard } from "./TaskCard";
 import { Separator } from "./ui/separator";
 import { useLocation } from "react-router-dom";
+import { useTodosByList } from "@/hooks/useTodosByList";
+import { useOpenTodo } from "@/hooks/useOpenTodo";
 
 type ListItemProps = {
   list: models.List;
 };
 
 export default function ListItem({ list }: ListItemProps) {
-  const [todosByList, setTodosByList] = useState<Record<number, models.Todo[]>>(
-    {}
-  );
-  const [openTodoId, setOpenTodoId] = useState<number>();
   const location = useLocation();
-
-  const loadTodos = async () => {
-    try {
-      if (location.pathname === "/someday") {
-        const result = await GetArchivedTodosByList(list.ID);
-        setTodosByList((prev) => ({
-          ...prev,
-          [list.ID]: result,
-        }));
-      } else {
-        const result = await GetTodosByList(list.ID);
-        setTodosByList((prev) => ({
-          ...prev,
-          [list.ID]: result,
-        }));
-      }
-    } catch (error) {
-      console.error("Failed to fetch todo's: ", error);
-    }
-  };
-
-  const handleToggle = async (id: number) => {
-    let listIdWithTodo: number | undefined = undefined;
-    for (const [listId, todos] of Object.entries(todosByList)) {
-      if (todos.some((t) => t.ID === id)) {
-        listIdWithTodo = Number(listId);
-        break;
-      }
-    }
-    if (listIdWithTodo === undefined) return;
-
-    setTodosByList((prev) => {
-      const todos = prev[listIdWithTodo!].map((t) =>
-        t.ID === id
-          ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
-              Completed: !t.Completed,
-            })
-          : t
-      );
-      return { ...prev, [listIdWithTodo!]: todos };
-    });
-
-    try {
-      await ToggleTodo(id);
-    } catch (error) {
-      console.error(error);
-      setTodosByList((prev) => {
-        const todos = prev[listIdWithTodo!].map((t) =>
-          t.ID === id
-            ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
-                Completed: !t.Completed,
-              })
-            : t
-        );
-        return { ...prev, [listIdWithTodo!]: todos };
-      });
-    }
-    await loadTodos();
-  };
-
-  const updateTodo = async (
-    id: number,
-    name: string,
-    description: string,
-    list_id: number,
-    today: boolean,
-    deadline: string
-  ) => {
-    await UpdateTodo(id, name, description, list_id, today, deadline);
-    await loadTodos();
-  };
-
-  const toggleTodoCard = (id: number) => {
-    setOpenTodoId(id);
-  };
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Escape" && openTodoId) {
-      e.preventDefault();
-      setOpenTodoId(undefined);
-    }
-  };
-
-  useEffect(() => {
-    const listener = (e: KeyboardEvent) => handleKeyDown(e);
-    window.addEventListener("keydown", listener);
-    return () => {
-      window.removeEventListener("keydown", listener);
-    };
-  }, [openTodoId]);
-
-  useEffect(() => {
-    loadTodos();
-  }, []);
+  const isArchived = location.pathname === "/someday";
+  const { todos, toggleTodo, updateTodo } = useTodosByList(list, isArchived);
+  const { openTodoId, open, close } = useOpenTodo();
 
   return (
     <div>
@@ -127,14 +26,14 @@ export default function ListItem({ list }: ListItemProps) {
         </div>
         <Separator className="mr-4" />
         <div className="ml-6 mt-2">
-          {(todosByList[list.ID] ?? []).map((todo) => (
+          {todos.map((todo) => (
             <div key={todo.ID}>
               {todo.ID !== openTodoId ? (
                 <Task
                   todo={todo}
-                  onToggle={handleToggle}
+                  onToggle={toggleTodo}
                   currentListId={list.ID}
-                  openCard={toggleTodoCard}
+                  openCard={open}
                 />
               ) : (
                 <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
