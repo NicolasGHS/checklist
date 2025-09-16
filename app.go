@@ -133,6 +133,10 @@ func (a *App) GetListsWithoutArea() ([]models.List, error) {
 	return api.GetListsWithoutArea()
 }
 
+func (a *App) GetListsWithArchivedTodos() ([]models.List, error) {
+	return api.GetListsWithArchivedTodos()
+}
+
 func (a *App) DeleteList(id uint) error {
 	return api.DeleteList(id)
 }

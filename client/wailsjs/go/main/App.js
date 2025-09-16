@@ -58,6 +58,10 @@ export function GetListsByArea(arg1) {
   return window['go']['main']['App']['GetListsByArea'](arg1);
 }
 
+export function GetListsWithArchivedTodos() {
+  return window['go']['main']['App']['GetListsWithArchivedTodos']();
+}
+
 export function GetListsWithoutArea() {
   return window['go']['main']['App']['GetListsWithoutArea']();
 }

@@ -80,3 +80,16 @@ func DeleteList(id uint) error {
 func UpdateListArea(id uint, areaID uint) error {
 	return db.DB.Model(&models.List{}).Where("id = ?", id).Update("area_id", areaID).Error
 }
+
+func GetListsWithArchivedTodos() ([]models.List, error) {
+	var lists []models.List
+
+	result := db.DB.Where("id IN (?)",
+		db.DB.Table("todos").Select("DISTINCT list_id").Where("archive = 1")).Find(&lists)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return lists, nil
+}

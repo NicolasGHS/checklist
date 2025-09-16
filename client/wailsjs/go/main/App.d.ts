@@ -31,6 +31,8 @@ export function GetLists():Promise<Array<models.List>>;
 
 export function GetListsByArea(arg1:number):Promise<Array<models.List>>;
 
+export function GetListsWithArchivedTodos():Promise<Array<models.List>>;
+
 export function GetListsWithoutArea():Promise<Array<models.List>>;
 
 export function GetNextSevenDays():Promise<Array<time.Time>>;

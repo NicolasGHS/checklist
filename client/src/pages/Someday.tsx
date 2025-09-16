@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import {
   GetArchivedTodos,
-  GetLists,
+  GetListsWithArchivedTodos,
   ToggleTodo,
   UpdateTodo,
 } from "../../wailsjs/go/main/App";
 import { models } from "../../wailsjs/go/models";
-import { Task } from "@/components/Task";
-import { TodoCard } from "@/components/TaskCard";
 import ListItem from "@/components/ListItem";
 
 export default function Someday() {
@@ -21,7 +19,7 @@ export default function Someday() {
   };
 
   const loadLists = async () => {
-    const result = await GetLists();
+    const result = await GetListsWithArchivedTodos();
     setLists(result);
   };
 
