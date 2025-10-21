@@ -28,45 +28,13 @@ import { useEffect, useState } from "react";
 import { AreaList } from "./AreaList";
 import { ScrollArea } from "../ui/scroll-area";
 import { ListItem } from "./ListItem";
-
-const items = [
-  {
-    title: "Inbox",
-    url: "/inbox",
-    icon: Inbox,
-    listId: 1,
-  },
-  {
-    title: "Today",
-    url: "/today",
-    icon: Star,
-    listId: 0,
-  },
-  {
-    title: "Upcoming",
-    url: "/upcoming",
-    icon: Calendar,
-    listId: 0,
-  },
-  {
-    title: "Anytime",
-    url: "/anytime",
-    icon: FolderOpen,
-    listId: 0,
-  },
-  {
-    title: "Someday",
-    url: "/someday",
-    icon: Layers,
-    listId: 0,
-  },
-];
+import { sidebarItems } from "@/constants/sidebarItems";
 
 // Component for droppable menu items
-const DroppableMenuItem = ({ item }: { item: (typeof items)[0] }) => {
+const DroppableMenuItem = ({ item }: { item: (typeof sidebarItems)[0] }) => {
   const location = useLocation();
   const { isOver, setNodeRef } = useDroppable({
-    id: `drop-list-${item.listId}`,
+    id: `drop-list-${item.id}`,
   });
   const [count, setCount] = useState<number>(0);
   const isToday = item.title == "Today";
@@ -97,7 +65,7 @@ const DroppableMenuItem = ({ item }: { item: (typeof items)[0] }) => {
         <div
           ref={setNodeRef}
           className={`transition-all duration-200 rounded-md ${
-            isOver && item.listId > 0
+            isOver
               ? "bg-accent/50 border-2 border-dashed border-primary/50 p-1 scale-105"
               : "hover:bg-accent/20"
           }`}
@@ -201,7 +169,7 @@ export function AppSidebar() {
             <SidebarGroupContent className="mt-5">
               <SidebarMenu>
                 <div>
-                  {items.map((item) => (
+                  {sidebarItems.map((item) => (
                     <DroppableMenuItem key={item.title} item={item} />
                   ))}
                 </div>

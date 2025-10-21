@@ -37,7 +37,7 @@ func InitDB() error {
 		return err
 	}
 
-	database.AutoMigrate(&models.Todo{})
+	database.AutoMigrate(&models.Todo{}, &models.Area{}, &models.List{})
 	DB = database
 	return nil
 }
