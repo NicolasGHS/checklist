@@ -1,0 +1,35 @@
+FROM golang:1.23-bookworm
+
+# 1️⃣ Systeemafhankelijkheden voor Wails
+RUN apt-get update && apt-get install -y \
+    libgtk-3-dev \
+    libwebkit2gtk-4.0-dev \
+    pkg-config \
+    xz-utils \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2️⃣ Node.js + npm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g npm@latest
+
+# 3️⃣ Werkmap
+WORKDIR /app
+
+# 4️⃣ Kopieer enkel frontend package-info, installeer deps (Linux build!)
+COPY client/package*.json ./client/
+RUN cd client && npm ci
+
+# 5️⃣ Kopieer de rest van de app
+COPY . .
+
+# 6️⃣ Installeer Wails CLI
+RUN go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+# 7️⃣ Zorg dat Wails in PATH staat
+ENV PATH="/go/bin:${PATH}"
+
+# 8️⃣ Build voor Linux
+RUN wails build -platform linux/amd64
+
