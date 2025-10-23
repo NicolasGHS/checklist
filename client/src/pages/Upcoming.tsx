@@ -29,19 +29,11 @@ const Upcoming = () => {
     const todosMap: { [key: string]: models.Todo[] } = {};
     for (const date of dates) {
       try {
-        console.log(
-          "Fetching todos for date:",
-          date,
-          "ISO:",
-          date.toISOString()
-        );
         const todos = await GetTodosByDeadline(date);
-        console.log("Todos returned:", todos);
         // Use local date components to avoid timezone shifts
         const dateKey = `${date.getFullYear()}-${String(
           date.getMonth() + 1
         ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-        console.log("Date key:", dateKey);
         todosMap[dateKey] = todos;
       } catch (error) {
         console.error(`Failed to fetch todos for ${date}:`, error);
