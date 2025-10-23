@@ -46,13 +46,14 @@ export const Page = ({ title, id }: PageProps) => {
     name: string,
     description: string,
     today: boolean,
-    deadline: string
+    deadline: string,
   ) => {
     await AddTodo(name, description, id, today, deadline);
     loadTodos();
     if (today) {
       setTodayCount((prev) => prev + 1);
-    } else {
+    } else if (id == 1) {
+      console.log("List id tijdens addTodo: ", id);
       setInboxCount((prev) => prev + 1);
     }
   };
@@ -63,7 +64,7 @@ export const Page = ({ title, id }: PageProps) => {
     description: string,
     list_id: number,
     today: boolean,
-    deadline: string
+    deadline: string,
   ) => {
     await UpdateTodo(id, name, description, list_id, today, deadline);
 
@@ -83,8 +84,8 @@ export const Page = ({ title, id }: PageProps) => {
           ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
               Completed: !t.Completed,
             })
-          : t
-      )
+          : t,
+      ),
     );
 
     try {
@@ -97,8 +98,8 @@ export const Page = ({ title, id }: PageProps) => {
             ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
                 Completed: !t.Completed,
               })
-            : t
-        )
+            : t,
+        ),
       );
     }
     loadTodos();
