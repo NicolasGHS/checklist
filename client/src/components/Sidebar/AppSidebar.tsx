@@ -29,6 +29,7 @@ import { AreaList } from "./AreaList";
 import { ScrollArea } from "../ui/scroll-area";
 import { ListItem } from "./ListItem";
 import { sidebarItems } from "@/constants/sidebarItems";
+import { useCount } from "@/hooks/useCount";
 
 // Component for droppable menu items
 const DroppableMenuItem = ({ item }: { item: (typeof sidebarItems)[0] }) => {
@@ -36,15 +37,18 @@ const DroppableMenuItem = ({ item }: { item: (typeof sidebarItems)[0] }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: `drop-list-${item.id}`,
   });
-  const [count, setCount] = useState<number>(0);
+  const { count, setCount } = useCount();
   const isToday = item.title == "Today";
+  const isInbox = item.title == "Inbox";
 
+  // TODO: show today count
   const getCount = async () => {
     if (isToday) {
       const count = await GetTodayCount();
-      setCount(count);
-    } else {
-      const count = await GetListCount(item.listId);
+      // setCount(count);
+    } else if (isInbox) {
+      const count = await GetListCount(1);
+      console.log(`Inbox has ${count} todo's`);
       setCount(count);
     }
   };

@@ -13,6 +13,7 @@ import { models } from "wailsjs/go/models";
 import { useLocation } from "react-router-dom";
 import { TodoCard } from "./TaskCard";
 import { Button } from "./ui/button";
+import { useCount } from "@/hooks/useCount";
 
 type PageProps = {
   title: string;
@@ -25,6 +26,7 @@ export const Page = ({ title, id }: PageProps) => {
   const [openTodoId, setOpenTodoId] = useState<number>();
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
   const location = useLocation();
+  const { count, setCount } = useCount();
 
   const showCard = () => {
     setShowNewTaskCard(!showNewTaskCard);
@@ -48,6 +50,7 @@ export const Page = ({ title, id }: PageProps) => {
   ) => {
     await AddTodo(name, description, id, today, deadline);
     loadTodos();
+    setCount((prev) => prev + 1);
   };
 
   const updateTodo = async (

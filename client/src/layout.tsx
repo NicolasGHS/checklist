@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "../src/components/ui/sidebar";
 import { AppSidebar } from "./components/Sidebar/AppSidebar";
 import { ThemeProvider } from "./components/theme-provider";
+import { CountContextProvider } from "./contexts/CountContext";
 import {
   DndContext,
   DragEndEvent,
@@ -152,39 +153,41 @@ const Layout: React.FC = () => {
   };
 
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <SidebarProvider>
-          <div className="flex min-h-screen w-screen bg-background">
-            <AppSidebar />
+    <CountContextProvider>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+          <SidebarProvider>
+            <div className="flex min-h-screen w-screen bg-background">
+              <AppSidebar />
 
-            <div className="flex items-start p-4">
-              <SidebarTrigger />
-            </div>
-            <main className="flex-1 flex flex-col bg-background">
-              <div className="flex-1 bg-background">
-                <Outlet />
+              <div className="flex items-start p-4">
+                <SidebarTrigger />
               </div>
-            </main>
-          </div>
-        </SidebarProvider>
-        <DragOverlay>
-          {draggedTask ? (
-            <div className="flex gap-3 items-center bg-background border rounded px-3 py-2 shadow-lg opacity-90">
-              <div className="w-4 h-4 border border-border rounded bg-muted"></div>
-              <p className="text-foreground">
-                Drag to Today to set deadline...
-              </p>
+              <main className="flex-1 flex flex-col bg-background">
+                <div className="flex-1 bg-background">
+                  <Outlet />
+                </div>
+              </main>
             </div>
-          ) : draggedList ? (
-            <div className="flex items-center gap-2 bg-background border rounded px-2 py-1 shadow-lg">
-              <Hash className="w-4 h-4" />
-              <span>Moving list...</span>
-            </div>
-          ) : null}
-        </DragOverlay>
-      </DndContext>
-    </ThemeProvider>
+          </SidebarProvider>
+          <DragOverlay>
+            {draggedTask ? (
+              <div className="flex gap-3 items-center bg-background border rounded px-3 py-2 shadow-lg opacity-90">
+                <div className="w-4 h-4 border border-border rounded bg-muted"></div>
+                <p className="text-foreground">
+                  Drag to Today to set deadline...
+                </p>
+              </div>
+            ) : draggedList ? (
+              <div className="flex items-center gap-2 bg-background border rounded px-2 py-1 shadow-lg">
+                <Hash className="w-4 h-4" />
+                <span>Moving list...</span>
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+      </ThemeProvider>
+    </CountContextProvider>
   );
 };
 
