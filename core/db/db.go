@@ -44,7 +44,7 @@ func InitDB() error {
 	if result.Error != nil {
 		inbox = models.List{
 			ID:   1,
-			Name: "Inbux",
+			Name: "Inbox",
 			Slug: "inbox",
 		}
 		database.Create(&inbox)
