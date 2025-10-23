@@ -38,6 +38,18 @@ func InitDB() error {
 	}
 
 	database.AutoMigrate(&models.Todo{}, &models.Area{}, &models.List{})
+
+	var inbox models.List
+	result := database.First(&inbox, 1)
+	if result.Error != nil {
+		inbox = models.List{
+			ID:   1,
+			Name: "Inbux",
+			Slug: "inbox",
+		}
+		database.Create(&inbox)
+	}
+
 	DB = database
 	return nil
 }
