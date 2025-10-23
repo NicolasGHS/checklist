@@ -53,7 +53,6 @@ export const Page = ({ title, id }: PageProps) => {
     if (today) {
       setTodayCount((prev) => prev + 1);
     } else if (id == 1) {
-      console.log("List id tijdens addTodo: ", id);
       setInboxCount((prev) => prev + 1);
     }
   };
