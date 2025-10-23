@@ -87,9 +87,10 @@ func GetIncompletedTodayTodos(date string) ([]models.Todo, error) {
 func GetTodosByDeadline(date time.Time) ([]models.Todo, error) {
 	var todos []models.Todo
 
-	// Set the date range to cover the entire day
-	startOfDay := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
-	endOfDay := time.Date(date.Year(), date.Month(), date.Day(), 23, 59, 59, 999999999, date.Location())
+	loc := time.Local
+	localDate := date.In(loc)
+	startOfDay := time.Date(localDate.Year(), localDate.Month(), localDate.Day(), 0, 0, 0, 0, loc)
+	endOfDay := time.Date(localDate.Year(), localDate.Month(), localDate.Day(), 23, 59, 59, 999999999, loc)
 
 	result := db.DB.Where("deadline >= ? AND deadline <= ?", startOfDay, endOfDay).Order("completed asc").Find(&todos)
 	if result.Error != nil {
