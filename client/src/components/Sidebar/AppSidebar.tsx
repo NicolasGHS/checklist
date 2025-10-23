@@ -31,31 +31,40 @@ import { ListItem } from "./ListItem";
 import { sidebarItems } from "@/constants/sidebarItems";
 import { useCount } from "@/hooks/useCount";
 
-// Component for droppable menu items
 const DroppableMenuItem = ({ item }: { item: (typeof sidebarItems)[0] }) => {
   const location = useLocation();
   const { isOver, setNodeRef } = useDroppable({
     id: `drop-list-${item.id}`,
   });
-  const { count, setCount } = useCount();
+  const { inboxCount, setInboxCount, todayCount, setTodayCount } = useCount();
   const isToday = item.title == "Today";
   const isInbox = item.title == "Inbox";
 
-  // TODO: show today count
   const getCount = async () => {
     if (isToday) {
       const count = await GetTodayCount();
-      // setCount(count);
+      setTodayCount(count);
     } else if (isInbox) {
       const count = await GetListCount(1);
       console.log(`Inbox has ${count} todo's`);
-      setCount(count);
+      setInboxCount(count);
     }
   };
 
   useEffect(() => {
     getCount();
   }, [item]);
+
+  useEffect(() => {
+    const handleTaskMoved = () => {
+      getCount();
+    };
+
+    window.addEventListener("taskMoved", handleTaskMoved);
+    return () => {
+      window.removeEventListener("taskMoved", handleTaskMoved);
+    };
+  }, [isToday, isInbox]);
 
   return (
     <SidebarMenuItem>
@@ -82,7 +91,8 @@ const DroppableMenuItem = ({ item }: { item: (typeof sidebarItems)[0] }) => {
               <item.icon className="w-5" />
               <span>{item.title}</span>
             </div>
-            {["Today", "Inbox"].includes(item.title) && <p>{count}</p>}
+            {isToday && <p>{todayCount}</p>}
+            {isInbox && <p>{inboxCount}</p>}
           </Link>
         </div>
       </SidebarMenuButton>

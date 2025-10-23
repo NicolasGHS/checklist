@@ -85,6 +85,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
       const result = await DeleteDeadline(Task.ID);
       setTaskItem(result);
       console.log("result: ", result);
+      window.dispatchEvent(new CustomEvent("taskMoved"));
     } catch (error) {
       console.error("Failed removing deadline: ", error);
     }

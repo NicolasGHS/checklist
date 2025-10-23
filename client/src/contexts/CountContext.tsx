@@ -1,8 +1,10 @@
 import { createContext, useState } from "react";
 
 type CountContextType = {
-  count: number;
-  setCount: React.Dispatch<React.SetStateAction<number>>;
+  inboxCount: number;
+  setInboxCount: React.Dispatch<React.SetStateAction<number>>;
+  todayCount: number;
+  setTodayCount: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export const CountContext = createContext<CountContextType | null>(null);
@@ -12,10 +14,13 @@ export const CountContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [count, setCount] = useState<number>(0);
+  const [inboxCount, setInboxCount] = useState<number>(0);
+  const [todayCount, setTodayCount] = useState<number>(0);
 
   return (
-    <CountContext.Provider value={{ count, setCount }}>
+    <CountContext.Provider
+      value={{ inboxCount, setInboxCount, todayCount, setTodayCount }}
+    >
       {children}
     </CountContext.Provider>
   );

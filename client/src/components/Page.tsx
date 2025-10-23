@@ -26,7 +26,7 @@ export const Page = ({ title, id }: PageProps) => {
   const [openTodoId, setOpenTodoId] = useState<number>();
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
   const location = useLocation();
-  const { count, setCount } = useCount();
+  const { inboxCount, setInboxCount, setTodayCount } = useCount();
 
   const showCard = () => {
     setShowNewTaskCard(!showNewTaskCard);
@@ -50,7 +50,11 @@ export const Page = ({ title, id }: PageProps) => {
   ) => {
     await AddTodo(name, description, id, today, deadline);
     loadTodos();
-    setCount((prev) => prev + 1);
+    if (today) {
+      setTodayCount((prev) => prev + 1);
+    } else {
+      setInboxCount((prev) => prev + 1);
+    }
   };
 
   const updateTodo = async (
@@ -62,6 +66,14 @@ export const Page = ({ title, id }: PageProps) => {
     deadline: string
   ) => {
     await UpdateTodo(id, name, description, list_id, today, deadline);
+
+    if (location.pathname === "/today") {
+      loadTodayTodos();
+    } else {
+      loadTodos();
+    }
+    // update count
+    window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
   const handleToggle = async (id: number) => {
