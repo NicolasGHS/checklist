@@ -1,4 +1,3 @@
-// src/hooks/useCount.ts
 import { useContext } from "react";
 import { CountContext } from "@/contexts/CountContext";
 
