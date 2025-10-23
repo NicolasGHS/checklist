@@ -32,7 +32,7 @@ type TodoCardProps = {
 };
 
 const formSchema = z.object({
-  name: z.string().min(2).max(50),
+  name: z.string().min(0).max(128),
   description: z.string().max(255).optional(),
 });
 
