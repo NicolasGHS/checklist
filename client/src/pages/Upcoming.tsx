@@ -25,9 +25,6 @@ const Upcoming = () => {
     setDays(dates);
     setWeekdays(days);
 
-    console.log("Raw result from GetNextSevenDays:", result);
-    console.log("Converted dates:", dates);
-
     // Fetch todos for each day
     const todosMap: { [key: string]: models.Todo[] } = {};
     for (const date of dates) {
@@ -54,7 +51,6 @@ const Upcoming = () => {
         todosMap[dateKey] = [];
       }
     }
-    console.log("Final todosMap:", todosMap);
     setTodosByDay(todosMap);
   };
 
