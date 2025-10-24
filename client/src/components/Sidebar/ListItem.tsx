@@ -94,7 +94,10 @@ export const ListItem = ({ list, onDelete }: ListItemProps) => {
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setOpen(true)}>
+            <DropdownMenuItem
+              onClick={() => setOpen(true)}
+              className="hover:cursor-pointer"
+            >
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
