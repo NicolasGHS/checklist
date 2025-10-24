@@ -152,6 +152,13 @@ func ToggleTodo(id uint) error {
 
 	todo.Completed = !todo.Completed
 
+	if todo.Completed {
+		now := time.Now()
+		todo.CompletedAt = now
+	} else {
+		todo.CompletedAt = time.Time{}
+	}
+
 	db.DB.Save(&todo)
 	return nil
 }
