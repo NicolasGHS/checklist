@@ -48,6 +48,10 @@ export const ListItem = ({ list, onDelete }: ListItemProps) => {
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const truncate = (text: string, maxLength: number) => {
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
   return (
     <SidebarMenuButton
       asChild
@@ -70,14 +74,14 @@ export const ListItem = ({ list, onDelete }: ListItemProps) => {
         }}
         style={style}
       >
-        <Link to={`list/${list.Slug}`} className="flex-1 py-1">
-          <span className="flex items-center gap-2">
+        <Link to={`list/${list.Slug}`} className="flex-1 py-1 min-w-0">
+          <span className="flex items-center gap-2 min-w-0">
             <Hash
-              className="w-4 h-4 cursor-grab active:cursor-grabbing"
+              className="w-4 h-4 flex-shrink-0 cursor-grab active:cursor-grabbing"
               {...listeners}
               {...attributes}
             />
-            {list.Name}
+            <span className="truncate">{truncate(list.Name, 20)}</span>
           </span>
         </Link>
 
@@ -90,7 +94,10 @@ export const ListItem = ({ list, onDelete }: ListItemProps) => {
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setOpen(true)}>
+            <DropdownMenuItem
+              onClick={() => setOpen(true)}
+              className="hover:cursor-pointer"
+            >
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -13,6 +13,7 @@ import { models } from "wailsjs/go/models";
 import { useLocation } from "react-router-dom";
 import { TodoCard } from "./TaskCard";
 import { Button } from "./ui/button";
+import { useCount } from "@/hooks/useCount";
 
 type PageProps = {
   title: string;
@@ -25,6 +26,7 @@ export const Page = ({ title, id }: PageProps) => {
   const [openTodoId, setOpenTodoId] = useState<number>();
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
   const location = useLocation();
+  const { inboxCount, setInboxCount, setTodayCount } = useCount();
 
   const showCard = () => {
     setShowNewTaskCard(!showNewTaskCard);
@@ -44,10 +46,15 @@ export const Page = ({ title, id }: PageProps) => {
     name: string,
     description: string,
     today: boolean,
-    deadline: string
+    deadline: string,
   ) => {
     await AddTodo(name, description, id, today, deadline);
     loadTodos();
+    if (today) {
+      setTodayCount((prev) => prev + 1);
+    } else if (id == 1) {
+      setInboxCount((prev) => prev + 1);
+    }
   };
 
   const updateTodo = async (
@@ -56,9 +63,17 @@ export const Page = ({ title, id }: PageProps) => {
     description: string,
     list_id: number,
     today: boolean,
-    deadline: string
+    deadline: string,
   ) => {
     await UpdateTodo(id, name, description, list_id, today, deadline);
+
+    if (location.pathname === "/today") {
+      loadTodayTodos();
+    } else {
+      loadTodos();
+    }
+    // update count
+    window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
   const handleToggle = async (id: number) => {
@@ -68,8 +83,8 @@ export const Page = ({ title, id }: PageProps) => {
           ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
               Completed: !t.Completed,
             })
-          : t
-      )
+          : t,
+      ),
     );
 
     try {
@@ -82,8 +97,8 @@ export const Page = ({ title, id }: PageProps) => {
             ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
                 Completed: !t.Completed,
               })
-            : t
-        )
+            : t,
+        ),
       );
     }
     loadTodos();

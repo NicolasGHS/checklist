@@ -3,7 +3,6 @@ package api
 import (
 	"checklist/core/db"
 	"checklist/core/models"
-	"checklist/core/utils"
 	"time"
 )
 
@@ -22,26 +21,21 @@ func GetTodosByList(id uint) ([]models.Todo, error) {
 }
 
 func GetTodayTodos() ([]models.Todo, error) {
-	var todos []models.Todo
 	var result []models.Todo
 
-	todayDate := time.Now()
-
-	_ = db.DB.Find(&todos)
-
-	incompoletedTasks, err := GetIncompletedTodayTodos(todayDate.String())
-
+	err := db.DB.Where("DATE(deadline) = DATE(?)", time.Now()).Find(&result).Error
 	if err != nil {
 		return nil, err
 	}
 
-	result = append(result, incompoletedTasks...)
-
-	for _, todo := range todos {
-		if utils.IsToday(todo.Deadline) {
-			result = append(result, todo)
-		}
+	var overdueTodos []models.Todo
+	err = db.DB.Where("completed = 0 AND deadline < DATE(?)", time.Now()).Find(&overdueTodos).Error
+	if err != nil {
+		return nil, err
 	}
+
+	result = append(result, overdueTodos...)
+
 	return result, nil
 }
 
@@ -54,27 +48,30 @@ func GetTodayCount() (int, error) {
 		return 0, err
 	}
 
-	number := len(todos)
-	return number, nil
+	count := 0
+	for _, todo := range todos {
+		if !todo.Completed {
+			count++
+		}
+	}
+
+	return count, nil
 }
 
 func GetListCount(id uint) (int, error) {
-	var todos []models.Todo
-	var result []models.Todo
-
 	todos, err := GetTodosByList(id)
 	if err != nil {
 		return 0, err
 	}
 
+	count := 0
 	for _, todo := range todos {
 		if !todo.Completed {
-			result = append(result, todo)
+			count++
 		}
 	}
 
-	number := len(result)
-	return number, nil
+	return count, nil
 }
 
 func GetIncompletedTodayTodos(date string) ([]models.Todo, error) {
@@ -90,9 +87,10 @@ func GetIncompletedTodayTodos(date string) ([]models.Todo, error) {
 func GetTodosByDeadline(date time.Time) ([]models.Todo, error) {
 	var todos []models.Todo
 
-	// Set the date range to cover the entire day
-	startOfDay := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
-	endOfDay := time.Date(date.Year(), date.Month(), date.Day(), 23, 59, 59, 999999999, date.Location())
+	loc := time.Local
+	localDate := date.In(loc)
+	startOfDay := time.Date(localDate.Year(), localDate.Month(), localDate.Day(), 0, 0, 0, 0, loc)
+	endOfDay := time.Date(localDate.Year(), localDate.Month(), localDate.Day(), 23, 59, 59, 999999999, loc)
 
 	result := db.DB.Where("deadline >= ? AND deadline <= ?", startOfDay, endOfDay).Order("completed asc").Find(&todos)
 	if result.Error != nil {
@@ -180,11 +178,10 @@ func CalculateDaysLeft(id uint) (*int, error) {
 		return nil, nil
 	}
 
-	loc := time.Local // of een expliciete locatie indien je die opslaat
+	loc := time.Local
 	now := time.Now().In(loc)
 	dl := t.Deadline.In(loc)
 
-	// Strip tijdcomponent
 	y1, m1, d1 := now.Date()
 	y2, m2, d2 := dl.Date()
 

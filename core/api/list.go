@@ -35,7 +35,7 @@ func GetListsByArea(id uint) ([]models.List, error) {
 func GetListsWithoutArea() ([]models.List, error) {
 	var lists []models.List
 
-	result := db.DB.Where("area_id = 0").Find(&lists)
+	result := db.DB.Where("area_id = 0 AND name != ?", "Inbox").Find(&lists)
 
 	if result.Error != nil {
 		return nil, result.Error

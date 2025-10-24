@@ -32,7 +32,7 @@ type TodoCardProps = {
 };
 
 const formSchema = z.object({
-  name: z.string().min(2).max(50),
+  name: z.string().min(0).max(128),
   description: z.string().max(255).optional(),
 });
 
@@ -85,6 +85,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
       const result = await DeleteDeadline(Task.ID);
       setTaskItem(result);
       console.log("result: ", result);
+      window.dispatchEvent(new CustomEvent("taskMoved"));
     } catch (error) {
       console.error("Failed removing deadline: ", error);
     }

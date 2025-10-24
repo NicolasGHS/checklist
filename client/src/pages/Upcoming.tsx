@@ -30,11 +30,16 @@ const Upcoming = () => {
     for (const date of dates) {
       try {
         const todos = await GetTodosByDeadline(date);
-        const dateKey = date.toISOString().split("T")[0]; // YYYY-MM-DD format
+        // Use local date components to avoid timezone shifts
+        const dateKey = `${date.getFullYear()}-${String(
+          date.getMonth() + 1
+        ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
         todosMap[dateKey] = todos;
       } catch (error) {
         console.error(`Failed to fetch todos for ${date}:`, error);
-        const dateKey = date.toISOString().split("T")[0];
+        const dateKey = `${date.getFullYear()}-${String(
+          date.getMonth() + 1
+        ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
         todosMap[dateKey] = [];
       }
     }
@@ -51,7 +56,6 @@ const Upcoming = () => {
   };
 
   const openCard = (id: number) => {
-    // Find the todo with the given id
     const todo = Object.values(todosByDay)
       .flat()
       .find((t) => t.ID === id);
@@ -109,7 +113,12 @@ const Upcoming = () => {
         <h1 className="text-3xl text-foreground font-bold mb-6">Upcoming</h1>
         {weekdays?.map((day, index) => {
           const date = days?.[index];
-          const dateKey = date?.toISOString().split("T")[0] || "";
+          const dateKey = date
+            ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+                2,
+                "0"
+              )}-${String(date.getDate()).padStart(2, "0")}`
+            : "";
           const todosForDay = todosByDay[dateKey] || [];
 
           return (
