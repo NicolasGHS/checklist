@@ -5,6 +5,8 @@
 
 Checklist is an open source cross-platform task management application written with [Wails](https://wails.io/). Right now the project aims to be a Things3 clone and alternative, in a later stage of development checklist should get more of it's own identity.
 
+<img src="assets/screenshot.png">
+
 Organize your tasks quick and neatly so you can focus on what matters.
 
 ## Mission
