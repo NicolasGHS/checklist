@@ -1,4 +1,4 @@
-import { Calendar, FolderOpen, Inbox, Layers, Star } from "lucide-react";
+import { Calendar, FolderOpen, Inbox, Layers, Star, Book } from "lucide-react";
 
 export const sidebarItems = [
   {
@@ -34,6 +34,13 @@ export const sidebarItems = [
     title: "Someday",
     url: "/someday",
     icon: Layers,
+    listId: 0,
+  },
+  {
+    id: 5,
+    title: "Logbook",
+    url: "/logbook",
+    icon: Book,
     listId: 0,
   },
 ];

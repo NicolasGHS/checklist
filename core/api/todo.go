@@ -199,3 +199,13 @@ func CalculateDaysLeft(id uint) (*int, error) {
 
 	return &days, nil
 }
+
+func GetCompletedTodos() ([]models.Todo, error) {
+	var todos []models.Todo
+
+	result := db.DB.Where("completed = 1").Order("completed_at DESC").Find(&todos)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return todos, nil
+}

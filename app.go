@@ -108,6 +108,10 @@ func (a *App) CalculateRemainingTime(id uint) (*int, error) {
 	return api.CalculateDaysLeft(id)
 }
 
+func (a *App) GetCompletedTodos() ([]models.Todo, error) {
+	return api.GetCompletedTodos()
+}
+
 // List
 func (a *App) GetLists() ([]models.List, error) {
 	return api.GetLists()
