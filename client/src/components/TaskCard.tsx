@@ -15,9 +15,13 @@ import { Calendar } from "./ui/calendar";
 import {
   CalculateRemainingTime,
   DeleteDeadline,
+  GetSubtasks,
+  AddSubtask,
+  ToggleTodo,
 } from "../../wailsjs/go/main/App";
 import { Deadline } from "./Deadline";
 import { DaysLeft } from "./DaysLeft";
+import { Subtask } from "./Subtask";
 
 type TodoCardProps = {
   UpdateTodoFunction: (
@@ -41,6 +45,8 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   const [date, setDate] = useState<Date | undefined>();
   const [daysLeft, setDaysLeft] = useState<number>();
   const [taskItem, setTaskItem] = useState<models.Todo>(Task);
+  const [subtasks, setSubtasks] = useState<models.Todo[]>([]);
+  const [newSubtaskName, setNewSubtaskName] = useState<string>("");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,6 +63,40 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
     const result = await CalculateRemainingTime(taskItem.ID);
     console.log("result: ", result);
     setDaysLeft(result);
+  };
+
+  const loadSubtasks = async () => {
+    try {
+      const result = await GetSubtasks(taskItem.ID);
+      setSubtasks(result || []);
+    } catch (error) {
+      console.error("Failed loading subtasks: ", error);
+      setSubtasks([]);
+    }
+  };
+
+  const handleAddSubtask = async (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && newSubtaskName.trim()) {
+      e.preventDefault();
+      try {
+        await AddSubtask(newSubtaskName.trim(), taskItem.ID);
+        setNewSubtaskName("");
+        await loadSubtasks();
+        window.dispatchEvent(new CustomEvent("taskMoved"));
+      } catch (error) {
+        console.error("Failed adding subtask: ", error);
+      }
+    }
+  };
+
+  const handleToggleSubtask = async (subtaskId: number) => {
+    try {
+      await ToggleTodo(subtaskId);
+      await loadSubtasks();
+      window.dispatchEvent(new CustomEvent("taskMoved"));
+    } catch (error) {
+      console.error("Failed toggling subtask: ", error);
+    }
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -100,6 +140,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
 
   useEffect(() => {
     calculateTime();
+    loadSubtasks();
   }, []);
 
   // Sync taskItem with Task prop when it changes
@@ -163,6 +204,27 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
               />
             </form>
           </Form>
+
+          <div className="ml-7 mt-3 space-y-2">
+            {subtasks.map((subtask) => (
+              <Subtask
+                key={subtask.ID}
+                subtask={subtask}
+                onToggle={handleToggleSubtask}
+              />
+            ))}
+            <div className="flex items-center gap-3">
+              <div className="w-4 h-4" /> {/* Spacer for checkbox alignment */}
+              <Input
+                placeholder="Add subtask..."
+                value={newSubtaskName}
+                onChange={(e) => setNewSubtaskName(e.target.value)}
+                onKeyDown={handleAddSubtask}
+                className="border-0 focus-visible:ring-0 focus-visible:outline-none shadow-none text-sm"
+              />
+            </div>
+          </div>
+
           <div className="flex items-center justify-between">
             {taskItem.Deadline ? (
               <div className="group flex items-center gap-2">

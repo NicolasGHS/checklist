@@ -16,20 +16,20 @@ func GetTodos() ([]models.Todo, error) {
 func GetTodosByList(id uint) ([]models.Todo, error) {
 	var todos []models.Todo
 
-	_ = db.DB.Where("list_id = ? AND archive = 0", id).Order("completed asc").Find(&todos)
+	_ = db.DB.Where("list_id = ? AND archive = 0 AND parent_id IS NULL", id).Order("completed asc").Find(&todos)
 	return todos, nil
 }
 
 func GetTodayTodos() ([]models.Todo, error) {
 	var result []models.Todo
 
-	err := db.DB.Where("DATE(deadline) = DATE(?)", time.Now()).Find(&result).Error
+	err := db.DB.Where("DATE(deadline) = DATE(?) AND parent_id IS NULL", time.Now()).Find(&result).Error
 	if err != nil {
 		return nil, err
 	}
 
 	var overdueTodos []models.Todo
-	err = db.DB.Where("completed = 0 AND deadline < DATE(?)", time.Now()).Find(&overdueTodos).Error
+	err = db.DB.Where("completed = 0 AND deadline < DATE(?) AND parent_id IS NULL", time.Now()).Find(&overdueTodos).Error
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func GetTodosByDeadline(date time.Time) ([]models.Todo, error) {
 	startOfDay := time.Date(localDate.Year(), localDate.Month(), localDate.Day(), 0, 0, 0, 0, loc)
 	endOfDay := time.Date(localDate.Year(), localDate.Month(), localDate.Day(), 23, 59, 59, 999999999, loc)
 
-	result := db.DB.Where("deadline >= ? AND deadline <= ?", startOfDay, endOfDay).Order("completed asc").Find(&todos)
+	result := db.DB.Where("deadline >= ? AND deadline <= ? AND parent_id IS NULL", startOfDay, endOfDay).Order("completed asc").Find(&todos)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -102,7 +102,7 @@ func GetTodosByDeadline(date time.Time) ([]models.Todo, error) {
 func GetArchivedTodos() ([]models.Todo, error) {
 	var todos []models.Todo
 
-	result := db.DB.Where("archive = 1").Find(&todos)
+	result := db.DB.Where("archive = 1 AND parent_id IS NULL").Find(&todos)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -113,7 +113,7 @@ func GetArchivedTodos() ([]models.Todo, error) {
 func GetArchivedTodosByList(id uint) ([]models.Todo, error) {
 	var todos []models.Todo
 
-	result := db.DB.Where("archive = 1 AND list_id = ?", id).Find(&todos)
+	result := db.DB.Where("archive = 1 AND list_id = ? AND parent_id IS NULL", id).Find(&todos)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -124,6 +124,16 @@ func GetArchivedTodosByList(id uint) ([]models.Todo, error) {
 
 func AddTodo(name, description string, list_id uint, today bool, deadline *time.Time) error {
 	return db.DB.Create(&models.Todo{Name: name, Completed: false, Description: description, ListID: list_id, Today: today, Deadline: deadline}).Error
+}
+
+func AddSubtask(name string, parent_id uint) error {
+	return db.DB.Create(&models.Todo{Name: name, Completed: false, ParentID: &parent_id}).Error
+}
+
+func GetSubtasks(parent_id uint) ([]models.Todo, error) {
+	var subtasks []models.Todo
+	result := db.DB.Where("parent_id = ?", parent_id).Order("completed asc, created_at asc").Find(&subtasks)
+	return subtasks, result.Error
 }
 
 func UpdateTodo(id uint, name string, description string, list_id uint, today bool, deadline *time.Time) error {
@@ -203,7 +213,7 @@ func CalculateDaysLeft(id uint) (*int, error) {
 func GetCompletedTodos() ([]models.Todo, error) {
 	var todos []models.Todo
 
-	result := db.DB.Where("completed = 1").Order("completed_at DESC").Find(&todos)
+	result := db.DB.Where("completed = 1 AND parent_id IS NULL").Order("completed_at DESC").Find(&todos)
 	if result.Error != nil {
 		return nil, result.Error
 	}

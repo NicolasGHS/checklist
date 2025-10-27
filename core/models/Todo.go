@@ -8,6 +8,7 @@ type Todo struct {
 	Description string     `bson:"description"`
 	Completed   bool       `bson:"completed"`
 	ListID      uint       `bson:"list_id"`
+	ParentID    *uint      `bson:"parent_id"`
 	Today       bool       `bson:"today"`
 	Deadline    *time.Time `bson:"deadline"` // pointer to make deadline optional
 	Archive     bool       `bson:"archive"`  // Someday

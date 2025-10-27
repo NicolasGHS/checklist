@@ -14,6 +14,10 @@ export function AddListWithArea(arg1, arg2, arg3) {
   return window['go']['main']['App']['AddListWithArea'](arg1, arg2, arg3);
 }
 
+export function AddSubtask(arg1, arg2) {
+  return window['go']['main']['App']['AddSubtask'](arg1, arg2);
+}
+
 export function AddTodo(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['main']['App']['AddTodo'](arg1, arg2, arg3, arg4, arg5);
 }
@@ -72,6 +76,10 @@ export function GetListsWithoutArea() {
 
 export function GetNextSevenDays() {
   return window['go']['main']['App']['GetNextSevenDays']();
+}
+
+export function GetSubtasks(arg1) {
+  return window['go']['main']['App']['GetSubtasks'](arg1);
 }
 
 export function GetTodayCount() {

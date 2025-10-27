@@ -84,6 +84,7 @@ export namespace models {
 	    Description: string;
 	    Completed: boolean;
 	    ListID: number;
+	    ParentID?: number;
 	    Today: boolean;
 	    Deadline?: time.Time;
 	    Archive: boolean;
@@ -102,6 +103,7 @@ export namespace models {
 	        this.Description = source["Description"];
 	        this.Completed = source["Completed"];
 	        this.ListID = source["ListID"];
+	        this.ParentID = source["ParentID"];
 	        this.Today = source["Today"];
 	        this.Deadline = this.convertValues(source["Deadline"], time.Time);
 	        this.Archive = source["Archive"];
