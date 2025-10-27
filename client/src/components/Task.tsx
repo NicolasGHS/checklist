@@ -12,9 +12,10 @@ type TaskProps = {
   onToggle: (id: number) => void;
   openCard: (id: number) => void;
   currentListId?: number;
+  showCompletionDate?: boolean;
 };
 
-export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
+export const Task = ({ todo, onToggle, openCard, showCompletionDate = false }: TaskProps) => {
   const [daysLeft, setDaysLeft] = useState<number>();
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
@@ -36,6 +37,14 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
     const result = await CalculateRemainingTime(todo.ID);
     console.log("result in calculateTime: ", result);
     setDaysLeft(result);
+  };
+
+  const formatCompletionDate = (completedAt: any) => {
+    if (!completedAt) return "";
+    const date = new Date(completedAt);
+    const day = date.getDate();
+    const month = date.toLocaleDateString("en-US", { month: "short" }).toLowerCase();
+    return `${day} ${month}`;
   };
 
   useEffect(() => {
@@ -60,6 +69,11 @@ export const Task = ({ todo, onToggle, openCard }: TaskProps) => {
           {...(!todo.Completed ? attributes : {})}
         />
         <Checkbox checked={todo.Completed} onCheckedChange={handleChange} />
+        {showCompletionDate && todo.CompletedAt && (
+          <span className="text-sm text-muted-foreground min-w-[60px]">
+            {formatCompletionDate(todo.CompletedAt)}
+          </span>
+        )}
         <p
           className={` ${
             todo.Completed

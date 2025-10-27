@@ -80,6 +80,7 @@ export const LogBook = () => {
                     todo={todo}
                     onToggle={handleToggle}
                     openCard={handleOpenCard}
+                    showCompletionDate={true}
                   />
                 ))}
               </div>
