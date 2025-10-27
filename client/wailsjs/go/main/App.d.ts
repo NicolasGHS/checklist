@@ -23,6 +23,8 @@ export function GetArchivedTodosByList(arg1:number):Promise<Array<models.Todo>>;
 
 export function GetAreas():Promise<Array<models.Area>>;
 
+export function GetCompletedTodos():Promise<Array<models.Todo>>;
+
 export function GetListBySlug(arg1:string):Promise<models.List>;
 
 export function GetListCount(arg1:number):Promise<number>;

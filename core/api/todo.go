@@ -152,6 +152,13 @@ func ToggleTodo(id uint) error {
 
 	todo.Completed = !todo.Completed
 
+	if todo.Completed {
+		now := time.Now()
+		todo.CompletedAt = now
+	} else {
+		todo.CompletedAt = time.Time{}
+	}
+
 	db.DB.Save(&todo)
 	return nil
 }
@@ -191,4 +198,14 @@ func CalculateDaysLeft(id uint) (*int, error) {
 	days := int(end.Sub(start).Hours() / 24)
 
 	return &days, nil
+}
+
+func GetCompletedTodos() ([]models.Todo, error) {
+	var todos []models.Todo
+
+	result := db.DB.Where("completed = 1").Order("completed_at DESC").Find(&todos)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return todos, nil
 }

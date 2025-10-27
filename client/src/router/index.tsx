@@ -8,6 +8,7 @@ import Settings from "../pages/Settings";
 import { ListPage } from "../pages/List";
 import Someday from "@/pages/Someday";
 import Anytime from "@/pages/Anytime";
+import { LogBook } from "@/pages/Logbook";
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path: "list/:slug",
         element: <ListPage />,
+      },
+      {
+        path: "logbook",
+        element: <LogBook />,
       },
     ],
   },

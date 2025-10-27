@@ -11,6 +11,7 @@ type Todo struct {
 	Today       bool       `bson:"today"`
 	Deadline    *time.Time `bson:"deadline"` // pointer to make deadline optional
 	Archive     bool       `bson:"archive"`  // Someday
+	CompletedAt time.Time  `bson:"completed_at"`
 	CreatedAt   time.Time  `bson:"created"`
 	UpdatedAt   time.Time  `bson:"created"`
 }

@@ -42,6 +42,10 @@ export function GetAreas() {
   return window['go']['main']['App']['GetAreas']();
 }
 
+export function GetCompletedTodos() {
+  return window['go']['main']['App']['GetCompletedTodos']();
+}
+
 export function GetListBySlug(arg1) {
   return window['go']['main']['App']['GetListBySlug'](arg1);
 }
