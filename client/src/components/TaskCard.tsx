@@ -102,6 +102,11 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
     calculateTime();
   }, []);
 
+  // Sync taskItem with Task prop when it changes
+  useEffect(() => {
+    setTaskItem(Task);
+  }, [Task]);
+
   // Focus on input when opening card
   useEffect(() => {
     const nameField = form.getFieldState("name");
@@ -185,22 +190,36 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
                         setDate(selectedDate);
                         setShowCalendar(false);
 
-                        // Update deadline directly
+                        // Create the deadline date
+                        const newDeadline = new Date(
+                          selectedDate.getFullYear(),
+                          selectedDate.getMonth(),
+                          selectedDate.getDate(),
+                          23,
+                          59,
+                          59,
+                          999
+                        );
+
+                        setTaskItem(
+                          Object.assign(
+                            Object.create(Object.getPrototypeOf(taskItem)),
+                            taskItem,
+                            {
+                              Deadline: newDeadline as any,
+                            }
+                          )
+                        );
+
+                        calculateTime();
+
                         UpdateTodoFunction(
                           taskItem.ID,
                           form.getValues("name"),
                           form.getValues("description") || "",
                           taskItem.ListID,
                           false,
-                          new Date(
-                            selectedDate.getFullYear(),
-                            selectedDate.getMonth(),
-                            selectedDate.getDate(),
-                            23,
-                            59,
-                            59,
-                            999
-                          ).toISOString()
+                          newDeadline.toISOString()
                         );
                       }
                     }}
