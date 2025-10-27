@@ -15,7 +15,12 @@ type TaskProps = {
   showCompletionDate?: boolean;
 };
 
-export const Task = ({ todo, onToggle, openCard, showCompletionDate = false }: TaskProps) => {
+export const Task = ({
+  todo,
+  onToggle,
+  openCard,
+  showCompletionDate = false,
+}: TaskProps) => {
   const [daysLeft, setDaysLeft] = useState<number>();
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
@@ -43,7 +48,9 @@ export const Task = ({ todo, onToggle, openCard, showCompletionDate = false }: T
     if (!completedAt) return "";
     const date = new Date(completedAt);
     const day = date.getDate();
-    const month = date.toLocaleDateString("en-US", { month: "short" }).toLowerCase();
+    const month = date
+      .toLocaleDateString("en-US", { month: "short" })
+      .toLowerCase();
     return `${day} ${month}`;
   };
 
