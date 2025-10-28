@@ -64,7 +64,7 @@ func GetOverdueTodayTodos() ([]models.Todo, error) {
 func GetTodosByDeadline(start, end time.Time) ([]models.Todo, error) {
 	var todos []models.Todo
 
-	result := db.DB.Where("deadline >= ? AND deadline <= ? AND parent_id IS NULL", start, end).Order("completed asc").Find(&todos)
+	result := db.DB.Where("deadline >= ? AND deadline <= ? AND archive = 0 AND parent_id IS NULL", start, end).Order("completed asc").Find(&todos)
 
 	if result.Error != nil {
 		return nil, result.Error
