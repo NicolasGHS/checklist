@@ -10,7 +10,7 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
-import { Book, Trash2 } from "lucide-react";
+import { Book, Trash2, Plus } from "lucide-react";
 import { GetAllNotes, CreateNote, DeleteNote } from "../../wailsjs/go/main/App";
 import { models } from "../../wailsjs/go/models";
 import { NotesList } from "./NotesList";
@@ -19,6 +19,7 @@ export const Notebar: React.FC = () => {
   const [notes, setNotes] = useState<models.Note[]>([]);
   const [currentNote, setCurrentNote] = useState("");
   const [selectedNote, setSelectedNote] = useState<models.Note | null>(null);
+  const [isCreatingNote, setIsCreatingNote] = useState(false);
 
   useEffect(() => {
     loadNotes();
@@ -42,6 +43,7 @@ export const Notebar: React.FC = () => {
       try {
         await CreateNote(title, content);
         setCurrentNote("");
+        setIsCreatingNote(false);
         await loadNotes();
       } catch (error) {
         console.error("Failed to save note:", error);
@@ -67,6 +69,15 @@ export const Notebar: React.FC = () => {
 
   const handleBackToList = () => {
     setSelectedNote(null);
+  };
+
+  const handleNewNoteClick = () => {
+    setIsCreatingNote(true);
+  };
+
+  const handleCancelNote = () => {
+    setIsCreatingNote(false);
+    setCurrentNote("");
   };
 
   return (
@@ -130,16 +141,36 @@ export const Notebar: React.FC = () => {
           ) : (
             // List View
             <>
-              {/* New Note Box */}
-              <div onMouseLeave={handleSaveNote}>
-                <Textarea
-                  placeholder="Start typing your note here..."
-                  value={currentNote}
-                  onChange={(e) => setCurrentNote(e.target.value)}
-                  rows={6}
-                  className="resize-none"
-                />
-              </div>
+              {isCreatingNote ? (
+                /* New Note Box */
+                <div onMouseLeave={handleSaveNote} className="space-y-2">
+                  <Textarea
+                    placeholder="Start typing your note here..."
+                    value={currentNote}
+                    onChange={(e) => setCurrentNote(e.target.value)}
+                    rows={6}
+                    className="resize-none"
+                    autoFocus
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCancelNote}
+                    className="w-full"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={handleNewNoteClick}
+                  className="w-full"
+                  variant="outline"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Note
+                </Button>
+              )}
               <NotesList
                 notes={notes}
                 handleDeleteNote={handleDeleteNote}
