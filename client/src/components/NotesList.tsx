@@ -34,15 +34,15 @@ export const NotesList = ({ notes, handleDeleteNote }: NotesListProps) => {
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(note.createdAt as any).toLocaleString()}
-                </p>
               </CardHeader>
               {note.content && (
                 <CardContent className="pt-0">
                   <p className="text-sm whitespace-pre-wrap">{note.content}</p>
                 </CardContent>
               )}
+              <p className="text-xs text-muted-foreground mb-2">
+                {new Date(note.createdAt as any).toLocaleString()}
+              </p>
             </Card>
           ))
         )}

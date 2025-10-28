@@ -73,7 +73,7 @@ export const Notebar: React.FC = () => {
           {/* New Note Box */}
           <div onMouseLeave={handleSaveNote}>
             <Textarea
-              placeholder="Start typing your note here...&#10;First line will be the title"
+              placeholder="Start typing your note here..."
               value={currentNote}
               onChange={(e) => setCurrentNote(e.target.value)}
               rows={6}
