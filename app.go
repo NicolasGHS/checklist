@@ -44,6 +44,14 @@ func (a *App) AddTodo(name, description string, list_id uint, today bool, deadli
 	return api.AddTodo(name, description, list_id, today, deadlinePtr)
 }
 
+func (a *App) AddSubtask(name string, parent_id uint) error {
+	return api.AddSubtask(name, parent_id)
+}
+
+func (a *App) GetSubtasks(parent_id uint) ([]models.Todo, error) {
+	return api.GetSubtasks(parent_id)
+}
+
 func (a *App) GetTodos() ([]models.Todo, error) {
 	return api.GetTodos()
 }

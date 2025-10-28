@@ -9,6 +9,8 @@ export function AddList(arg1:string,arg2:string):Promise<void>;
 
 export function AddListWithArea(arg1:string,arg2:string,arg3:number):Promise<void>;
 
+export function AddSubtask(arg1:string,arg2:number):Promise<void>;
+
 export function AddTodo(arg1:string,arg2:string,arg3:number,arg4:boolean,arg5:string):Promise<void>;
 
 export function CalculateRemainingTime(arg1:number):Promise<any>;
@@ -38,6 +40,8 @@ export function GetListsWithArchivedTodos():Promise<Array<models.List>>;
 export function GetListsWithoutArea():Promise<Array<models.List>>;
 
 export function GetNextSevenDays():Promise<Array<time.Time>>;
+
+export function GetSubtasks(arg1:number):Promise<Array<models.Todo>>;
 
 export function GetTodayCount():Promise<number>;
 
