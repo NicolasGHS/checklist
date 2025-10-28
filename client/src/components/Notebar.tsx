@@ -18,6 +18,7 @@ import { NotesList } from "./NotesList";
 export const Notebar: React.FC = () => {
   const [notes, setNotes] = useState<models.Note[]>([]);
   const [currentNote, setCurrentNote] = useState("");
+  const [selectedNote, setSelectedNote] = useState<models.Note | null>(null);
 
   useEffect(() => {
     loadNotes();
@@ -52,9 +53,20 @@ export const Notebar: React.FC = () => {
     try {
       await DeleteNote(id);
       await loadNotes();
+      if (selectedNote?.id === id) {
+        setSelectedNote(null);
+      }
     } catch (error) {
       console.error("Failed to delete note:", error);
     }
+  };
+
+  const handleNoteClick = (note: models.Note) => {
+    setSelectedNote(note);
+  };
+
+  const handleBackToList = () => {
+    setSelectedNote(null);
   };
 
   return (
@@ -66,21 +78,75 @@ export const Notebar: React.FC = () => {
       </SheetTrigger>
       <SheetContent side="right" className="w-[400px] sm:w-[540px]">
         <SheetHeader>
-          <SheetTitle>Notes</SheetTitle>
+          <SheetTitle>
+            {selectedNote ? (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleBackToList}
+                  className="h-8 w-8"
+                >
+                  <span className="text-lg">←</span>
+                </Button>
+                <span>Note Details</span>
+              </div>
+            ) : (
+              "Notes"
+            )}
+          </SheetTitle>
         </SheetHeader>
 
         <div className="mt-6 space-y-4">
-          {/* New Note Box */}
-          <div onMouseLeave={handleSaveNote}>
-            <Textarea
-              placeholder="Start typing your note here..."
-              value={currentNote}
-              onChange={(e) => setCurrentNote(e.target.value)}
-              rows={6}
-              className="resize-none"
-            />
-          </div>
-          <NotesList notes={notes} handleDeleteNote={handleDeleteNote} />
+          {selectedNote ? (
+            // Note Detail View
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <CardTitle className="text-xl">
+                      {selectedNote.title}
+                    </CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleDeleteNote(selectedNote.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(selectedNote.createdAt as any).toLocaleString()}
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm whitespace-pre-wrap">
+                    {selectedNote.content}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            // List View
+            <>
+              {/* New Note Box */}
+              <div onMouseLeave={handleSaveNote}>
+                <Textarea
+                  placeholder="Start typing your note here..."
+                  value={currentNote}
+                  onChange={(e) => setCurrentNote(e.target.value)}
+                  rows={6}
+                  className="resize-none"
+                />
+              </div>
+              <NotesList
+                notes={notes}
+                handleDeleteNote={handleDeleteNote}
+                onNoteClick={handleNoteClick}
+              />
+            </>
+          )}
         </div>
       </SheetContent>
     </Sheet>
