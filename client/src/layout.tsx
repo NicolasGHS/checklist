@@ -17,6 +17,7 @@ import {
 } from "../wailsjs/go/main/App";
 import { Hash } from "lucide-react";
 import { models } from "wailsjs/go/models";
+import { Notebar } from "./components/Notebar";
 
 const Layout: React.FC = () => {
   const [draggedTask, setDraggedTask] = useState<{
@@ -168,6 +169,10 @@ const Layout: React.FC = () => {
                   <Outlet />
                 </div>
               </main>
+
+              <div className="flex items-start p-4">
+                <Notebar />
+              </div>
             </div>
           </SidebarProvider>
           <DragOverlay>
