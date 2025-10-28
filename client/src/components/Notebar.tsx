@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Sheet,
   SheetContent,
@@ -10,45 +10,57 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
-import { PanelRight, Trash2 } from "lucide-react";
-
-interface Note {
-  id: number;
-  title: string;
-  content: string;
-  createdAt: Date;
-}
+import { Book, Trash2 } from "lucide-react";
+import { GetAllNotes, CreateNote, DeleteNote } from "../../wailsjs/go/main/App";
+import { models } from "../../wailsjs/go/models";
 
 export const Notebar: React.FC = () => {
-  const [notes, setNotes] = useState<Note[]>([]);
+  const [notes, setNotes] = useState<models.Note[]>([]);
   const [currentNote, setCurrentNote] = useState("");
 
-  const handleSaveNote = () => {
+  useEffect(() => {
+    loadNotes();
+  }, []);
+
+  const loadNotes = async () => {
+    try {
+      const allNotes = await GetAllNotes();
+      setNotes(allNotes || []);
+    } catch (error) {
+      console.error("Failed to load notes:", error);
+    }
+  };
+
+  const handleSaveNote = async () => {
     if (currentNote.trim()) {
       const lines = currentNote.trim().split("\n");
       const title = lines[0] || "Untitled Note";
       const content = lines.slice(1).join("\n");
 
-      const newNote: Note = {
-        id: Date.now(),
-        title: title,
-        content: content,
-        createdAt: new Date(),
-      };
-      setNotes([newNote, ...notes]); // Add new note at the beginning
-      setCurrentNote("");
+      try {
+        await CreateNote(title, content);
+        setCurrentNote("");
+        await loadNotes();
+      } catch (error) {
+        console.error("Failed to save note:", error);
+      }
     }
   };
 
-  const handleDeleteNote = (id: number) => {
-    setNotes(notes.filter((note) => note.id !== id));
+  const handleDeleteNote = async (id: number) => {
+    try {
+      await DeleteNote(id);
+      await loadNotes();
+    } catch (error) {
+      console.error("Failed to delete note:", error);
+    }
   };
 
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon">
-          <PanelRight className="h-4 w-4" />
+          <Book className="h-4 w-4" />
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-[400px] sm:w-[540px]">
@@ -93,7 +105,7 @@ export const Notebar: React.FC = () => {
                         </Button>
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {note.createdAt.toLocaleString()}
+                        {new Date(note.createdAt as any).toLocaleString()}
                       </p>
                     </CardHeader>
                     {note.content && (

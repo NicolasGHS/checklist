@@ -26,12 +26,24 @@ export function CalculateRemainingTime(arg1) {
   return window['go']['main']['App']['CalculateRemainingTime'](arg1);
 }
 
+export function CreateNote(arg1, arg2) {
+  return window['go']['main']['App']['CreateNote'](arg1, arg2);
+}
+
 export function DeleteDeadline(arg1) {
   return window['go']['main']['App']['DeleteDeadline'](arg1);
 }
 
 export function DeleteList(arg1) {
   return window['go']['main']['App']['DeleteList'](arg1);
+}
+
+export function DeleteNote(arg1) {
+  return window['go']['main']['App']['DeleteNote'](arg1);
+}
+
+export function GetAllNotes() {
+  return window['go']['main']['App']['GetAllNotes']();
 }
 
 export function GetArchivedTodos() {
@@ -78,6 +90,10 @@ export function GetNextSevenDays() {
   return window['go']['main']['App']['GetNextSevenDays']();
 }
 
+export function GetNoteByID(arg1) {
+  return window['go']['main']['App']['GetNoteByID'](arg1);
+}
+
 export function GetSubtasks(arg1) {
   return window['go']['main']['App']['GetSubtasks'](arg1);
 }
@@ -112,6 +128,10 @@ export function ToggleTodo(arg1) {
 
 export function UpdateListArea(arg1, arg2) {
   return window['go']['main']['App']['UpdateListArea'](arg1, arg2);
+}
+
+export function UpdateNote(arg1, arg2, arg3) {
+  return window['go']['main']['App']['UpdateNote'](arg1, arg2, arg3);
 }
 
 export function UpdateTodo(arg1, arg2, arg3, arg4, arg5, arg6) {
