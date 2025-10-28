@@ -153,3 +153,7 @@ func DeleteDeadline(id uint) (models.Todo, error) {
 
 	return todo, nil
 }
+
+func SaveTodo(todo *models.Todo) error {
+	return db.DB.Save(todo).Error
+}

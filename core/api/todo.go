@@ -164,9 +164,7 @@ func ToggleTodo(id uint) error {
 		todo.CompletedAt = time.Time{}
 	}
 
-	// TODO: remove save function
-	db.DB.Save(&todo)
-	return nil
+	return repository.SaveTodo(&todo)
 }
 
 func UpdateTodoList(id uint, listID uint) error {
@@ -176,7 +174,7 @@ func UpdateTodoList(id uint, listID uint) error {
 	}
 
 	todo.ListID = listID
-	return db.DB.Save(&todo).Error
+	return repository.SaveTodo(&todo)
 }
 
 func CalculateDaysLeft(id uint) (*int, error) {
