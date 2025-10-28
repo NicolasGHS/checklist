@@ -5,7 +5,7 @@ import {time} from '../models';
 
 export function AddArea(arg1:string):Promise<void>;
 
-export function AddList(arg1:string,arg2:string):Promise<void>;
+export function AddList(arg1:string):Promise<void>;
 
 export function AddListWithArea(arg1:string,arg2:string,arg3:number):Promise<void>;
 

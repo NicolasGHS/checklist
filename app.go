@@ -129,8 +129,8 @@ func (a *App) GetListBySlug(slug string) (models.List, error) {
 	return api.GetListBySlug(slug)
 }
 
-func (a *App) AddList(name, description string) error {
-	return api.AddList(name, description)
+func (a *App) AddList(name string) error {
+	return api.AddList(name)
 }
 
 func (a *App) AddListWithArea(name, description string, areaId int32) error {
