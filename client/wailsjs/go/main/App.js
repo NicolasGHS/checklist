@@ -6,8 +6,8 @@ export function AddArea(arg1) {
   return window['go']['main']['App']['AddArea'](arg1);
 }
 
-export function AddList(arg1, arg2) {
-  return window['go']['main']['App']['AddList'](arg1, arg2);
+export function AddList(arg1) {
+  return window['go']['main']['App']['AddList'](arg1);
 }
 
 export function AddListWithArea(arg1, arg2, arg3) {

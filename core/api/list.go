@@ -1,56 +1,54 @@
 package api
 
 import (
-	"checklist/core/db"
 	"checklist/core/models"
+	"checklist/core/repository"
 	"fmt"
 
 	"github.com/gosimple/slug"
 )
 
 func GetLists() ([]models.List, error) {
-	var lists []models.List
+	response, err := repository.GetLists()
+	if err != nil {
+		return nil, err
+	}
 
-	result := db.DB.Not("id = 1").Find(&lists)
-	return lists, result.Error
+	return response, nil
 }
 
 func GetListBySlug(slug string) (models.List, error) {
-	var list models.List
+	response, err := repository.GetListsBySlug(slug)
+	if err != nil {
+		return response, err
+	}
 
-	result := db.DB.Where("slug = ?", slug).Find(&list)
-	return list, result.Error
+	return response, nil
 }
 
 func GetListsByArea(id uint) ([]models.List, error) {
-	var lists []models.List
-
-	result := db.DB.Where("area_id = ?", id).Find(&lists)
-	if result.Error != nil {
-		return nil, result.Error
+	response, err := repository.GetListsByArea(id)
+	if err != nil {
+		return nil, err
 	}
-	return lists, nil
+
+	return response, nil
 }
 
 func GetListsWithoutArea() ([]models.List, error) {
-	var lists []models.List
-
-	result := db.DB.Where("area_id = 0 AND name != ?", "Inbox").Find(&lists)
-
-	if result.Error != nil {
-		return nil, result.Error
+	response, err := repository.GetListsWithoutArea()
+	if err != nil {
+		return nil, err
 	}
 
-	return lists, nil
+	return response, nil
 }
 
 func MakeSlug(name string) string {
-	var lists []models.List
+	response, err := repository.GetListByName(name)
 
-	_ = db.DB.Where("name = ?", name).Find(&lists)
-
-	if len(lists) != 0 {
-		newSlug := slug.Make(fmt.Sprintf("%s%d", name, len(lists)))
+	if err == nil && response.ID != 0 {
+		newSlug := slug.Make(fmt.Sprintf("%s%d", name, response.ID))
 		return newSlug
 	}
 
@@ -59,37 +57,50 @@ func MakeSlug(name string) string {
 	return newSlug
 }
 
-func AddList(name, description string) error {
-
+func AddList(name string) error {
 	slug := MakeSlug(name)
 
-	return db.DB.Create(&models.List{Name: name, Slug: slug}).Error
+	response := repository.AddList(name, slug, 0)
+	if response != nil {
+		return response
+	}
+
+	return nil
 }
 
 func AddListWithArea(name, description string, areaId int32) error {
-
 	slug := MakeSlug(name)
 
-	return db.DB.Create(&models.List{Name: name, Slug: slug, AreaID: areaId}).Error
+	response := repository.AddList(name, slug, areaId)
+	if response != nil {
+		return response
+	}
+
+	return nil
 }
 
 func DeleteList(id uint) error {
-	return db.DB.Delete(&models.List{}, id).Error
+	response := repository.DeleteList(id)
+	if response != nil {
+		return response
+	}
+	return nil
 }
 
 func UpdateListArea(id uint, areaID uint) error {
-	return db.DB.Model(&models.List{}).Where("id = ?", id).Update("area_id", areaID).Error
+	response := repository.UpdateListArea(id, areaID)
+	if response != nil {
+		return response
+	}
+	return nil
 }
 
 func GetListsWithArchivedTodos() ([]models.List, error) {
-	var lists []models.List
+	response, err := repository.GetListsWithArchivedTodos()
 
-	result := db.DB.Where("id IN (?)",
-		db.DB.Table("todos").Select("DISTINCT list_id").Where("archive = 1")).Find(&lists)
-
-	if result.Error != nil {
-		return nil, result.Error
+	if err != nil {
+		return nil, err
 	}
 
-	return lists, nil
+	return response, nil
 }

@@ -1,17 +1,21 @@
 package api
 
 import (
-	"checklist/core/db"
 	"checklist/core/models"
+	"checklist/core/repository"
 )
 
 func GetAreas() ([]models.Area, error) {
-	var areas []models.Area
+	response, err := repository.GetAreas()
+	if err != nil {
+		return nil, err
+	}
 
-	result := db.DB.Find(&areas)
-	return areas, result.Error
+	return response, nil
 }
 
 func AddArea(name string) error {
-	return db.DB.Create(&models.Area{Name: name}).Error
+	result := repository.AddArea(name)
+
+	return result
 }
