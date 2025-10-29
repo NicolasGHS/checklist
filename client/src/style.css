@@ -146,7 +146,7 @@ body {
 /* Custom markdown styles */
 @layer components {
   .prose {
-    @apply text-foreground;
+    @apply text-foreground text-left;
   }
   
   .prose h1,
@@ -155,7 +155,11 @@ body {
   .prose h4,
   .prose h5,
   .prose h6 {
-    @apply text-foreground font-semibold;
+    @apply text-foreground font-semibold text-left;
+  }
+  
+  .prose p {
+    @apply text-left;
   }
   
   .prose a {
@@ -167,11 +171,11 @@ body {
   }
   
   .prose pre {
-    @apply bg-muted border border-border;
+    @apply bg-muted border border-border text-left;
   }
   
   .prose blockquote {
-    @apply border-l-primary text-muted-foreground;
+    @apply border-l-primary text-muted-foreground text-left;
   }
   
   .prose strong {
@@ -180,7 +184,11 @@ body {
   
   .prose ul,
   .prose ol {
-    @apply text-foreground;
+    @apply text-foreground text-left;
+  }
+  
+  .prose li {
+    @apply text-left;
   }
   
   .prose table {
