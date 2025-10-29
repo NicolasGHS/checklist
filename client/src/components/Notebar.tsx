@@ -10,8 +10,8 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
-import { Book, Trash2, Plus } from "lucide-react";
-import { GetAllNotes, CreateNote, DeleteNote } from "../../wailsjs/go/main/App";
+import { Book, Trash2, Plus, Pencil } from "lucide-react";
+import { GetAllNotes, CreateNote, DeleteNote, UpdateNote } from "../../wailsjs/go/main/App";
 import { models } from "../../wailsjs/go/models";
 import { NotesList } from "./NotesList";
 
@@ -20,6 +20,8 @@ export const Notebar: React.FC = () => {
   const [currentNote, setCurrentNote] = useState("");
   const [selectedNote, setSelectedNote] = useState<models.Note | null>(null);
   const [isCreatingNote, setIsCreatingNote] = useState(false);
+  const [isEditingNote, setIsEditingNote] = useState(false);
+  const [editedNoteContent, setEditedNoteContent] = useState("");
 
   useEffect(() => {
     loadNotes();
@@ -80,6 +82,41 @@ export const Notebar: React.FC = () => {
     setCurrentNote("");
   };
 
+  const handleEditNote = () => {
+    if (selectedNote) {
+      setEditedNoteContent(`${selectedNote.title}\n${selectedNote.content}`);
+      setIsEditingNote(true);
+    }
+  };
+
+  const handleSaveEditedNote = async () => {
+    if (selectedNote && editedNoteContent.trim()) {
+      const lines = editedNoteContent.trim().split("\n");
+      const title = lines[0] || "Untitled Note";
+      const content = lines.slice(1).join("\n");
+
+      try {
+        await UpdateNote(selectedNote.id, title, content);
+        setIsEditingNote(false);
+        setEditedNoteContent("");
+        await loadNotes();
+        // Update the selected note with new data
+        const updatedNotes = await GetAllNotes();
+        const updatedNote = updatedNotes?.find(n => n.id === selectedNote.id);
+        if (updatedNote) {
+          setSelectedNote(updatedNote);
+        }
+      } catch (error) {
+        console.error("Failed to update note:", error);
+      }
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingNote(false);
+    setEditedNoteContent("");
+  };
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -112,31 +149,71 @@ export const Notebar: React.FC = () => {
           {selectedNote ? (
             // Note Detail View
             <div className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-xl">
-                      {selectedNote.title}
-                    </CardTitle>
+              {isEditingNote ? (
+                // Edit Mode
+                <div className="space-y-2">
+                  <Textarea
+                    placeholder="Edit your note..."
+                    value={editedNoteContent}
+                    onChange={(e) => setEditedNoteContent(e.target.value)}
+                    rows={12}
+                    className="resize-none"
+                    autoFocus
+                  />
+                  <div className="flex gap-2">
                     <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => handleDeleteNote(selectedNote.id)}
+                      onClick={handleSaveEditedNote}
+                      className="flex-1"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      Save Changes
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleCancelEdit}
+                      className="flex-1"
+                    >
+                      Cancel
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(selectedNote.createdAt as any).toLocaleString()}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm whitespace-pre-wrap">
-                    {selectedNote.content}
-                  </p>
-                </CardContent>
-              </Card>
+                </div>
+              ) : (
+                // View Mode
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-xl">
+                        {selectedNote.title}
+                      </CardTitle>
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={handleEditNote}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => handleDeleteNote(selectedNote.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(selectedNote.createdAt as any).toLocaleString()}
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm whitespace-pre-wrap">
+                      {selectedNote.content}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           ) : (
             // List View
