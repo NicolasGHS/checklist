@@ -22,24 +22,23 @@ type TodoCardProps = {
 };
 
 export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
-  const [task, setTask] = useState(Task);
   const [daysLeft, setDaysLeft] = useState<number>();
 
   const calculateTime = async () => {
-    const result = await CalculateRemainingTime(task.ID);
+    const result = await CalculateRemainingTime(Task.ID);
     setDaysLeft(result);
   };
 
   useEffect(() => {
     calculateTime();
-  }, [task.Deadline]);
+  }, [Task.Deadline]);
 
   const handleSubmit = (values: TodoFormValues) => {
     UpdateTodoFunction(
-      task.ID,
+      Task.ID,
       values.name,
       values.description || "",
-      task.ListID,
+      Task.ListID,
       false,
       ""
     );
@@ -48,23 +47,22 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   const handleDeadlineSelect = (date: Date) => {
     const newDeadline = new Date(date.setHours(23, 59, 59, 999));
     UpdateTodoFunction(
-      task.ID,
-      task.Name,
-      task.Description,
-      task.ListID,
+      Task.ID,
+      Task.Name,
+      Task.Description,
+      Task.ListID,
       false,
       newDeadline.toISOString()
     );
   };
 
   const handleDeadlineDelete = async () => {
-    const result = await DeleteDeadline(task.ID);
-    setTask(result);
+    await DeleteDeadline(Task.ID);
     UpdateTodoFunction(
-      task.ID,
-      task.Name,
-      task.Description,
-      task.ListID,
+      Task.ID,
+      Task.Name,
+      Task.Description,
+      Task.ListID,
       false,
       ""
     );
@@ -74,16 +72,16 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
     <Card className="pt-4 mb-3">
       <CardContent>
         <TodoForm
-          defaultValues={{ name: task.Name, description: task.Description }}
+          defaultValues={{ name: Task.Name, description: Task.Description }}
           onSubmit={handleSubmit}
         />
 
-        <SubtasksList parentId={task.ID} />
+        <SubtasksList parentId={Task.ID} />
 
         <DeadlinePicker
-          deadline={task.Deadline ? new Date(task.Deadline as any) : undefined}
+          deadline={Task.Deadline ? new Date(Task.Deadline as any) : undefined}
           daysLeft={daysLeft}
-          completed={task.Completed}
+          completed={Task.Completed}
           onSelect={handleDeadlineSelect}
           onDelete={handleDeadlineDelete}
         />
