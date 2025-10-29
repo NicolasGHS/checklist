@@ -1,4 +1,4 @@
-import ListItem from "@/components/ListItem";
+import ListItem from "@/components/Task/ListItem";
 import { useEffect, useState } from "react";
 import { GetLists } from "../../wailsjs/go/main/App";
 import { models } from "../../wailsjs/go/models";

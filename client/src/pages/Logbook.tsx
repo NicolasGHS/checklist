@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { GetCompletedTodos, ToggleTodo } from "../../wailsjs/go/main/App";
 import { models } from "wailsjs/go/models";
-import { Task } from "../components/Task";
+import { Task } from "../components/Task/Task";
 
 interface GroupedTodos {
   [key: string]: models.Todo[];

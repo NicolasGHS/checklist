@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Checkbox } from "./ui/checkbox";
-import { CalculateRemainingTime } from "../../wailsjs/go/main/App";
+import { Checkbox } from "../ui/checkbox";
+import { CalculateRemainingTime } from "../../../wailsjs/go/main/App";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 import { models } from "wailsjs/go/models";
-import { DaysLeft } from "./DaysLeft";
+import { DaysLeft } from "../DaysLeft";
 
 type TaskProps = {
   todo: models.Todo;

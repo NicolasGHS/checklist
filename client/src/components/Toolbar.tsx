@@ -1,4 +1,4 @@
-import { NewTaskButton } from "./NewTaskButton";
+import { NewTaskButton } from "./Task/NewTaskButton";
 import { Separator } from "./ui/separator";
 
 type ToolbarProps = {

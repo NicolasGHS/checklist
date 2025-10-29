@@ -1,4 +1,4 @@
-import { Checkbox } from "./ui/checkbox";
+import { Checkbox } from "../ui/checkbox";
 import { models } from "wailsjs/go/models";
 
 type SubtaskProps = {
