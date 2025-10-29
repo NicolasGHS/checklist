@@ -37,7 +37,7 @@ func InitDB() error {
 		return err
 	}
 
-	database.AutoMigrate(&models.Todo{}, &models.Area{}, &models.List{})
+	database.AutoMigrate(&models.Todo{}, &models.Area{}, &models.List{}, &models.Note{})
 
 	var inbox models.List
 	result := database.First(&inbox, 1)

@@ -40,7 +40,7 @@ export const NewListButton = ({
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    AddList(values.name, "").then(() => {
+    AddList(values.name).then(() => {
       form.reset();
       closeListCreation();
       reloadData();

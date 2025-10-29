@@ -171,3 +171,25 @@ func (a *App) AddArea(name string) error {
 func (a *App) GetNextSevenDays() []time.Time {
 	return api.GetNextSevenDays()
 }
+
+// Note
+
+func (a *App) CreateNote(title, content string) (*models.Note, error) {
+	return api.CreateNote(title, content)
+}
+
+func (a *App) GetAllNotes() ([]models.Note, error) {
+	return api.GetAllNotes()
+}
+
+func (a *App) GetNoteByID(id uint) (*models.Note, error) {
+	return api.GetNoteByID(id)
+}
+
+func (a *App) UpdateNote(id uint, title, content string) (*models.Note, error) {
+	return api.UpdateNote(id, title, content)
+}
+
+func (a *App) DeleteNote(id uint) error {
+	return api.DeleteNote(id)
+}

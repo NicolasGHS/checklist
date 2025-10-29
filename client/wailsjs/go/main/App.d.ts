@@ -15,9 +15,15 @@ export function AddTodo(arg1:string,arg2:string,arg3:number,arg4:boolean,arg5:st
 
 export function CalculateRemainingTime(arg1:number):Promise<any>;
 
+export function CreateNote(arg1:string,arg2:string):Promise<models.Note>;
+
 export function DeleteDeadline(arg1:number):Promise<models.Todo>;
 
 export function DeleteList(arg1:number):Promise<void>;
+
+export function DeleteNote(arg1:number):Promise<void>;
+
+export function GetAllNotes():Promise<Array<models.Note>>;
 
 export function GetArchivedTodos():Promise<Array<models.Todo>>;
 
@@ -41,6 +47,8 @@ export function GetListsWithoutArea():Promise<Array<models.List>>;
 
 export function GetNextSevenDays():Promise<Array<time.Time>>;
 
+export function GetNoteByID(arg1:number):Promise<models.Note>;
+
 export function GetSubtasks(arg1:number):Promise<Array<models.Todo>>;
 
 export function GetTodayCount():Promise<number>;
@@ -58,6 +66,8 @@ export function GetTodosByList(arg1:number):Promise<Array<models.Todo>>;
 export function ToggleTodo(arg1:number):Promise<void>;
 
 export function UpdateListArea(arg1:number,arg2:number):Promise<void>;
+
+export function UpdateNote(arg1:number,arg2:string,arg3:string):Promise<models.Note>;
 
 export function UpdateTodo(arg1:number,arg2:string,arg3:string,arg4:number,arg5:boolean,arg6:string):Promise<void>;
 
