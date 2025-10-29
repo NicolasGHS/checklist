@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { NotesList } from "./NotesList";
 import { models } from "wailsjs/go/models";
 import { NoteEditForm } from "./NoteEditForm";

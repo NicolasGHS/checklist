@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
-import { Button } from "./ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
+import { Button } from "../ui/button";
 import {
   GetAllNotes,
   CreateNote,
   DeleteNote,
   UpdateNote,
-} from "../../wailsjs/go/main/App";
-import { models } from "../../wailsjs/go/models";
+} from "../../../wailsjs/go/main/App";
+import { models } from "../../../wailsjs/go/models";
 import { NotebarButton } from "./NotebarButton";
 import { NoteListView } from "./NoteListView";
 import { NoteDetailView } from "./NoteDetailView";

@@ -1,6 +1,6 @@
 import { Book } from "lucide-react";
-import { Button } from "./ui/button";
-import { SheetTrigger } from "./ui/sheet";
+import { Button } from "../ui/button";
+import { SheetTrigger } from "../ui/sheet";
 
 export const NotebarButton = () => {
   return (

@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
-import { Button } from "./ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { ScrollArea } from "./ui/scroll-area";
+import { Button } from "../ui/button";
+import { Card, CardHeader, CardTitle } from "../ui/card";
+import { ScrollArea } from "../ui/scroll-area";
 import { models } from "wailsjs/go/models";
 
 type NotesListProps = {

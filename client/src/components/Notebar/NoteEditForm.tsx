@@ -1,5 +1,5 @@
-import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
+import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 
 type NoteEditFormProps = {
   value: string;
