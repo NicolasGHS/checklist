@@ -1,8 +1,8 @@
-import { models } from "../../wailsjs/go/models";
+import { models } from "../../../wailsjs/go/models";
 import { Hash } from "lucide-react";
 import { Task } from "./Task";
 import { TodoCard } from "./TaskCard";
-import { Separator } from "./ui/separator";
+import { Separator } from "../ui/separator";
 import { useLocation } from "react-router-dom";
 import { useTodosByList } from "@/hooks/useTodosByList";
 import { useOpenTodo } from "@/hooks/useOpenTodo";

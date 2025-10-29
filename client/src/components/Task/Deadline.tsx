@@ -1,6 +1,6 @@
 import { formatDateYMD } from "@/utils/dates";
 import { X } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Flag } from "lucide-react";
 
 type DeadlineProps = {

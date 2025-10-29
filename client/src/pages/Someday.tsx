@@ -6,7 +6,7 @@ import {
   UpdateTodo,
 } from "../../wailsjs/go/main/App";
 import { models } from "../../wailsjs/go/models";
-import ListItem from "@/components/ListItem";
+import ListItem from "@/components/Task/ListItem";
 
 export default function Someday() {
   const [todos, setTodos] = useState<models.Todo[]>([]);

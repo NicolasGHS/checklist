@@ -1,5 +1,5 @@
 import { Separator } from "./ui/separator";
-import { Task } from "./Task";
+import { Task } from "./Task/Task";
 import { models } from "wailsjs/go/models";
 import { useDroppable } from "@dnd-kit/core";
 

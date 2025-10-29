@@ -3,9 +3,9 @@ import { useLocation } from "react-router-dom";
 import { useCount } from "@/hooks/useCount";
 import { useTodos } from "@/hooks/useTodos";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { TaskList } from "./TaskList";
-import { NewTodoCard } from "./NewTodoCard";
-import { NewTaskButton } from "./NewTaskButton";
+import { TaskList } from "./Task/TaskList";
+import { NewTodoCard } from "./Task/NewTodoCard";
+import { NewTaskButton } from "./Task/NewTaskButton";
 import { Button } from "./ui/button";
 
 type PageProps = {
