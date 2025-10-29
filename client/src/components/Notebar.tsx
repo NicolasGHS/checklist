@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "./ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { ScrollArea } from "./ui/scroll-area";
-import { Book, Trash2, Plus, Pencil } from "lucide-react";
+import { Trash2, Plus, Pencil } from "lucide-react";
 import {
   GetAllNotes,
   CreateNote,
@@ -21,6 +14,8 @@ import {
 } from "../../wailsjs/go/main/App";
 import { models } from "../../wailsjs/go/models";
 import { NotesList } from "./NotesList";
+import { NotebarButton } from "./NotebarButton";
+import { NoteListView } from "./NoteListView";
 
 export const Notebar: React.FC = () => {
   const [notes, setNotes] = useState<models.Note[]>([]);
@@ -107,7 +102,6 @@ export const Notebar: React.FC = () => {
         setIsEditingNote(false);
         setEditedNoteContent("");
         await loadNotes();
-        // Update the selected note with new data
         const updatedNotes = await GetAllNotes();
         const updatedNote = updatedNotes?.find((n) => n.id === selectedNote.id);
         if (updatedNote) {
@@ -126,11 +120,7 @@ export const Notebar: React.FC = () => {
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Book className="h-4 w-4" />
-        </Button>
-      </SheetTrigger>
+      <NotebarButton />
       <SheetContent side="right" className="w-[400px] sm:w-[540px]">
         <SheetHeader>
           <SheetTitle>
@@ -222,44 +212,17 @@ export const Notebar: React.FC = () => {
               )}
             </div>
           ) : (
-            // List View
-            <>
-              {isCreatingNote ? (
-                /* New Note Box */
-                <div onMouseLeave={handleSaveNote} className="space-y-2">
-                  <Textarea
-                    placeholder="Start typing your note here... (Markdown supported)"
-                    value={currentNote}
-                    onChange={(e) => setCurrentNote(e.target.value)}
-                    rows={6}
-                    className="resize-none"
-                    autoFocus
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleCancelNote}
-                    className="w-full"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  onClick={handleNewNoteClick}
-                  className="w-full"
-                  variant="outline"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Note
-                </Button>
-              )}
-              <NotesList
-                notes={notes}
-                handleDeleteNote={handleDeleteNote}
-                onNoteClick={handleNoteClick}
-              />
-            </>
+            <NoteListView
+              notes={notes}
+              isCreatingNote={isCreatingNote}
+              handleSaveNote={handleSaveNote}
+              currentNote={currentNote}
+              setCurrentNote={setCurrentNote}
+              handleCancelNote={handleCancelNote}
+              handleNewNoteClick={handleNewNoteClick}
+              handleDeleteNote={handleDeleteNote}
+              handleNoteClick={handleNoteClick}
+            />
           )}
         </div>
       </SheetContent>
