@@ -1,19 +1,12 @@
-import { useEffect, useState } from "react";
-import { NewTodoCard } from "./NewTodoCard";
-import { Task } from "./Task";
-import {
-  AddTodo,
-  GetTodayTodos,
-  GetTodosByList,
-  UpdateTodo,
-  ToggleTodo,
-} from "../../wailsjs/go/main/App";
-import { NewTaskButton } from "./NewTaskButton";
-import { models } from "wailsjs/go/models";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { TodoCard } from "./TaskCard";
-import { Button } from "./ui/button";
 import { useCount } from "@/hooks/useCount";
+import { useTodos } from "@/hooks/useTodos";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { TaskList } from "./TaskList";
+import { NewTodoCard } from "./NewTodoCard";
+import { NewTaskButton } from "./NewTaskButton";
+import { Button } from "./ui/button";
 
 type PageProps = {
   title: string;
@@ -21,195 +14,82 @@ type PageProps = {
 };
 
 export const Page = ({ title, id }: PageProps) => {
-  const [todos, setTodos] = useState<models.Todo[]>([]);
-  const [showNewTaskCard, setShowNewTaskCard] = useState<boolean>(false);
-  const [openTodoId, setOpenTodoId] = useState<number>();
-  const [showCompleted, setShowCompleted] = useState<boolean>(false);
   const location = useLocation();
+  const [showNewTaskCard, setShowNewTaskCard] = useState(false);
+  const [openTodoId, setOpenTodoId] = useState<number>(0);
   const { inboxCount, setInboxCount, setTodayCount } = useCount();
 
-  const showCard = () => {
-    setShowNewTaskCard(!showNewTaskCard);
+  const {
+    todos,
+    showCompleted,
+    setShowCompleted,
+    addTodo,
+    updateTodo,
+    toggleTodo,
+  } = useTodos(id, location.pathname);
+
+  const toggleTodoCard = (id: number) => setOpenTodoId(id);
+
+  const handleNewTask = () => setShowNewTaskCard(true);
+  const handleCloseTask = () => {
+    setShowNewTaskCard(false);
+    setOpenTodoId(0);
   };
 
-  const loadTodos = async () => {
-    const result = await GetTodosByList(id);
-    setTodos(result);
-  };
+  useKeyboardShortcuts({
+    onNewTask: handleNewTask,
+    onCloseTask: handleCloseTask,
+  });
 
-  const loadTodayTodos = async () => {
-    const result = await GetTodayTodos();
-    setTodos(result);
-  };
-
-  const createTodo = async (
+  const handleAddTodo = async (
     name: string,
     description: string,
     today: boolean,
-    deadline: string,
+    deadline: string
   ) => {
-    await AddTodo(name, description, id, today, deadline);
-    loadTodos();
-    if (today) {
-      setTodayCount((prev) => prev + 1);
-    } else if (id == 1) {
-      setInboxCount((prev) => prev + 1);
-    }
+    await addTodo(name, description, today, deadline);
+    if (today) setTodayCount((p) => p + 1);
+    else if (id === 1) setInboxCount((p) => p + 1);
   };
-
-  const updateTodo = async (
-    id: number,
-    name: string,
-    description: string,
-    list_id: number,
-    today: boolean,
-    deadline: string,
-  ) => {
-    await UpdateTodo(id, name, description, list_id, today, deadline);
-
-    if (location.pathname === "/today") {
-      loadTodayTodos();
-    } else {
-      loadTodos();
-    }
-    // update count
-    window.dispatchEvent(new CustomEvent("taskMoved"));
-  };
-
-  const handleToggle = async (id: number) => {
-    setTodos((prev) =>
-      prev.map((t) =>
-        t.ID === id
-          ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
-              Completed: !t.Completed,
-            })
-          : t,
-      ),
-    );
-
-    try {
-      await ToggleTodo(id);
-    } catch (error) {
-      console.error(error);
-      setTodos((prev) =>
-        prev.map((t) =>
-          t.ID === id
-            ? Object.assign(Object.create(Object.getPrototypeOf(t)), t, {
-                Completed: !t.Completed,
-              })
-            : t,
-        ),
-      );
-    }
-    loadTodos();
-  };
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Escape" && showNewTaskCard) {
-      e.preventDefault();
-      setShowNewTaskCard(false);
-    }
-
-    if (e.key === "Escape" && openTodoId !== 0) {
-      e.preventDefault();
-      setOpenTodoId(0);
-    }
-
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "n") {
-      e.preventDefault();
-      setShowNewTaskCard(true);
-    }
-  };
-
-  const toggleTodoCard = (id: number) => {
-    setOpenTodoId(id);
-  };
-
-  const toggleShowCompletedTasks = () => {
-    setShowCompleted(!showCompleted);
-  };
-
-  useEffect(() => {
-    if (location.pathname === "/today") {
-      loadTodayTodos();
-    } else {
-      loadTodos();
-    }
-  }, [id]);
-
-  // Listen for task move events
-  useEffect(() => {
-    const handleTaskMoved = () => {
-      loadTodos();
-    };
-
-    window.addEventListener("taskMoved", handleTaskMoved);
-    return () => {
-      window.removeEventListener("taskMoved", handleTaskMoved);
-    };
-  }, []);
-
-  useEffect(() => {
-    const listener = (e: KeyboardEvent) => handleKeyDown(e);
-    window.addEventListener("keydown", listener);
-    return () => {
-      window.removeEventListener("keydown", listener);
-    };
-  }, [showNewTaskCard]);
 
   return (
     <div className="mt-10 flex flex-col h-full relative">
       <div className="flex-1 p-6">
         <h1 className="text-3xl text-foreground font-bold mb-6">{title}</h1>
-        <div>
-          {showNewTaskCard && <NewTodoCard AddTodoFunction={createTodo} />}
-          <ul>
-            {todos
-              ?.filter((todo) => !todo.Completed)
-              .map((todo: models.Todo, index) => (
-                <li key={index} className="text-white mb-2">
-                  {todo.ID !== openTodoId ? (
-                    <Task
-                      todo={todo}
-                      onToggle={handleToggle}
-                      currentListId={id}
-                      openCard={toggleTodoCard}
-                    />
-                  ) : (
-                    <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
-                  )}
-                </li>
-              ))}
-          </ul>
-          <Button
-            variant="ghost"
-            className="text-muted-foreground hover:cursor-pointer"
-            onClick={toggleShowCompletedTasks}
-          >
-            {`${showCompleted ? "Hide" : "Show"} completed tasks`}
-          </Button>
-          <ul>
-            {showCompleted &&
-              todos
-                ?.filter((todo) => todo.Completed)
-                .map((todo: models.Todo, index) => (
-                  <li key={index} className="text-white mb-2">
-                    {todo.ID !== openTodoId ? (
-                      <Task
-                        todo={todo}
-                        onToggle={handleToggle}
-                        currentListId={id}
-                        openCard={toggleTodoCard}
-                      />
-                    ) : (
-                      <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
-                    )}
-                  </li>
-                ))}
-          </ul>
-        </div>
+
+        {showNewTaskCard && <NewTodoCard AddTodoFunction={handleAddTodo} />}
+
+        <TaskList
+          todos={todos}
+          openTodoId={openTodoId}
+          toggleTodoCard={toggleTodoCard}
+          onToggle={toggleTodo}
+          updateTodo={updateTodo}
+          currentListId={id}
+          completed={false}
+        />
+
+        <Button
+          variant="ghost"
+          className="text-muted-foreground hover:cursor-pointer"
+          onClick={() => setShowCompleted(!showCompleted)}
+        >
+          {`${showCompleted ? "Hide" : "Show"} completed tasks`}
+        </Button>
+
+        {showCompleted && (
+          <TaskList
+            todos={todos}
+            openTodoId={openTodoId}
+            toggleTodoCard={toggleTodoCard}
+            onToggle={toggleTodo}
+            updateTodo={updateTodo}
+            currentListId={id}
+            completed={true}
+          />
+        )}
       </div>
-      <NewTaskButton onClick={showCard} />
+      <NewTaskButton onClick={handleNewTask} />
     </div>
   );
 };
