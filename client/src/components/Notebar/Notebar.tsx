@@ -12,7 +12,7 @@ import { NotebarButton } from "./NotebarButton";
 import { NoteListView } from "./NoteListView";
 import { NoteDetailView } from "./NoteDetailView";
 
-export const Notebar: React.FC = () => {
+export const Notebar = () => {
   const [notes, setNotes] = useState<models.Note[]>([]);
   const [currentNote, setCurrentNote] = useState("");
   const [selectedNote, setSelectedNote] = useState<models.Note | null>(null);
