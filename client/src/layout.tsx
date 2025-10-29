@@ -17,7 +17,7 @@ import {
 } from "../wailsjs/go/main/App";
 import { Hash } from "lucide-react";
 import { models } from "wailsjs/go/models";
-import { Notebar } from "./components/Notebar";
+import { Notebar } from "./components/Notebar/Notebar";
 
 const Layout: React.FC = () => {
   const [draggedTask, setDraggedTask] = useState<{
