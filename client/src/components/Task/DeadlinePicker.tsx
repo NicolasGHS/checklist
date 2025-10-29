@@ -23,7 +23,7 @@ export const DeadlinePicker = ({
   const [showCalendar, setShowCalendar] = useState(false);
 
   return (
-    <div className="flex items-center justify-end">
+    <div className="flex items-center justify-between">
       {deadline && (
         <div className="group flex items-center gap-2">
           <Deadline date={deadline} deleteDeadline={onDelete} />

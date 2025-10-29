@@ -60,6 +60,14 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   const handleDeadlineDelete = async () => {
     const result = await DeleteDeadline(task.ID);
     setTask(result);
+    UpdateTodoFunction(
+      task.ID,
+      task.Name,
+      task.Description,
+      task.ListID,
+      false,
+      ""
+    );
   };
 
   return (
