@@ -1,10 +1,10 @@
 import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Textarea } from "./ui/textarea";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { models } from "wailsjs/go/models";
+import { NoteEditForm } from "./NoteEditForm";
 
 type NoteDetailsViewProps = {
   isEditingNote: boolean;
@@ -30,29 +30,13 @@ export const NoteDetailView = ({
   return (
     <div className="space-y-4">
       {isEditingNote ? (
-        // Edit Mode
-        <div className="space-y-2">
-          <Textarea
-            placeholder="Edit your note... (Markdown supported)"
-            value={editedNoteContent}
-            onChange={(e) => setEditedNoteContent(e.target.value)}
-            rows={12}
-            className="resize-none"
-            autoFocus
-          />
-          <div className="flex gap-2">
-            <Button onClick={handleSaveEditedNote} className="flex-1">
-              Save Changes
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleCancelEdit}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-          </div>
-        </div>
+        <NoteEditForm
+          value={editedNoteContent}
+          setValue={setEditedNoteContent}
+          onSave={handleSaveEditedNote}
+          onCancel={handleCancelEdit}
+          saveLabel="Save Changes"
+        />
       ) : (
         // View Mode
         <Card>

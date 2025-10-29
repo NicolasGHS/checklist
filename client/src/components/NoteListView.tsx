@@ -1,8 +1,8 @@
 import { Plus } from "lucide-react";
 import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
 import { NotesList } from "./NotesList";
 import { models } from "wailsjs/go/models";
+import { NoteEditForm } from "./NoteEditForm";
 
 type NoteListViewProps = {
   notes: models.Note[];
@@ -30,24 +30,13 @@ export const NoteListView = ({
   return (
     <>
       {isCreatingNote ? (
-        <div onMouseLeave={handleSaveNote} className="space-y-2">
-          <Textarea
-            placeholder="Start typing your note here... (Markdown supported)"
-            value={currentNote}
-            onChange={(e) => setCurrentNote(e.target.value)}
-            rows={6}
-            className="resize-none"
-            autoFocus
-          />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCancelNote}
-            className="w-full"
-          >
-            Cancel
-          </Button>
-        </div>
+        <NoteEditForm
+          value={currentNote}
+          setValue={setCurrentNote}
+          onSave={handleSaveNote}
+          onCancel={handleCancelNote}
+          saveLabel="Add Note"
+        />
       ) : (
         <Button
           onClick={handleNewNoteClick}
