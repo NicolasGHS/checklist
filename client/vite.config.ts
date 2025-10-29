@@ -8,5 +8,17 @@ export default defineConfig({
     alias: {
       '@': '/src',
     }
+  },
+  optimizeDeps: {
+    include: ['react-markdown', 'remark-gfm']
+  },
+  build: {
+    rollupOptions: {
+      external: []
+    },
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true
+    }
   }
 })

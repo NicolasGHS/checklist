@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import {
   Sheet,
   SheetContent,
@@ -11,7 +13,12 @@ import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
 import { Book, Trash2, Plus, Pencil } from "lucide-react";
-import { GetAllNotes, CreateNote, DeleteNote, UpdateNote } from "../../wailsjs/go/main/App";
+import {
+  GetAllNotes,
+  CreateNote,
+  DeleteNote,
+  UpdateNote,
+} from "../../wailsjs/go/main/App";
 import { models } from "../../wailsjs/go/models";
 import { NotesList } from "./NotesList";
 
@@ -102,7 +109,7 @@ export const Notebar: React.FC = () => {
         await loadNotes();
         // Update the selected note with new data
         const updatedNotes = await GetAllNotes();
-        const updatedNote = updatedNotes?.find(n => n.id === selectedNote.id);
+        const updatedNote = updatedNotes?.find((n) => n.id === selectedNote.id);
         if (updatedNote) {
           setSelectedNote(updatedNote);
         }
@@ -153,7 +160,7 @@ export const Notebar: React.FC = () => {
                 // Edit Mode
                 <div className="space-y-2">
                   <Textarea
-                    placeholder="Edit your note..."
+                    placeholder="Edit your note... (Markdown supported)"
                     value={editedNoteContent}
                     onChange={(e) => setEditedNoteContent(e.target.value)}
                     rows={12}
@@ -161,10 +168,7 @@ export const Notebar: React.FC = () => {
                     autoFocus
                   />
                   <div className="flex gap-2">
-                    <Button
-                      onClick={handleSaveEditedNote}
-                      className="flex-1"
-                    >
+                    <Button onClick={handleSaveEditedNote} className="flex-1">
                       Save Changes
                     </Button>
                     <Button
@@ -208,9 +212,11 @@ export const Notebar: React.FC = () => {
                     </p>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm whitespace-pre-wrap">
-                      {selectedNote.content}
-                    </p>
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {selectedNote.content}
+                      </ReactMarkdown>
+                    </div>
                   </CardContent>
                 </Card>
               )}
@@ -222,7 +228,7 @@ export const Notebar: React.FC = () => {
                 /* New Note Box */
                 <div onMouseLeave={handleSaveNote} className="space-y-2">
                   <Textarea
-                    placeholder="Start typing your note here..."
+                    placeholder="Start typing your note here... (Markdown supported)"
                     value={currentNote}
                     onChange={(e) => setCurrentNote(e.target.value)}
                     rows={6}
