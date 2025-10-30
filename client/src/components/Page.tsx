@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useCount } from "@/hooks/useCount";
 import { useTodos } from "@/hooks/useTodos";
@@ -21,6 +21,7 @@ export const Page = ({ title, id }: PageProps) => {
 
   const {
     todos,
+    setTodos,
     showCompleted,
     setShowCompleted,
     addTodo,
@@ -51,6 +52,22 @@ export const Page = ({ title, id }: PageProps) => {
     if (today) setTodayCount((p) => p + 1);
     else if (id === 1) setInboxCount((p) => p + 1);
   };
+
+  useEffect(() => {
+    const handleTaskMoved = (
+      event: CustomEvent<{ taskId: number; targetListId: number }>
+    ) => {
+      const { taskId, targetListId } = event.detail;
+
+      setTodos((prev) => prev.filter((t) => t.ID !== taskId));
+    };
+
+    window.addEventListener("taskMoved", handleTaskMoved as EventListener);
+
+    return () => {
+      window.removeEventListener("taskMoved", handleTaskMoved as EventListener);
+    };
+  }, [setTodos]);
 
   return (
     <div className="mt-10 flex flex-col h-full relative">

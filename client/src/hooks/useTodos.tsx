@@ -61,6 +61,7 @@ export const useTodos = (listId: number, path: string) => {
 
   return {
     todos,
+    setTodos,
     showCompleted,
     setShowCompleted,
     loadTodos,
