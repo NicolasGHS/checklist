@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "../src/components/ui/sidebar";
 import { AppSidebar } from "./components/Sidebar/AppSidebar";
@@ -19,7 +19,83 @@ import { Hash } from "lucide-react";
 import { models } from "wailsjs/go/models";
 import { Notebar } from "./components/Notebar/Notebar";
 
-const Layout: React.FC = () => {
+/* -----------------------------
+  Helper Functions
+--------------------------------*/
+async function handleTaskDrop(
+  active: DragEndEvent["active"],
+  over: DragEndEvent["over"]
+) {
+  if (!over) return;
+
+  const taskId = parseInt(active.id.toString().replace("task-", ""));
+  const targetListId = parseInt(over.id.toString().replace("drop-list-", ""));
+  const taskData = active.data.current?.todo as models.Todo | undefined;
+
+  if (!taskData) return;
+
+  try {
+    if (targetListId === 5) {
+      // Move to Today — set deadline to end of current day
+      const now = new Date();
+      const todayDeadline = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        23,
+        59,
+        59,
+        999
+      );
+
+      await UpdateTodo(
+        taskId,
+        taskData.Name,
+        taskData.Description || "",
+        taskData.ListID,
+        false,
+        todayDeadline.toISOString()
+      );
+
+      window.dispatchEvent(
+        new CustomEvent("taskMoved", {
+          detail: { taskId, targetListId, deadlineSet: true },
+        })
+      );
+    } else {
+      // Move to another list
+      await UpdateTodoList(taskId, targetListId);
+      window.dispatchEvent(
+        new CustomEvent("taskMoved", {
+          detail: { taskId, targetListId },
+        })
+      );
+    }
+  } catch (error) {
+    console.error("Failed to handle task drop:", error);
+  }
+}
+
+async function handleListDrop(
+  active: DragEndEvent["active"],
+  over: DragEndEvent["over"]
+) {
+  if (!over) return;
+
+  const listId = parseInt(active.id.toString().replace("list-", ""));
+  const areaId = parseInt(over.id.toString().replace("area-", ""));
+
+  try {
+    await UpdateListArea(listId, areaId);
+    window.dispatchEvent(
+      new CustomEvent("listMoved", { detail: { listId, areaId } })
+    );
+  } catch (error) {
+    console.error("Failed to move list:", error);
+  }
+}
+
+const Layout = () => {
   const [draggedTask, setDraggedTask] = useState<{
     id: number;
     name?: string;
@@ -28,129 +104,33 @@ const Layout: React.FC = () => {
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
-    console.log("Drag started:", active.id);
+    const id = active.id.toString();
 
-    if (active.id.toString().startsWith("task-")) {
-      const taskId = parseInt(active.id.toString().replace("task-", ""));
+    if (id.startsWith("task-")) {
+      const taskId = parseInt(id.replace("task-", ""));
       setDraggedTask({ id: taskId, name: "Task" });
-      console.log("Dragging task:", taskId);
-    } else if (active.id.toString().startsWith("list-")) {
-      setDraggedList({
-        ID: parseInt(active.id.toString().replace("list-", "")),
-      } as models.List);
-      console.log("Dragging list:", active.id);
+    } else if (id.startsWith("list-")) {
+      const listId = parseInt(id.replace("list-", ""));
+      setDraggedList({ ID: listId } as models.List);
     }
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    console.log("Drag ended:", { active: active.id, over: over?.id });
     setDraggedTask(null);
     setDraggedList(null);
 
-    if (!over) {
-      console.log("No drop target");
-      return;
-    }
+    if (!over) return;
 
-    // Check if we're dropping a task over a list
-    if (
+    const isTaskDrop =
       active.id.toString().startsWith("task-") &&
-      over.id.toString().startsWith("drop-list-")
-    ) {
-      const taskId = parseInt(active.id.toString().replace("task-", ""));
-      const targetListId = parseInt(
-        over.id.toString().replace("drop-list-", "")
-      );
-
-      console.log(`Attempting to move task ${taskId} to list ${targetListId}`);
-
-      // Special handling for Today item (ID 5)
-      if (targetListId === 5) {
-        console.log(`Setting deadline to today for task ${taskId}`);
-
-        try {
-          // Get the task data to preserve other properties
-          const taskData = active.data.current?.todo;
-          if (taskData) {
-            // Set deadline to today at end of day (23:59:59)
-            const today = new Date();
-            const todayDeadline = new Date(
-              today.getFullYear(),
-              today.getMonth(),
-              today.getDate(),
-              23,
-              59,
-              59,
-              999
-            );
-
-            await UpdateTodo(
-              taskId,
-              taskData.Name,
-              taskData.Description || "",
-              taskData.ListID,
-              false, // today flag
-              todayDeadline.toISOString()
-            );
-
-            console.log(
-              `Successfully set deadline to today for task ${taskId}`
-            );
-
-            window.dispatchEvent(
-              new CustomEvent("taskMoved", {
-                detail: { taskId, targetListId, deadlineSet: true },
-              })
-            );
-          }
-        } catch (error) {
-          console.error("Failed to set deadline for task:", error);
-        }
-      } else {
-        // Regular list move
-        try {
-          await UpdateTodoList(taskId, targetListId);
-          console.log(
-            `Successfully moved task ${taskId} to list ${targetListId}`
-          );
-
-          window.dispatchEvent(
-            new CustomEvent("taskMoved", {
-              detail: { taskId, targetListId },
-            })
-          );
-        } catch (error) {
-          console.error("Failed to move task to list:", error);
-        }
-      }
-    } else if (
+      over.id.toString().startsWith("drop-list-");
+    const isListDrop =
       active.id.toString().startsWith("list-") &&
-      over.id.toString().startsWith("area-")
-    ) {
-      const listId = parseInt(active.id.toString().replace("list-", ""));
-      const areaId = parseInt(over.id.toString().replace("area-", ""));
+      over.id.toString().startsWith("area-");
 
-      console.log(`Attempting to move list ${listId} to area ${areaId}`);
-
-      try {
-        await UpdateListArea(listId, areaId);
-        console.log(`Successfully moved list ${listId} to area ${areaId}`);
-
-        // Dispatch a custom event to notify components to refresh their data
-        window.dispatchEvent(
-          new CustomEvent("listMoved", {
-            detail: { listId, areaId },
-          })
-        );
-      } catch (error) {
-        console.error("Failed to move list to area:", error);
-      }
-    } else {
-      console.log(
-        "Drop target not recognized or incompatible drag/drop combination"
-      );
-    }
+    if (isTaskDrop) return handleTaskDrop(active, over);
+    if (isListDrop) return handleListDrop(active, over);
   };
 
   return (
@@ -164,6 +144,7 @@ const Layout: React.FC = () => {
               <div className="flex items-start p-4">
                 <SidebarTrigger />
               </div>
+
               <main className="flex-1 flex flex-col bg-background">
                 <div className="flex-1 bg-background">
                   <Outlet />
@@ -175,6 +156,7 @@ const Layout: React.FC = () => {
               </div>
             </div>
           </SidebarProvider>
+
           <DragOverlay>
             {draggedTask ? (
               <div className="flex gap-3 items-center bg-background border rounded px-3 py-2 shadow-lg opacity-90">
