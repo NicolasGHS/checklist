@@ -29,13 +29,13 @@ async function handleTaskDrop(
   if (!over) return;
 
   const taskId = parseInt(active.id.toString().replace("task-", ""));
-  const targetListId = parseInt(over.id.toString().replace("drop-list-", ""));
+  const targetDropId = over.id.toString().replace("drop-list-", "");
   const taskData = active.data.current?.todo as models.Todo | undefined;
 
   if (!taskData) return;
 
   try {
-    if (targetListId === 5) {
+    if (targetDropId === "sidebar-today") {
       // Move to Today — set deadline to end of current day
       const now = new Date();
       const todayDeadline = new Date(
@@ -59,11 +59,12 @@ async function handleTaskDrop(
 
       window.dispatchEvent(
         new CustomEvent("taskMoved", {
-          detail: { taskId, targetListId, deadlineSet: true },
+          detail: { taskId, targetListId: "today", deadlineSet: true },
         })
       );
     } else {
-      // Move to another list
+      // Move to another list - parse as numeric list ID
+      const targetListId = parseInt(targetDropId);
       await UpdateTodoList(taskId, targetListId);
       window.dispatchEvent(
         new CustomEvent("taskMoved", {
