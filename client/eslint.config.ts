@@ -19,7 +19,7 @@ export default defineConfig([
       ...tseslint.configs.recommended,
       pluginReact.configs.flat.recommended,
       "js/recommended",
-      "plugin:react/jsx-runtime", // 👈 Voor automatic JSX runtime
+      "plugin:react/jsx-runtime",
     ],
     settings: {
       react: {
