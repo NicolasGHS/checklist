@@ -88,7 +88,7 @@ const DroppableMenuItem = ({ item }: { item: (typeof sidebarItems)[0] }) => {
             className="flex items-center justify-between gap-2 w-full p-2"
           >
             <div className="flex items-center gap-2">
-              <item.icon className="w-5" />
+              <item.icon className="w-5 text-primary" />
               <span>{item.title}</span>
             </div>
             {isToday && <p>{todayCount}</p>}
