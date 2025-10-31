@@ -1,4 +1,3 @@
-import { Calendar, Inbox, Star, FolderOpen, Layers } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Separator } from "../ui/separator";
 import { useDroppable } from "@dnd-kit/core";
