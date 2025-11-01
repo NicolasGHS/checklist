@@ -32,38 +32,11 @@ import { useCount } from "@/hooks/useCount";
 
 const DroppableMenuItem = ({ item }: { item: (typeof sidebarItems)[0] }) => {
   const location = useLocation();
-  const { isOver, setNodeRef } = useDroppable({
-    id: `drop-list-${item.id}`,
-  });
-  const { inboxCount, setInboxCount, todayCount, setTodayCount } = useCount();
-  const isToday = item.title == "Today";
-  const isInbox = item.title == "Inbox";
+  const { isOver, setNodeRef } = useDroppable({ id: `drop-list-${item.id}` });
+  const { inboxCount, todayCount } = useCount(); // geen lokale fetching meer
 
-  const getCount = async () => {
-    if (isToday) {
-      const count = await GetTodayCount();
-      setTodayCount(count);
-    } else if (isInbox) {
-      const count = await GetListCount(1);
-      console.log(`Inbox has ${count} todo's`);
-      setInboxCount(count);
-    }
-  };
-
-  useEffect(() => {
-    getCount();
-  }, [item]);
-
-  useEffect(() => {
-    const handleTaskMoved = () => {
-      getCount();
-    };
-
-    window.addEventListener("taskMoved", handleTaskMoved);
-    return () => {
-      window.removeEventListener("taskMoved", handleTaskMoved);
-    };
-  }, [isToday, isInbox]);
+  const isToday = item.title === "Today";
+  const isInbox = item.title === "Inbox";
 
   return (
     <SidebarMenuItem>

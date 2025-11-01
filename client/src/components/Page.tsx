@@ -17,7 +17,7 @@ export const Page = ({ title, id }: PageProps) => {
   const location = useLocation();
   const [showNewTaskCard, setShowNewTaskCard] = useState(false);
   const [openTodoId, setOpenTodoId] = useState<number>(0);
-  const { inboxCount, setInboxCount, setTodayCount } = useCount();
+  const { refreshCounts } = useCount();
 
   const {
     todos,
@@ -49,17 +49,16 @@ export const Page = ({ title, id }: PageProps) => {
     deadline: string
   ) => {
     await addTodo(name, description, today, deadline);
-    if (today) setTodayCount((p) => p + 1);
-    else if (id === 1) setInboxCount((p) => p + 1);
+    await refreshCounts();
   };
 
   useEffect(() => {
     const handleTaskMoved = (
       event: CustomEvent<{ taskId: number; targetListId: number }>
     ) => {
-      const { taskId, targetListId } = event.detail;
-
+      const { taskId } = event.detail;
       setTodos((prev) => prev.filter((t) => t.ID !== taskId));
+      refreshCounts();
     };
 
     window.addEventListener("taskMoved", handleTaskMoved as EventListener);
@@ -67,7 +66,7 @@ export const Page = ({ title, id }: PageProps) => {
     return () => {
       window.removeEventListener("taskMoved", handleTaskMoved as EventListener);
     };
-  }, [setTodos]);
+  }, [setTodos, refreshCounts]);
 
   return (
     <div className="mt-10 flex flex-col h-full relative">

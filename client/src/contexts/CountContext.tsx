@@ -1,10 +1,10 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
+import { GetTodayCount, GetListCount } from "../../wailsjs/go/main/App";
 
 type CountContextType = {
   inboxCount: number;
-  setInboxCount: React.Dispatch<React.SetStateAction<number>>;
   todayCount: number;
-  setTodayCount: React.Dispatch<React.SetStateAction<number>>;
+  refreshCounts: () => void;
 };
 
 export const CountContext = createContext<CountContextType | null>(null);
@@ -14,13 +14,37 @@ export const CountContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [inboxCount, setInboxCount] = useState<number>(0);
-  const [todayCount, setTodayCount] = useState<number>(0);
+  const [inboxCount, setInboxCount] = useState(0);
+  const [todayCount, setTodayCount] = useState(0);
+
+  const refreshCounts = useCallback(async () => {
+    try {
+      const [today, inbox] = await Promise.all([
+        GetTodayCount(),
+        GetListCount(1),
+      ]);
+      setTodayCount(today);
+      setInboxCount(inbox);
+    } catch (err) {
+      console.error("Error fetching counts:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshCounts();
+
+    const handleTaskMoved = () => {
+      refreshCounts();
+    };
+
+    window.addEventListener("taskMoved", handleTaskMoved);
+    return () => {
+      window.removeEventListener("taskMoved", handleTaskMoved);
+    };
+  }, [refreshCounts]);
 
   return (
-    <CountContext.Provider
-      value={{ inboxCount, setInboxCount, todayCount, setTodayCount }}
-    >
+    <CountContext.Provider value={{ inboxCount, todayCount, refreshCounts }}>
       {children}
     </CountContext.Provider>
   );
