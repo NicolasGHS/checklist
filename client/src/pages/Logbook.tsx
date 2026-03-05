@@ -46,6 +46,7 @@ export const LogBook = () => {
     try {
       await ToggleTodo(id);
       fetchCompletedTodos();
+      window.dispatchEvent(new CustomEvent("taskMoved"));
     } catch (error) {
       console.error("Failed to toggle todo:", error);
     }

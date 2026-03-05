@@ -19,3 +19,11 @@ func AddArea(name string) error {
 
 	return result
 }
+
+func DeleteArea(id uint) error {
+	response := repository.DeleteArea(id)
+	if response != nil {
+		return response
+	}
+	return nil
+}

@@ -1,6 +1,7 @@
 import {
   AddList,
   AddListWithArea,
+  DeleteArea,
   GetListsByArea,
 } from "../../../wailsjs/go/main/App";
 import { useEffect, useState } from "react";
@@ -28,6 +29,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 type AreaListProps = {
   areaItem: models.Area;
   deleteList: (id: number) => void;
+  onDeleteArea: (id: number) => void;
 };
 
 const formSchema = z.object({
@@ -35,7 +37,7 @@ const formSchema = z.object({
   description: z.string(),
 });
 
-export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
+export const AreaList = ({ areaItem, deleteList, onDeleteArea }: AreaListProps) => {
   const [lists, setLists] = useState<models.List[]>([]);
   const [hovered, setHovered] = useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
@@ -66,6 +68,15 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
     }
   };
 
+  const handleDeleteArea = async () => {
+    try {
+      await DeleteArea(areaItem.ID);
+      onDeleteArea(areaItem.ID);
+    } catch (error) {
+      console.error("Failed to delete area: ", error);
+    }
+  };
+
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Escape" && showNewList) {
       e.preventDefault();
@@ -80,6 +91,7 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
   useEffect(() => {
     const listener = (e: KeyboardEvent) => handleKeyDown(e);
     window.addEventListener("keydown", listener);
+    return () => window.removeEventListener("keydown", listener);
   }, [showNewList]);
 
   return (
@@ -115,7 +127,9 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem>Edit</DropdownMenuItem>
-                  <DropdownMenuItem>Delete</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleDeleteArea}>
+                    Delete
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -136,6 +150,7 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
                       <FormControl>
                         <Input
                           placeholder="New list"
+                          autoFocus
                           {...field}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {

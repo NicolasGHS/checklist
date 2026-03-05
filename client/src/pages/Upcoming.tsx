@@ -50,6 +50,7 @@ const Upcoming = () => {
     try {
       await ToggleTodo(id);
       getNextDays();
+      window.dispatchEvent(new CustomEvent("taskMoved"));
     } catch (error) {
       console.error("Failed to toggle todo:", error);
     }

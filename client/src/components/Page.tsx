@@ -102,6 +102,7 @@ export const Page = ({ title, id }: PageProps) => {
       );
     }
     loadTodos();
+    window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -155,7 +156,7 @@ export const Page = ({ title, id }: PageProps) => {
     return () => {
       window.removeEventListener("keydown", listener);
     };
-  }, [showNewTaskCard]);
+  }, [showNewTaskCard, openTodoId]);
 
   return (
     <div className="mt-10 flex flex-col h-full relative">

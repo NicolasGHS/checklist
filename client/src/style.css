@@ -142,3 +142,65 @@ body {
     @apply bg-background text-foreground;
     }
 }
+
+/* Custom markdown styles */
+@layer components {
+  .prose {
+    @apply text-foreground text-left;
+  }
+  
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    @apply text-foreground font-semibold text-left;
+  }
+  
+  .prose p {
+    @apply text-left;
+  }
+  
+  .prose a {
+    @apply text-primary hover:text-primary/80;
+  }
+  
+  .prose code {
+    @apply bg-muted text-foreground px-1 py-0.5 rounded;
+  }
+  
+  .prose pre {
+    @apply bg-muted border border-border text-left;
+  }
+  
+  .prose blockquote {
+    @apply border-l-primary text-muted-foreground text-left;
+  }
+  
+  .prose strong {
+    @apply text-foreground font-semibold;
+  }
+  
+  .prose ul,
+  .prose ol {
+    @apply text-foreground text-left;
+  }
+  
+  .prose li {
+    @apply text-left;
+  }
+  
+  .prose table {
+    @apply border-border;
+  }
+  
+  .prose th {
+    @apply bg-muted;
+  }
+  
+  .prose td,
+  .prose th {
+    @apply border-border;
+  }
+}

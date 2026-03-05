@@ -21,3 +21,11 @@ func AddArea(name string) error {
 
 	return result
 }
+
+func DeleteArea(id uint) error {
+	response := db.DB.Delete(&models.Area{}, id).Error
+	if response != nil {
+		return response
+	}
+	return nil
+}
