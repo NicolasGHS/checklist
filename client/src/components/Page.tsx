@@ -102,6 +102,7 @@ export const Page = ({ title, id }: PageProps) => {
       );
     }
     loadTodos();
+    window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {

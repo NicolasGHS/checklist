@@ -64,6 +64,7 @@ export default function Someday() {
       );
     }
     loadTodos();
+    window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
