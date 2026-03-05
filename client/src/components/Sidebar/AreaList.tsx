@@ -136,6 +136,7 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
                       <FormControl>
                         <Input
                           placeholder="New list"
+                          autoFocus
                           {...field}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {

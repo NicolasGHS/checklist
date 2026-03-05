@@ -91,7 +91,7 @@ export const NewListButton = ({
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="Project name" {...field} />
+                          <Input placeholder="Project name" autoFocus {...field} />
                         </FormControl>
                       </FormItem>
                     )}
@@ -128,7 +128,7 @@ export const NewListButton = ({
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="Area name" {...field} />
+                          <Input placeholder="Area name" autoFocus {...field} />
                         </FormControl>
                       </FormItem>
                     )}
