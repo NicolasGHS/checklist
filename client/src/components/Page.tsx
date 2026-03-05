@@ -155,7 +155,7 @@ export const Page = ({ title, id }: PageProps) => {
     return () => {
       window.removeEventListener("keydown", listener);
     };
-  }, [showNewTaskCard]);
+  }, [showNewTaskCard, openTodoId]);
 
   return (
     <div className="mt-10 flex flex-col h-full relative">

@@ -80,6 +80,7 @@ export const AreaList = ({ areaItem, deleteList }: AreaListProps) => {
   useEffect(() => {
     const listener = (e: KeyboardEvent) => handleKeyDown(e);
     window.addEventListener("keydown", listener);
+    return () => window.removeEventListener("keydown", listener);
   }, [showNewList]);
 
   return (
