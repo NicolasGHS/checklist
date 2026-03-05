@@ -17,6 +17,8 @@ export function CalculateRemainingTime(arg1:number):Promise<any>;
 
 export function CreateNote(arg1:string,arg2:string):Promise<models.Note>;
 
+export function DeleteArea(arg1:number):Promise<void>;
+
 export function DeleteDeadline(arg1:number):Promise<models.Todo>;
 
 export function DeleteList(arg1:number):Promise<void>;

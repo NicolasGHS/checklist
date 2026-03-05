@@ -166,6 +166,10 @@ func (a *App) AddArea(name string) error {
 	return api.AddArea(name)
 }
 
+func (a *App) DeleteArea(id uint) error {
+	return api.DeleteArea(id)
+}
+
 // Time
 
 func (a *App) GetNextSevenDays() []time.Time {

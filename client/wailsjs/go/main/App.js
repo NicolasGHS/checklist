@@ -30,6 +30,10 @@ export function CreateNote(arg1, arg2) {
   return window['go']['main']['App']['CreateNote'](arg1, arg2);
 }
 
+export function DeleteArea(arg1) {
+  return window['go']['main']['App']['DeleteArea'](arg1);
+}
+
 export function DeleteDeadline(arg1) {
   return window['go']['main']['App']['DeleteDeadline'](arg1);
 }

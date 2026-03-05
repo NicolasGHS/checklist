@@ -203,6 +203,10 @@ export function AppSidebar() {
                       key={`${area.ID}-${updateTrigger}`}
                       areaItem={area}
                       deleteList={handleDelete}
+                      onDeleteArea={() => {
+                        setAreas((prev) => prev.filter((a) => a.ID !== area.ID));
+                        loadLists();
+                      }}
                     />
                   ))}
                 </div>
