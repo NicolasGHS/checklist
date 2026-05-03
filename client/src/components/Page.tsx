@@ -3,6 +3,7 @@ import { NewTodoCard } from "./NewTodoCard";
 import { Task } from "./Task";
 import {
   AddTodo,
+  DeleteTodo,
   GetTodayTodos,
   GetTodosByList,
   UpdateTodo,
@@ -122,6 +123,12 @@ export const Page = ({ title, id }: PageProps) => {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    await DeleteTodo(id);
+    loadTodos();
+    window.dispatchEvent(new CustomEvent("taskMoved"));
+  };
+
   const toggleTodoCard = (id: number) => {
     setOpenTodoId(id);
   };
@@ -175,6 +182,7 @@ export const Page = ({ title, id }: PageProps) => {
                       onToggle={handleToggle}
                       currentListId={id}
                       openCard={toggleTodoCard}
+                      onDelete={handleDelete}
                     />
                   ) : (
                     <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />

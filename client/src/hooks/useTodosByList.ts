@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { models } from "../../wailsjs/go/models";
 import {
+  DeleteTodo,
   GetArchivedTodosByList,
   GetTodosByList,
   ToggleTodo,
@@ -61,9 +62,14 @@ export const useTodosByList = (list: models.List, isArchived: boolean) => {
     await loadTodos();
   };
 
+  const deleteTodo = async (id: number) => {
+    await DeleteTodo(id);
+    await loadTodos();
+  };
+
   useEffect(() => {
     loadTodos();
   }, [list.ID, isArchived]);
 
-  return { todos, toggleTodo, updateTodo };
+  return { todos, toggleTodo, updateTodo, deleteTodo };
 };

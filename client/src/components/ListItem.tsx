@@ -14,7 +14,7 @@ type ListItemProps = {
 export default function ListItem({ list }: ListItemProps) {
   const location = useLocation();
   const isArchived = location.pathname === "/someday";
-  const { todos, toggleTodo, updateTodo } = useTodosByList(list, isArchived);
+  const { todos, toggleTodo, updateTodo, deleteTodo } = useTodosByList(list, isArchived);
   const { openTodoId, open, close } = useOpenTodo();
 
   return (
@@ -36,6 +36,7 @@ export default function ListItem({ list }: ListItemProps) {
                     onToggle={toggleTodo}
                     currentListId={list.ID}
                     openCard={open}
+                    onDelete={deleteTodo}
                   />
                 ) : (
                   <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />

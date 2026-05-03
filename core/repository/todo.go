@@ -154,6 +154,10 @@ func DeleteDeadline(id uint) (models.Todo, error) {
 	return todo, nil
 }
 
+func DeleteTodo(id uint) error {
+	return db.DB.Where("id = ? OR parent_id = ?", id, id).Delete(&models.Todo{}).Error
+}
+
 func SaveTodo(todo *models.Todo) error {
 	return db.DB.Save(todo).Error
 }

@@ -3,14 +3,21 @@ import { Checkbox } from "./ui/checkbox";
 import { CalculateRemainingTime } from "../../wailsjs/go/main/App";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical } from "lucide-react";
+import { GripVertical, MoreHorizontal, Trash2 } from "lucide-react";
 import { models } from "wailsjs/go/models";
 import { DaysLeft } from "./DaysLeft";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 type TaskProps = {
   todo: models.Todo;
   onToggle: (id: number) => void;
   openCard: (id: number) => void;
+  onDelete?: (id: number) => void;
   currentListId?: number;
   showCompletionDate?: boolean;
 };
@@ -19,6 +26,7 @@ export const Task = ({
   todo,
   onToggle,
   openCard,
+  onDelete,
   showCompletionDate = false,
 }: TaskProps) => {
   const [daysLeft, setDaysLeft] = useState<number>();
@@ -91,7 +99,33 @@ export const Task = ({
           {todo.Name}
         </p>
       </div>
-      {!todo.Completed && <DaysLeft difference={daysLeft} />}
+      <div className="flex items-center gap-2">
+        {!todo.Completed && <DaysLeft difference={daysLeft} />}
+        {onDelete && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-muted"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(todo.ID);
+                }}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
     </div>
   );
 };

@@ -202,6 +202,10 @@ func CalculateDaysLeft(id uint) (*int, error) {
 	return &days, nil
 }
 
+func DeleteTodo(id uint) error {
+	return repository.DeleteTodo(id)
+}
+
 func GetCompletedTodos() ([]models.Todo, error) {
 	response, err := repository.GetCompletedTodos()
 	if err != nil {

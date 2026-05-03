@@ -104,6 +104,10 @@ func (a *App) UpdateTodo(id uint, name string, description string, list_id uint,
 	return api.UpdateTodo(id, name, description, list_id, today, deadlinePtr)
 }
 
+func (a *App) DeleteTodo(id uint) error {
+	return api.DeleteTodo(id)
+}
+
 func (a *App) DeleteDeadline(id uint) (models.Todo, error) {
 	return api.DeleteDeadline(id)
 }

@@ -46,6 +46,10 @@ export function DeleteNote(arg1) {
   return window['go']['main']['App']['DeleteNote'](arg1);
 }
 
+export function DeleteTodo(arg1) {
+  return window['go']['main']['App']['DeleteTodo'](arg1);
+}
+
 export function GetAllNotes() {
   return window['go']['main']['App']['GetAllNotes']();
 }

@@ -9,6 +9,7 @@ type DayProps = {
   todos?: models.Todo[];
   onToggle: (id: number) => void;
   openCard: (id: number) => void;
+  onDelete?: (id: number) => void;
 };
 
 export const Day = ({
@@ -17,6 +18,7 @@ export const Day = ({
   todos = [],
   onToggle,
   openCard,
+  onDelete,
 }: DayProps) => {
   const { setNodeRef, isOver } = useDroppable({
     id: dayNumber,
@@ -40,6 +42,7 @@ export const Day = ({
               todo={todo}
               onToggle={onToggle}
               openCard={openCard}
+              onDelete={onDelete}
             />
           ))}
         </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  DeleteTodo,
   GetNextSevenDays,
   GetTodosByDeadline,
   ToggleTodo,
@@ -54,6 +55,12 @@ const Upcoming = () => {
     } catch (error) {
       console.error("Failed to toggle todo:", error);
     }
+  };
+
+  const handleDelete = async (id: number) => {
+    await DeleteTodo(id);
+    getNextDays();
+    window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
   const openCard = (id: number) => {
@@ -130,6 +137,7 @@ const Upcoming = () => {
               todos={todosForDay}
               onToggle={handleToggle}
               openCard={openCard}
+              onDelete={handleDelete}
             />
           );
         })}

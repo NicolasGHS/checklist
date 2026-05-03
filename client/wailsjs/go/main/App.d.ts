@@ -25,6 +25,8 @@ export function DeleteList(arg1:number):Promise<void>;
 
 export function DeleteNote(arg1:number):Promise<void>;
 
+export function DeleteTodo(arg1:number):Promise<void>;
+
 export function GetAllNotes():Promise<Array<models.Note>>;
 
 export function GetArchivedTodos():Promise<Array<models.Todo>>;
