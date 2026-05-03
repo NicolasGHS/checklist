@@ -145,17 +145,23 @@ export const Page = ({ title, id }: PageProps) => {
     }
   }, [id]);
 
-  // Listen for task move events
   useEffect(() => {
-    const handleTaskMoved = () => {
-      loadTodos();
+    const handleTaskMoved = () => loadTodos();
+    const handleTaskDragStarted = (e: Event) => {
+      const { taskId } = (e as CustomEvent).detail;
+      setTodos((prev) => prev.filter((t) => t.ID !== taskId));
     };
+    const handleTaskDragCancelled = () => loadTodos();
 
     window.addEventListener("taskMoved", handleTaskMoved);
+    window.addEventListener("taskDragStarted", handleTaskDragStarted);
+    window.addEventListener("taskDragCancelled", handleTaskDragCancelled);
     return () => {
       window.removeEventListener("taskMoved", handleTaskMoved);
+      window.removeEventListener("taskDragStarted", handleTaskDragStarted);
+      window.removeEventListener("taskDragCancelled", handleTaskDragCancelled);
     };
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const listener = (e: KeyboardEvent) => handleKeyDown(e);

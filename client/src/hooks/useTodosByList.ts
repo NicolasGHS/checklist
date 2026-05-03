@@ -69,6 +69,19 @@ export const useTodosByList = (list: models.List, isArchived: boolean) => {
 
   useEffect(() => {
     loadTodos();
+
+    const handleTaskDragStarted = (e: Event) => {
+      const { taskId } = (e as CustomEvent).detail;
+      setTodos((prev) => prev.filter((todo) => todo.ID !== taskId));
+    };
+    const handleTaskDragCancelled = () => loadTodos();
+
+    window.addEventListener("taskDragStarted", handleTaskDragStarted);
+    window.addEventListener("taskDragCancelled", handleTaskDragCancelled);
+    return () => {
+      window.removeEventListener("taskDragStarted", handleTaskDragStarted);
+      window.removeEventListener("taskDragCancelled", handleTaskDragCancelled);
+    };
   }, [list.ID, isArchived]);
 
   return { todos, toggleTodo, updateTodo, deleteTodo };

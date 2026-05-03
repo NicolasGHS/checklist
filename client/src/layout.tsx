@@ -34,6 +34,7 @@ const Layout: React.FC = () => {
       const taskId = parseInt(active.id.toString().replace("task-", ""));
       setDraggedTask({ id: taskId, name: "Task" });
       console.log("Dragging task:", taskId);
+      window.dispatchEvent(new CustomEvent("taskDragStarted", { detail: { taskId } }));
     } else if (active.id.toString().startsWith("list-")) {
       setDraggedList({
         ID: parseInt(active.id.toString().replace("list-", "")),
@@ -50,6 +51,10 @@ const Layout: React.FC = () => {
 
     if (!over) {
       console.log("No drop target");
+      if (active.id.toString().startsWith("task-")) {
+        const taskId = parseInt(active.id.toString().replace("task-", ""));
+        window.dispatchEvent(new CustomEvent("taskDragCancelled", { detail: { taskId } }));
+      }
       return;
     }
 
