@@ -146,12 +146,19 @@ export const Page = ({ title, id }: PageProps) => {
   }, [id]);
 
   useEffect(() => {
-    const handleTaskMoved = () => loadTodos();
+    const reload = () => {
+      if (location.pathname === "/today") {
+        loadTodayTodos();
+      } else {
+        loadTodos();
+      }
+    };
+    const handleTaskMoved = () => reload();
     const handleTaskDragStarted = (e: Event) => {
       const { taskId } = (e as CustomEvent).detail;
       setTodos((prev) => prev.filter((t) => t.ID !== taskId));
     };
-    const handleTaskDragCancelled = () => loadTodos();
+    const handleTaskDragCancelled = () => reload();
 
     window.addEventListener("taskMoved", handleTaskMoved);
     window.addEventListener("taskDragStarted", handleTaskDragStarted);
