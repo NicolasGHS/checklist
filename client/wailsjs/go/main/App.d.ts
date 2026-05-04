@@ -55,6 +55,8 @@ export function GetNoteByID(arg1:number):Promise<models.Note>;
 
 export function GetSubtasks(arg1:number):Promise<Array<models.Todo>>;
 
+export function GetSyncFolder():Promise<string>;
+
 export function GetTodayCount():Promise<number>;
 
 export function GetTodayTodos():Promise<Array<models.Todo>>;
@@ -66,6 +68,10 @@ export function GetTodos():Promise<Array<models.Todo>>;
 export function GetTodosByDeadline(arg1:time.Time):Promise<Array<models.Todo>>;
 
 export function GetTodosByList(arg1:number):Promise<Array<models.Todo>>;
+
+export function SelectSyncFolder():Promise<string>;
+
+export function SetSyncFolder(arg1:string):Promise<void>;
 
 export function ToggleTodo(arg1:number):Promise<void>;
 

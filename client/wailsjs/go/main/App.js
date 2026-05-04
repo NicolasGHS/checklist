@@ -106,6 +106,10 @@ export function GetSubtasks(arg1) {
   return window['go']['main']['App']['GetSubtasks'](arg1);
 }
 
+export function GetSyncFolder() {
+  return window['go']['main']['App']['GetSyncFolder']();
+}
+
 export function GetTodayCount() {
   return window['go']['main']['App']['GetTodayCount']();
 }
@@ -128,6 +132,14 @@ export function GetTodosByDeadline(arg1) {
 
 export function GetTodosByList(arg1) {
   return window['go']['main']['App']['GetTodosByList'](arg1);
+}
+
+export function SelectSyncFolder() {
+  return window['go']['main']['App']['SelectSyncFolder']();
+}
+
+export function SetSyncFolder(arg1) {
+  return window['go']['main']['App']['SetSyncFolder'](arg1);
 }
 
 export function ToggleTodo(arg1) {

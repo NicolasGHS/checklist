@@ -12,25 +12,25 @@ import (
 var DB *gorm.DB
 
 func GetAppDataPath() (string, error) {
+	s := LoadSettings()
+	if s.SyncFolder != "" {
+		os.MkdirAll(s.SyncFolder, os.ModePerm)
+		return filepath.Join(s.SyncFolder, "todos.db"), nil
+	}
 	configDir, err := os.UserConfigDir()
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	appDir := filepath.Join(configDir, "Checklist")
 	os.MkdirAll(appDir, os.ModePerm)
-
 	return filepath.Join(appDir, "todos.db"), nil
 }
 
 func InitDB() error {
-	configDir, err := os.UserConfigDir()
+	dbPath, err := GetAppDataPath()
 	if err != nil {
 		return err
 	}
-	appDir := filepath.Join(configDir, "Checklist")
-	os.MkdirAll(appDir, os.ModePerm)
-
-	dbPath := filepath.Join(appDir, "todos.db")
 
 	database, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {

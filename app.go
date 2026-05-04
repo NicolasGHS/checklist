@@ -5,8 +5,13 @@ import (
 	"checklist/core/db"
 	"checklist/core/models"
 	"context"
+	"io"
 	"log"
+	"os"
+	"path/filepath"
 	"time"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -200,4 +205,74 @@ func (a *App) UpdateNote(id uint, title, content string) (*models.Note, error) {
 
 func (a *App) DeleteNote(id uint) error {
 	return api.DeleteNote(id)
+}
+
+// Sync / Settings
+
+func (a *App) GetSyncFolder() string {
+	return db.LoadSettings().SyncFolder
+}
+
+// SelectSyncFolder opens a native directory picker and returns the chosen path.
+func (a *App) SelectSyncFolder() (string, error) {
+	folder, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "Select Sync Folder",
+	})
+	return folder, err
+}
+
+// SetSyncFolder changes the database location. If no DB exists at the new
+// location the current database is copied there so existing data is preserved.
+// The DB connection is re-opened automatically so the app is ready to use
+// immediately — no restart required.
+func (a *App) SetSyncFolder(folder string) error {
+	currentPath, err := db.GetAppDataPath()
+	if err != nil {
+		return err
+	}
+
+	// Close existing DB connection before moving files.
+	if db.DB != nil {
+		sqlDB, err := db.DB.DB()
+		if err == nil {
+			sqlDB.Close()
+		}
+	}
+
+	if folder != "" {
+		if err := os.MkdirAll(folder, os.ModePerm); err != nil {
+			return err
+		}
+		newDbPath := filepath.Join(folder, "todos.db")
+		if _, err := os.Stat(newDbPath); os.IsNotExist(err) {
+			if err := copyFile(currentPath, newDbPath); err != nil {
+				return err
+			}
+		}
+	}
+
+	s := db.LoadSettings()
+	s.SyncFolder = folder
+	if err := db.SaveSettings(s); err != nil {
+		return err
+	}
+
+	return db.InitDB()
+}
+
+func copyFile(src, dst string) error {
+	in, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, in)
+	return err
 }
