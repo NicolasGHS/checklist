@@ -62,7 +62,7 @@ export const LogBook = () => {
   }, []);
 
   return (
-    <div className="mt-10 flex flex-col min-h-full">
+    <div className="mt-10 flex flex-col min-h-full select-none">
       <h1 className="text-3xl text-foreground font-bold mb-6">Logbook</h1>
 
       {Object.keys(groupedTodos).length === 0 ? (

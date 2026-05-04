@@ -18,7 +18,7 @@ export default function ListItem({ list }: ListItemProps) {
   const { openTodoId, open, close } = useOpenTodo();
 
   return (
-    <div>
+    <div className="select-none">
       <div key={list.ID} className="mb-4">
         <div className="flex items-center gap-2">
           <Hash className="w-5" />

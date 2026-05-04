@@ -70,7 +70,7 @@ export const Task = ({
 
   return (
     <div
-      className="flex gap-3 items-center justify-between ml-6 mr-10 group hover:cursor-pointer"
+      className="flex gap-3 items-center justify-between ml-6 mr-10 group hover:cursor-pointer select-none"
       ref={setNodeRef}
       style={style}
       onDoubleClick={() => openCard(todo.ID)}
