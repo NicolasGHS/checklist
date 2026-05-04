@@ -20,6 +20,7 @@ type TaskProps = {
   onDelete?: (id: number) => void;
   currentListId?: number;
   showCompletionDate?: boolean;
+  listNameMap?: Map<number, string>;
 };
 
 export const Task = ({
@@ -28,6 +29,7 @@ export const Task = ({
   openCard,
   onDelete,
   showCompletionDate = false,
+  listNameMap,
 }: TaskProps) => {
   const [daysLeft, setDaysLeft] = useState<number>();
   const { attributes, listeners, setNodeRef, transform, isDragging } =
@@ -98,6 +100,14 @@ export const Task = ({
         >
           {todo.Name}
         </p>
+        {listNameMap && listNameMap.get(todo.ListID) && (
+          <span
+            className="text-sm text-muted-foreground truncate max-w-[120px]"
+            title={listNameMap.get(todo.ListID)}
+          >
+            {listNameMap.get(todo.ListID)}
+          </span>
+        )}
       </div>
       <div className="flex items-center gap-2">
         {!todo.Completed && <DaysLeft difference={daysLeft} />}

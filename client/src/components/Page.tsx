@@ -4,6 +4,7 @@ import { Task } from "./Task";
 import {
   AddTodo,
   DeleteTodo,
+  GetLists,
   GetTodayTodos,
   GetTodosByList,
   UpdateTodo,
@@ -26,6 +27,7 @@ export const Page = ({ title, id }: PageProps) => {
   const [showNewTaskCard, setShowNewTaskCard] = useState<boolean>(false);
   const [openTodoId, setOpenTodoId] = useState<number>();
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
+  const [listNameMap, setListNameMap] = useState<Map<number, string>>(new Map());
   const location = useLocation();
   const { inboxCount, setInboxCount, setTodayCount } = useCount();
 
@@ -41,6 +43,11 @@ export const Page = ({ title, id }: PageProps) => {
   const loadTodayTodos = async () => {
     const result = await GetTodayTodos();
     setTodos(result);
+  };
+
+  const loadListNames = async () => {
+    const lists = await GetLists();
+    setListNameMap(new Map(lists.map((l) => [l.ID, l.Name])));
   };
 
   const createTodo = async (
@@ -140,6 +147,7 @@ export const Page = ({ title, id }: PageProps) => {
   useEffect(() => {
     if (location.pathname === "/today") {
       loadTodayTodos();
+      loadListNames();
     } else {
       loadTodos();
     }
@@ -196,6 +204,7 @@ export const Page = ({ title, id }: PageProps) => {
                       currentListId={id}
                       openCard={toggleTodoCard}
                       onDelete={handleDelete}
+                      listNameMap={location.pathname === "/today" ? listNameMap : undefined}
                     />
                   ) : (
                     <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
@@ -222,6 +231,7 @@ export const Page = ({ title, id }: PageProps) => {
                         onToggle={handleToggle}
                         currentListId={id}
                         openCard={toggleTodoCard}
+                        listNameMap={location.pathname === "/today" ? listNameMap : undefined}
                       />
                     ) : (
                       <TodoCard UpdateTodoFunction={updateTodo} Task={todo} />
