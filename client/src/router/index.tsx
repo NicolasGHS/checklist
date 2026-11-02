@@ -4,7 +4,6 @@ import Inbox from "../pages/Inbox";
 import Today from "../pages/Today";
 import Upcoming from "../pages/Upcoming";
 import Projects from "../pages/Projects";
-import Settings from "../pages/Settings";
 import { ListPage } from "../pages/List";
 import Someday from "@/pages/Someday";
 import Anytime from "@/pages/Anytime";
@@ -42,10 +41,6 @@ export const router = createBrowserRouter([
       {
         path: "projects",
         element: <Projects />,
-      },
-      {
-        path: "settings",
-        element: <Settings />,
       },
       {
         path: "list/:slug",
