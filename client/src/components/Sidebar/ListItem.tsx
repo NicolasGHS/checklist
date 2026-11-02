@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { DeleteList } from "../../../wailsjs/go/main/App";
+import { GetListCount } from "../../../wailsjs/go/main/App";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { models } from "wailsjs/go/models";
@@ -34,6 +34,7 @@ export const ListItem = ({ list, onDelete }: ListItemProps) => {
   const location = useLocation();
   const [open, setOpen] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [count, setCount] = useState<number>(0);
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: `list-${list.ID}`,
@@ -47,6 +48,20 @@ export const ListItem = ({ list, onDelete }: ListItemProps) => {
     transform: CSS.Translate.toString(transform),
     opacity: isDragging ? 0.5 : 1,
   };
+
+  const getCount = async () => {
+    const result = await GetListCount(list.ID);
+    setCount(result);
+  };
+
+  useEffect(() => {
+    getCount();
+
+    window.addEventListener("taskMoved", getCount);
+    return () => {
+      window.removeEventListener("taskMoved", getCount);
+    };
+  }, [list.ID]);
 
   const truncate = (text: string, maxLength: number) => {
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
@@ -85,23 +100,34 @@ export const ListItem = ({ list, onDelete }: ListItemProps) => {
           </span>
         </Link>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Ellipsis
-              className={`w-4 transition-opacity duration-200 ${
-                isHovered ? "opacity-100" : "opacity-0"
+        <div className="relative flex items-center justify-end min-w-4">
+          {count > 0 && (
+            <p
+              className={`transition-opacity duration-200 ${
+                isHovered ? "opacity-0" : "opacity-100"
               }`}
-            />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem
-              onClick={() => setOpen(true)}
-              className="hover:cursor-pointer"
             >
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              {count}
+            </p>
+          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="absolute right-0">
+              <Ellipsis
+                className={`w-4 transition-opacity duration-200 ${
+                  isHovered ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem
+                onClick={() => setOpen(true)}
+                className="hover:cursor-pointer"
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         <AlertDialog open={open} onOpenChange={setOpen}>
           <AlertDialogContent>

@@ -63,6 +63,8 @@ export const Page = ({ title, id }: PageProps) => {
     } else if (id == 1) {
       setInboxCount((prev) => prev + 1);
     }
+    // update list counts in the sidebar
+    window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
   const updateTodo = async (
