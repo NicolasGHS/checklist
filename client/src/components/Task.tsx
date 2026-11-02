@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { Checkbox } from "./ui/checkbox";
-import { CalculateRemainingTime } from "../../wailsjs/go/main/App";
+import {
+  CalculateRemainingTime,
+  DeleteDeadline,
+  UpdateTodo,
+} from "../../wailsjs/go/main/App";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, MoreHorizontal, Trash2 } from "lucide-react";
+import { GripVertical, MoreHorizontal, Star, Trash2 } from "lucide-react";
 import { models } from "wailsjs/go/models";
 import { DaysLeft } from "./DaysLeft";
 import {
@@ -52,6 +56,42 @@ export const Task = ({
     const result = await CalculateRemainingTime(todo.ID);
     console.log("result in calculateTime: ", result);
     setDaysLeft(result);
+  };
+
+  const isToday = typeof daysLeft === "number" && daysLeft <= 0;
+
+  const toggleToday = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      if (isToday) {
+        await DeleteDeadline(todo.ID);
+        setDaysLeft(undefined);
+      } else {
+        // Set deadline to today at end of day (23:59:59)
+        const today = new Date();
+        const todayDeadline = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          23,
+          59,
+          59,
+          999
+        );
+        await UpdateTodo(
+          todo.ID,
+          todo.Name,
+          todo.Description || "",
+          todo.ListID,
+          false,
+          todayDeadline.toISOString()
+        );
+        setDaysLeft(0);
+      }
+      window.dispatchEvent(new CustomEvent("taskMoved"));
+    } catch (error) {
+      console.error("Failed toggling today: ", error);
+    }
   };
 
   const formatCompletionDate = (completedAt: any) => {
@@ -110,7 +150,25 @@ export const Task = ({
         )}
       </div>
       <div className="flex items-center gap-2">
-        {!todo.Completed && <DaysLeft difference={daysLeft} />}
+        {!todo.Completed && !isToday && <DaysLeft difference={daysLeft} />}
+        {!todo.Completed && (
+          <button
+            className={`p-1 rounded hover:bg-muted transition-opacity ${
+              isToday ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+            }`}
+            onClick={toggleToday}
+            onDoubleClick={(e) => e.stopPropagation()}
+            title={isToday ? "Remove from Today" : "Add to Today"}
+          >
+            <Star
+              className={`w-4 h-4 ${
+                isToday
+                  ? "text-yellow-400 fill-yellow-400"
+                  : "text-muted-foreground"
+              }`}
+            />
+          </button>
+        )}
         {onDelete && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
