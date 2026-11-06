@@ -3,12 +3,14 @@ import {
   DeleteTodo,
   GetNextSevenDays,
   GetTodosByDeadline,
+  ScheduleTodo,
   ToggleTodo,
   UpdateTodo,
-} from "../../wailsjs/go/main/App";
-import { formatDateStrings } from "@/utils/dates";
+} from "bindings/checklist/app";
+import { endOfDayISO, formatDateStrings } from "@/utils/dates";
+import { useOpenTodo } from "@/hooks/useOpenTodo";
 import { Day } from "@/components/Day";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 
 const Upcoming = () => {
@@ -17,11 +19,12 @@ const Upcoming = () => {
   const [todosByDay, setTodosByDay] = useState<{
     [key: string]: models.Todo[];
   }>({});
-  const [selectedTodo, setSelectedTodo] = useState<models.Todo | null>(null);
+  // Escape closes the open card (handled in the hook)
+  const { openTodoId, open: openCard } = useOpenTodo();
 
   const getNextDays = async () => {
     const result = await GetNextSevenDays();
-    const dates = result.map((t: any) => new Date(t));
+    const dates = (result ?? []).map((t: any) => new Date(t));
     const days = formatDateStrings(dates);
     setDays(dates);
     setWeekdays(days);
@@ -30,7 +33,7 @@ const Upcoming = () => {
     const todosMap: { [key: string]: models.Todo[] } = {};
     for (const date of dates) {
       try {
-        const todos = await GetTodosByDeadline(date);
+        const todos = (await GetTodosByDeadline(date.toISOString())) ?? [];
         // Use local date components to avoid timezone shifts
         const dateKey = `${date.getFullYear()}-${String(
           date.getMonth() + 1
@@ -63,13 +66,17 @@ const Upcoming = () => {
     window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
-  const openCard = (id: number) => {
-    const todo = Object.values(todosByDay)
-      .flat()
-      .find((t) => t.ID === id);
-    if (todo) {
-      setSelectedTodo(todo);
-    }
+  const updateTodo = async (
+    id: number,
+    name: string,
+    description: string,
+    list_id: number,
+    today: boolean,
+    deadline: string,
+  ) => {
+    await UpdateTodo(id, name, description, list_id, today, deadline);
+    await getNextDays();
+    window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -92,20 +99,13 @@ const Upcoming = () => {
       return;
     }
 
-    const newDeadline = new Date(targetDate);
-    newDeadline.setHours(0, 0, 0, 0);
-
     try {
-      await UpdateTodo(
-        todo.ID,
-        todo.Name,
-        todo.Description || "",
-        todo.ListID,
-        todo.Today,
-        newDeadline.toISOString()
-      );
+      // end of the target day, like every other deadline; local midnight is
+      // stored as the previous day in UTC and lands in the wrong bucket
+      await ScheduleTodo(todo.ID, endOfDayISO(targetDate));
 
       await getNextDays();
+      window.dispatchEvent(new CustomEvent("taskMoved"));
     } catch (error) {
       console.error("Failed to update todo deadline:", error);
     }
@@ -113,6 +113,11 @@ const Upcoming = () => {
 
   useEffect(() => {
     getNextDays();
+
+    // e.g. a task starred or dropped on a sidebar view from here
+    const handleTaskMoved = () => getNextDays();
+    window.addEventListener("taskMoved", handleTaskMoved);
+    return () => window.removeEventListener("taskMoved", handleTaskMoved);
   }, []);
 
   return (
@@ -138,6 +143,8 @@ const Upcoming = () => {
               onToggle={handleToggle}
               openCard={openCard}
               onDelete={handleDelete}
+              openTodoId={openTodoId}
+              onUpdate={updateTodo}
             />
           );
         })}

@@ -1,4 +1,4 @@
-import { models } from "../../wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 import { Hash } from "lucide-react";
 import { Task } from "./Task";
 import { TodoCard } from "./TaskCard";

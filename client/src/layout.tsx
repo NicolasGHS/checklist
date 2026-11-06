@@ -5,19 +5,63 @@ import { AppSidebar } from "./components/Sidebar/AppSidebar";
 import { ThemeProvider } from "./components/theme-provider";
 import { CountContextProvider } from "./contexts/CountContext";
 import {
+  closestCenter,
+  CollisionDetection,
   DndContext,
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
+  pointerWithin,
 } from "@dnd-kit/core";
 import {
   UpdateTodoList,
   UpdateListArea,
-  UpdateTodo,
-} from "../wailsjs/go/main/App";
+  ScheduleTodo,
+  UnscheduleTodo,
+  SetTodoCompleted,
+} from "bindings/checklist/app";
+import { SidebarView, VIEW_DROP_PREFIX } from "@/constants/sidebarItems";
+import { endOfDayISO } from "@/utils/dates";
 import { Hash } from "lucide-react";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 import { Notebar } from "./components/Notebar/Notebar";
+
+const isTaskId = (id: unknown) => String(id).startsWith("task-");
+
+// What dropping a task on a sidebar view means. Inbox is a real list and
+// goes through the regular list move instead.
+const dropOnView = async (taskId: number, view: SidebarView) => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  switch (view) {
+    case "today":
+      return ScheduleTodo(taskId, endOfDayISO(new Date()));
+    case "upcoming":
+      return ScheduleTodo(taskId, endOfDayISO(tomorrow));
+    case "anytime":
+      return UnscheduleTodo(taskId, false);
+    case "someday":
+      return UnscheduleTodo(taskId, true);
+    case "logbook":
+      return SetTodoCompleted(taskId, true);
+    case "inbox":
+      return UpdateTodoList(taskId, 1);
+  }
+};
+
+// Sidebar targets (lists, Today, areas) win when the pointer is on them;
+// otherwise the closest task is the target, which drives reordering.
+const collisionDetection: CollisionDetection = (args) => {
+  const sidebarHits = pointerWithin(args).filter((c) => !isTaskId(c.id));
+  if (sidebarHits.length > 0) return sidebarHits;
+  return closestCenter({
+    ...args,
+    droppableContainers: args.droppableContainers.filter((c) =>
+      isTaskId(c.id),
+    ),
+  });
+};
 
 const Layout: React.FC = () => {
   const [draggedTask, setDraggedTask] = useState<{
@@ -32,7 +76,7 @@ const Layout: React.FC = () => {
 
     if (active.id.toString().startsWith("task-")) {
       const taskId = parseInt(active.id.toString().replace("task-", ""));
-      setDraggedTask({ id: taskId, name: "Task" });
+      setDraggedTask({ id: taskId, name: active.data.current?.todo?.Name });
       console.log("Dragging task:", taskId);
       window.dispatchEvent(new CustomEvent("taskDragStarted", { detail: { taskId } }));
     } else if (active.id.toString().startsWith("list-")) {
@@ -58,77 +102,36 @@ const Layout: React.FC = () => {
       return;
     }
 
-    // Check if we're dropping a task over a list
-    if (
-      active.id.toString().startsWith("task-") &&
-      over.id.toString().startsWith("drop-list-")
-    ) {
-      const taskId = parseInt(active.id.toString().replace("task-", ""));
-      const targetListId = parseInt(
-        over.id.toString().replace("drop-list-", "")
-      );
+    const activeKey = active.id.toString();
+    const overKey = over.id.toString();
 
-      console.log(`Attempting to move task ${taskId} to list ${targetListId}`);
+    if (activeKey.startsWith("task-") && overKey.startsWith(VIEW_DROP_PREFIX)) {
+      const taskId = parseInt(activeKey.replace("task-", ""));
+      const view = overKey.replace(VIEW_DROP_PREFIX, "") as SidebarView;
 
-      // Special handling for Today item (ID 5)
-      if (targetListId === 5) {
-        console.log(`Setting deadline to today for task ${taskId}`);
-
-        try {
-          // Get the task data to preserve other properties
-          const taskData = active.data.current?.todo;
-          if (taskData) {
-            // Set deadline to today at end of day (23:59:59)
-            const today = new Date();
-            const todayDeadline = new Date(
-              today.getFullYear(),
-              today.getMonth(),
-              today.getDate(),
-              23,
-              59,
-              59,
-              999
-            );
-
-            await UpdateTodo(
-              taskId,
-              taskData.Name,
-              taskData.Description || "",
-              taskData.ListID,
-              false, // today flag
-              todayDeadline.toISOString()
-            );
-
-            console.log(
-              `Successfully set deadline to today for task ${taskId}`
-            );
-
-            window.dispatchEvent(
-              new CustomEvent("taskMoved", {
-                detail: { taskId, targetListId, deadlineSet: true },
-              })
-            );
-          }
-        } catch (error) {
-          console.error("Failed to set deadline for task:", error);
-        }
-      } else {
-        // Regular list move
-        try {
-          await UpdateTodoList(taskId, targetListId);
-          console.log(
-            `Successfully moved task ${taskId} to list ${targetListId}`
-          );
-
-          window.dispatchEvent(
-            new CustomEvent("taskMoved", {
-              detail: { taskId, targetListId },
-            })
-          );
-        } catch (error) {
-          console.error("Failed to move task to list:", error);
-        }
+      try {
+        await dropOnView(taskId, view);
+      } catch (error) {
+        console.error(`Failed to move task ${taskId} to ${view}:`, error);
       }
+      window.dispatchEvent(
+        new CustomEvent("taskMoved", { detail: { taskId, view } })
+      );
+    } else if (
+      activeKey.startsWith("task-") &&
+      overKey.startsWith("drop-list-")
+    ) {
+      const taskId = parseInt(activeKey.replace("task-", ""));
+      const targetListId = parseInt(overKey.replace("drop-list-", ""));
+
+      try {
+        await UpdateTodoList(taskId, targetListId);
+      } catch (error) {
+        console.error("Failed to move task to list:", error);
+      }
+      window.dispatchEvent(
+        new CustomEvent("taskMoved", { detail: { taskId, targetListId } })
+      );
     } else if (
       active.id.toString().startsWith("list-") &&
       over.id.toString().startsWith("area-")
@@ -151,9 +154,12 @@ const Layout: React.FC = () => {
       } catch (error) {
         console.error("Failed to move list to area:", error);
       }
-    } else {
-      console.log(
-        "Drop target not recognized or incompatible drag/drop combination"
+    } else if (activeKey.startsWith("task-") && !overKey.startsWith("task-")) {
+      // dropped somewhere that doesn't take tasks (e.g. an area): views that
+      // hid the task when the drag started need to show it again
+      const taskId = parseInt(activeKey.replace("task-", ""));
+      window.dispatchEvent(
+        new CustomEvent("taskDragCancelled", { detail: { taskId } })
       );
     }
   };
@@ -161,7 +167,11 @@ const Layout: React.FC = () => {
   return (
     <CountContextProvider>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <DndContext
+          collisionDetection={collisionDetection}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
           <SidebarProvider>
             <div className="flex min-h-screen w-screen bg-background">
               <AppSidebar />
@@ -185,7 +195,7 @@ const Layout: React.FC = () => {
               <div className="flex gap-3 items-center bg-background border rounded px-3 py-2 shadow-lg opacity-90">
                 <div className="w-4 h-4 border border-border rounded bg-muted"></div>
                 <p className="text-foreground">
-                  Drag to Today to set deadline...
+                  {draggedTask.name ?? "Task"}
                 </p>
               </div>
             ) : draggedList ? (

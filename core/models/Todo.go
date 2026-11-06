@@ -12,6 +12,10 @@ type Todo struct {
 	Today       bool       `bson:"today"`
 	Deadline    *time.Time `bson:"deadline"` // pointer to make deadline optional
 	Archive     bool       `bson:"archive"`  // Someday
+	// Manual sort order within the task's list; 0 = not placed yet (sorts last).
+	Position int `bson:"position"`
+	// Manual sort order on the Today page, independent of the list order.
+	TodayPosition int `bson:"today_position"`
 	CompletedAt time.Time  `bson:"completed_at"`
 	CreatedAt   time.Time  `bson:"created"`
 	UpdatedAt   time.Time  `bson:"created"`

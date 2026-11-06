@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { GetCompletedTodos, ToggleTodo } from "../../wailsjs/go/main/App";
-import { models } from "wailsjs/go/models";
+import { GetCompletedTodos, ToggleTodo } from "bindings/checklist/app";
+import * as models from "bindings/checklist/core/models";
 import { Task } from "../components/Task";
 
 interface GroupedTodos {
@@ -13,7 +13,7 @@ export const LogBook = () => {
 
   const fetchCompletedTodos = async () => {
     try {
-      const todos = await GetCompletedTodos();
+      const todos = (await GetCompletedTodos()) ?? [];
       setCompletedTodos(todos);
       groupTodosByMonth(todos);
     } catch (error) {

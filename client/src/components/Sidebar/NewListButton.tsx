@@ -1,4 +1,4 @@
-import { AddList, AddArea } from "../../../wailsjs/go/main/App";
+import { AddList, AddArea } from "bindings/checklist/app";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

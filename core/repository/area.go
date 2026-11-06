@@ -3,6 +3,8 @@ package repository
 import (
 	"checklist/core/db"
 	"checklist/core/models"
+
+	"gorm.io/gorm"
 )
 
 func GetAreas() ([]models.Area, error) {
@@ -22,10 +24,13 @@ func AddArea(name string) error {
 	return result
 }
 
+// DeleteArea removes an area; its lists stay and become area-less.
 func DeleteArea(id uint) error {
-	response := db.DB.Delete(&models.Area{}, id).Error
-	if response != nil {
-		return response
-	}
-	return nil
+	return db.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&models.List{}).Where("area_id = ?", id).
+			Update("area_id", 0).Error; err != nil {
+			return err
+		}
+		return tx.Delete(&models.Area{}, id).Error
+	})
 }

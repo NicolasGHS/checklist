@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GetSyncFolder, SelectSyncFolder, SetSyncFolder } from "../../../wailsjs/go/main/App";
+import { GetSyncFolder, SelectSyncFolder, SetSyncFolder } from "bindings/checklist/app";
 import { Button } from "@/components/ui/button";
 
 export const SyncSettings = () => {
@@ -12,9 +12,14 @@ export const SyncSettings = () => {
   }, []);
 
   const handlePickFolder = async () => {
-    const folder = await SelectSyncFolder();
-    if (folder) {
-      setSyncFolder(folder);
+    try {
+      const folder = await SelectSyncFolder();
+      // "" when the dialog was cancelled
+      if (folder) {
+        setSyncFolder(folder);
+      }
+    } catch (e) {
+      setStatus(`Error: ${e}`);
     }
   };
 
@@ -24,6 +29,9 @@ export const SyncSettings = () => {
     try {
       await SetSyncFolder(syncFolder);
       setStatus("Sync folder updated. Your data is now stored in the selected location.");
+      // everything on screen came from the previous database
+      window.dispatchEvent(new CustomEvent("taskMoved"));
+      window.dispatchEvent(new CustomEvent("listMoved"));
     } catch (e) {
       setStatus(`Error: ${e}`);
     } finally {

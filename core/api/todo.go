@@ -4,6 +4,7 @@ import (
 	"checklist/core/db"
 	"checklist/core/models"
 	"checklist/core/repository"
+	"sort"
 	"time"
 )
 
@@ -26,17 +27,30 @@ func GetTodosByList(id uint) ([]models.Todo, error) {
 }
 
 func GetTodayTodos() ([]models.Todo, error) {
-	unfinishedTodos, err := repository.GetUnfinishedTodayTodos()
+	// "today" is the local calendar day, not the UTC one
+	startOfDay, endOfDay := localDayBounds(time.Now())
+
+	unfinishedTodos, err := repository.GetTodosDueBetween(startOfDay, endOfDay)
 	if err != nil {
 		return nil, err
 	}
 
-	overdueTodos, err := repository.GetOverdueTodayTodos()
+	overdueTodos, err := repository.GetOverdueTodos(startOfDay)
 	if err != nil {
 		return nil, err
 	}
 
 	result := append(unfinishedTodos, overdueTodos...)
+
+	// manually placed tasks first in their order; unplaced ones (0) keep the
+	// default order (due today, then overdue) after them
+	sort.SliceStable(result, func(i, j int) bool {
+		a, b := result[i].TodayPosition, result[j].TodayPosition
+		if (a == 0) != (b == 0) {
+			return b == 0
+		}
+		return a < b
+	})
 
 	return result, nil
 }
@@ -77,11 +91,7 @@ func GetListCount(id uint) (int, error) {
 }
 
 func GetTodosByDeadline(date time.Time) ([]models.Todo, error) {
-	// TODO: separate time logic
-	loc := time.Local
-	localDate := date.In(loc)
-	startOfDay := time.Date(localDate.Year(), localDate.Month(), localDate.Day(), 0, 0, 0, 0, loc)
-	endOfDay := time.Date(localDate.Year(), localDate.Month(), localDate.Day(), 23, 59, 59, 999999999, loc)
+	startOfDay, endOfDay := localDayBounds(date)
 
 	response, err := repository.GetTodosByDeadline(startOfDay, endOfDay)
 	if err != nil {
@@ -149,6 +159,30 @@ func DeleteDeadline(id uint) (models.Todo, error) {
 	return response, nil
 }
 
+// localDayBounds returns the first and last instant of t's local calendar day.
+func localDayBounds(t time.Time) (time.Time, time.Time) {
+	local := t.In(time.Local)
+	start := time.Date(local.Year(), local.Month(), local.Day(), 0, 0, 0, 0, time.Local)
+	end := time.Date(local.Year(), local.Month(), local.Day(), 23, 59, 59, 999999999, time.Local)
+	return start, end
+}
+
+// ScheduleTodo gives a task a deadline and moves it out of Someday.
+func ScheduleTodo(id uint, deadline time.Time) error {
+	return repository.ScheduleTodo(id, deadline)
+}
+
+// UnscheduleTodo clears a task's deadline and files it under Anytime, or
+// Someday when someday is true.
+func UnscheduleTodo(id uint, someday bool) error {
+	return repository.UnscheduleTodo(id, someday)
+}
+
+// SetTodoCompleted sets a task's completed state (idempotent, unlike ToggleTodo).
+func SetTodoCompleted(id uint, completed bool) error {
+	return repository.SetTodoCompleted(id, completed)
+}
+
 func ToggleTodo(id uint) error {
 	todo, err := repository.GetTodoById(id)
 	if err != nil {
@@ -174,7 +208,18 @@ func UpdateTodoList(id uint, listID uint) error {
 	}
 
 	todo.ListID = listID
+	todo.Position = 0 // goes to the bottom of the new list
 	return repository.SaveTodo(&todo)
+}
+
+// ReorderListTodos stores the manual order of tasks within a list.
+func ReorderListTodos(ids []uint) error {
+	return repository.SetTodoPositions("position", ids)
+}
+
+// ReorderTodayTodos stores the manual order of tasks on the Today page.
+func ReorderTodayTodos(ids []uint) error {
+	return repository.SetTodoPositions("today_position", ids)
 }
 
 func CalculateDaysLeft(id uint) (*int, error) {

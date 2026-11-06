@@ -2,3 +2,7 @@ build/bin
 node_modules
 client/dist
 todos.db
+.task
+.wails
+bin
+build/ios/xcode

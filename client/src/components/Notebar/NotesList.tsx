@@ -2,7 +2,7 @@ import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardHeader, CardTitle } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 
 type NotesListProps = {
   notes: models.Note[];

@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import { NotesList } from "./NotesList";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 import { NoteEditForm } from "./NoteEditForm";
 
 type NoteListViewProps = {

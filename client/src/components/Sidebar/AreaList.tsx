@@ -3,13 +3,13 @@ import {
   AddListWithArea,
   DeleteArea,
   GetListsByArea,
-} from "../../../wailsjs/go/main/App";
+} from "bindings/checklist/app";
 import { useEffect, useState } from "react";
 import { SidebarMenuItem } from "../ui/sidebar";
 import { ListItem } from "./ListItem";
 import { Box } from "lucide-react";
 import { useDroppable } from "@dnd-kit/core";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 import { Plus, Ellipsis } from "lucide-react";
 import {
   DropdownMenu,
@@ -28,7 +28,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 
 type AreaListProps = {
   areaItem: models.Area;
-  deleteList: (id: number) => void;
+  deleteList: (id: number, deleteTasks: boolean) => void;
   onDeleteArea: (id: number) => void;
 };
 
@@ -56,7 +56,7 @@ export const AreaList = ({ areaItem, deleteList, onDeleteArea }: AreaListProps) 
 
   const loadLists = async () => {
     const result = await GetListsByArea(areaItem.ID);
-    setLists(result);
+    setLists(result ?? []);
   };
 
   const addList = async (values: z.infer<typeof formSchema>) => {
@@ -174,8 +174,8 @@ export const AreaList = ({ areaItem, deleteList, onDeleteArea }: AreaListProps) 
           <SidebarMenuItem key={list.ID}>
             <ListItem
               list={list}
-              onDelete={(id) => {
-                deleteList(id);
+              onDelete={(id, deleteTasks) => {
+                deleteList(id, deleteTasks);
                 // Remove the deleted list from local state
                 setLists((prev) => prev.filter((l) => l.ID !== id));
               }}

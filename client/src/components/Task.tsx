@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
 import { Checkbox } from "./ui/checkbox";
-import { CalculateRemainingTime } from "../../wailsjs/go/main/App";
-import { useDraggable } from "@dnd-kit/core";
+import {
+  CalculateRemainingTime,
+  DeleteDeadline,
+  ScheduleTodo,
+} from "bindings/checklist/app";
+import { endOfDayISO } from "@/utils/dates";
+import {
+  DraggableAttributes,
+  DraggableSyntheticListeners,
+  useDraggable,
+} from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, MoreHorizontal, Trash2 } from "lucide-react";
-import { models } from "wailsjs/go/models";
+import { GripVertical, MoreHorizontal, Star, Trash2 } from "lucide-react";
+import * as models from "bindings/checklist/core/models";
 import { DaysLeft } from "./DaysLeft";
 import {
   DropdownMenu,
@@ -21,29 +31,74 @@ type TaskProps = {
   currentListId?: number;
   showCompletionDate?: boolean;
   listNameMap?: Map<number, string>;
+  // inside a SortableContext: the row can be reordered and is a drop target
+  sortable?: boolean;
 };
 
-export const Task = ({
+type DragBindings = {
+  setNodeRef: (node: HTMLElement | null) => void;
+  attributes: DraggableAttributes;
+  listeners: DraggableSyntheticListeners;
+  style: React.CSSProperties;
+};
+
+export const Task = ({ sortable = false, ...props }: TaskProps) =>
+  sortable ? <SortableTask {...props} /> : <DraggableTask {...props} />;
+
+type RowProps = Omit<TaskProps, "sortable">;
+
+const DraggableTask = (props: RowProps) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: `task-${props.todo.ID}`,
+      disabled: props.todo.Completed,
+      data: { todo: props.todo },
+    });
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  };
+  return (
+    <TaskRow {...props} drag={{ setNodeRef, attributes, listeners, style }} />
+  );
+};
+
+const SortableTask = (props: RowProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: `task-${props.todo.ID}`,
+    disabled: props.todo.Completed,
+    data: { todo: props.todo },
+  });
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+    position: "relative" as const,
+    zIndex: isDragging ? 1 : undefined,
+  };
+  return (
+    <TaskRow {...props} drag={{ setNodeRef, attributes, listeners, style }} />
+  );
+};
+
+const TaskRow = ({
   todo,
   onToggle,
   openCard,
   onDelete,
   showCompletionDate = false,
   listNameMap,
-}: TaskProps) => {
+  drag,
+}: RowProps & { drag: DragBindings }) => {
   const [daysLeft, setDaysLeft] = useState<number>();
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: `task-${todo.ID}`,
-      disabled: todo.Completed,
-      data: {
-        todo,
-      },
-    });
-  const style = {
-    transform: CSS.Translate.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
-  };
+  const { attributes, listeners, setNodeRef, style } = drag;
   const handleChange = () => {
     onToggle(todo.ID);
   };
@@ -51,7 +106,26 @@ export const Task = ({
   const calculateTime = async () => {
     const result = await CalculateRemainingTime(todo.ID);
     console.log("result in calculateTime: ", result);
-    setDaysLeft(result);
+    setDaysLeft(result ?? undefined);
+  };
+
+  const isToday = typeof daysLeft === "number" && daysLeft <= 0;
+
+  const toggleToday = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      if (isToday) {
+        await DeleteDeadline(todo.ID);
+        setDaysLeft(undefined);
+      } else {
+        // due at the end of today; also takes the task out of Someday
+        await ScheduleTodo(todo.ID, endOfDayISO(new Date()));
+        setDaysLeft(0);
+      }
+      window.dispatchEvent(new CustomEvent("taskMoved"));
+    } catch (error) {
+      console.error("Failed toggling today: ", error);
+    }
   };
 
   const formatCompletionDate = (completedAt: any) => {
@@ -66,7 +140,7 @@ export const Task = ({
 
   useEffect(() => {
     calculateTime();
-  });
+  }, [todo.ID, todo.Deadline]);
 
   return (
     <div
@@ -110,7 +184,25 @@ export const Task = ({
         )}
       </div>
       <div className="flex items-center gap-2">
-        {!todo.Completed && <DaysLeft difference={daysLeft} />}
+        {!todo.Completed && !isToday && <DaysLeft difference={daysLeft} />}
+        {!todo.Completed && (
+          <button
+            className={`p-1 rounded hover:bg-muted transition-opacity ${
+              isToday ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+            }`}
+            onClick={toggleToday}
+            onDoubleClick={(e) => e.stopPropagation()}
+            title={isToday ? "Remove from Today" : "Add to Today"}
+          >
+            <Star
+              className={`w-4 h-4 ${
+                isToday
+                  ? "text-yellow-400 fill-yellow-400"
+                  : "text-muted-foreground"
+              }`}
+            />
+          </button>
+        )}
         {onDelete && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
