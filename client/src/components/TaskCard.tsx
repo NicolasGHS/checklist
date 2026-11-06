@@ -8,20 +8,20 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { useForm } from "react-hook-form";
 import { Form } from "./ui/form";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 import { Flag } from "lucide-react";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import {
-  CalculateRemainingTime,
   DeleteDeadline,
   GetSubtasks,
   AddSubtask,
   ToggleTodo,
-} from "../../wailsjs/go/main/App";
+} from "bindings/checklist/app";
 import { Deadline } from "./Deadline";
 import { DaysLeft } from "./DaysLeft";
 import { Subtask } from "./Subtask";
+import { daysUntil, endOfDayISO } from "@/utils/dates";
 
 type TodoCardProps = {
   UpdateTodoFunction: (
@@ -57,12 +57,6 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
 
   const toggleCalendar = () => {
     setShowCalendar(!showCalendar);
-  };
-
-  const calculateTime = async () => {
-    const result = await CalculateRemainingTime(taskItem.ID);
-    console.log("result: ", result);
-    setDaysLeft(result);
   };
 
   const loadSubtasks = async () => {
@@ -106,17 +100,8 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
       values.description || "",
       taskItem.ListID,
       false,
-      date
-        ? new Date(
-            date.getFullYear(),
-            date.getMonth(),
-            date.getDate(),
-            23,
-            59,
-            59,
-            999
-          ).toISOString()
-        : ""
+      // "" leaves the stored deadline as is
+      date ? endOfDayISO(date) : ""
     );
   }
 
@@ -124,7 +109,8 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
     try {
       const result = await DeleteDeadline(Task.ID);
       setTaskItem(result);
-      console.log("result: ", result);
+      // otherwise the next save would send the removed date again
+      setDate(undefined);
       window.dispatchEvent(new CustomEvent("taskMoved"));
     } catch (error) {
       console.error("Failed removing deadline: ", error);
@@ -139,9 +125,13 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
   };
 
   useEffect(() => {
-    calculateTime();
     loadSubtasks();
   }, []);
+
+  // computed locally so it follows a newly picked date immediately
+  useEffect(() => {
+    setDaysLeft(taskItem.Deadline ? daysUntil(taskItem.Deadline) : undefined);
+  }, [taskItem.Deadline]);
 
   // Sync taskItem with Task prop when it changes
   useEffect(() => {
@@ -252,28 +242,17 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
                         setDate(selectedDate);
                         setShowCalendar(false);
 
-                        // Create the deadline date
-                        const newDeadline = new Date(
-                          selectedDate.getFullYear(),
-                          selectedDate.getMonth(),
-                          selectedDate.getDate(),
-                          23,
-                          59,
-                          59,
-                          999
-                        );
+                        const newDeadline = endOfDayISO(selectedDate);
 
                         setTaskItem(
                           Object.assign(
                             Object.create(Object.getPrototypeOf(taskItem)),
                             taskItem,
                             {
-                              Deadline: newDeadline as any,
+                              Deadline: newDeadline,
                             }
                           )
                         );
-
-                        calculateTime();
 
                         UpdateTodoFunction(
                           taskItem.ID,
@@ -281,7 +260,7 @@ export const TodoCard = ({ UpdateTodoFunction, Task }: TodoCardProps) => {
                           form.getValues("description") || "",
                           taskItem.ListID,
                           false,
-                          newDeadline.toISOString()
+                          newDeadline
                         );
                       }
                     }}

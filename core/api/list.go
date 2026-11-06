@@ -44,21 +44,27 @@ func GetListsWithoutArea() ([]models.List, error) {
 	return response, nil
 }
 
-func MakeSlug(name string) string {
-	response, err := repository.GetListByName(name)
-
-	if err == nil && response.ID != 0 {
-		newSlug := slug.Make(fmt.Sprintf("%s%d", name, response.ID))
-		return newSlug
+// MakeSlug returns a slug for name that no other list uses yet.
+func MakeSlug(name string) (string, error) {
+	base := slug.Make(name)
+	candidate := base
+	for i := 2; ; i++ {
+		exists, err := repository.SlugExists(candidate)
+		if err != nil {
+			return "", err
+		}
+		if !exists {
+			return candidate, nil
+		}
+		candidate = fmt.Sprintf("%s-%d", base, i)
 	}
-
-	newSlug := slug.Make(name)
-
-	return newSlug
 }
 
 func AddList(name string) error {
-	slug := MakeSlug(name)
+	slug, err := MakeSlug(name)
+	if err != nil {
+		return err
+	}
 
 	response := repository.AddList(name, slug, 0)
 	if response != nil {
@@ -69,7 +75,10 @@ func AddList(name string) error {
 }
 
 func AddListWithArea(name, description string, areaId int32) error {
-	slug := MakeSlug(name)
+	slug, err := MakeSlug(name)
+	if err != nil {
+		return err
+	}
 
 	response := repository.AddList(name, slug, areaId)
 	if response != nil {
@@ -79,8 +88,8 @@ func AddListWithArea(name, description string, areaId int32) error {
 	return nil
 }
 
-func DeleteList(id uint) error {
-	response := repository.DeleteList(id)
+func DeleteList(id uint, deleteTasks bool) error {
+	response := repository.DeleteList(id, deleteTasks)
 	if response != nil {
 		return response
 	}

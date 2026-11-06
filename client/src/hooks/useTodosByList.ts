@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
-import { models } from "../../wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 import {
   DeleteTodo,
   GetArchivedTodosByList,
   GetTodosByList,
   ToggleTodo,
   UpdateTodo,
-} from "../../wailsjs/go/main/App";
+} from "bindings/checklist/app";
+
+// tell the sidebar counts and other pages that tasks changed
+const notifyTaskChanged = () =>
+  window.dispatchEvent(new CustomEvent("taskMoved"));
 
 export const useTodosByList = (list: models.List, isArchived: boolean) => {
   const [todos, setTodos] = useState<models.Todo[]>([]);
@@ -16,7 +20,7 @@ export const useTodosByList = (list: models.List, isArchived: boolean) => {
       const result = isArchived
         ? await GetArchivedTodosByList(list.ID)
         : await GetTodosByList(list.ID);
-      setTodos(result);
+      setTodos(result ?? []);
     } catch (error) {
       console.error("Failed to fetch todo's: ", error);
     }
@@ -48,6 +52,7 @@ export const useTodosByList = (list: models.List, isArchived: boolean) => {
       );
     }
     await loadTodos();
+    notifyTaskChanged();
   };
 
   const updateTodo = async (
@@ -60,11 +65,13 @@ export const useTodosByList = (list: models.List, isArchived: boolean) => {
   ) => {
     await UpdateTodo(id, name, description, list_id, today, deadline);
     await loadTodos();
+    notifyTaskChanged();
   };
 
   const deleteTodo = async (id: number) => {
     await DeleteTodo(id);
     await loadTodos();
+    notifyTaskChanged();
   };
 
   useEffect(() => {
@@ -75,12 +82,17 @@ export const useTodosByList = (list: models.List, isArchived: boolean) => {
       setTodos((prev) => prev.filter((todo) => todo.ID !== taskId));
     };
     const handleTaskDragCancelled = () => loadTodos();
+    // a task was dropped elsewhere or changed on another view: the task hidden
+    // on drag start must come back (or stay gone) based on the saved data
+    const handleTaskMoved = () => loadTodos();
 
     window.addEventListener("taskDragStarted", handleTaskDragStarted);
     window.addEventListener("taskDragCancelled", handleTaskDragCancelled);
+    window.addEventListener("taskMoved", handleTaskMoved);
     return () => {
       window.removeEventListener("taskDragStarted", handleTaskDragStarted);
       window.removeEventListener("taskDragCancelled", handleTaskDragCancelled);
+      window.removeEventListener("taskMoved", handleTaskMoved);
     };
   }, [list.ID, isArchived]);
 

@@ -1,5 +1,5 @@
 import { Checkbox } from "./ui/checkbox";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 
 type SubtaskProps = {
   subtask: models.Todo;

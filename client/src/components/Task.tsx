@@ -3,8 +3,9 @@ import { Checkbox } from "./ui/checkbox";
 import {
   CalculateRemainingTime,
   DeleteDeadline,
-  UpdateTodo,
-} from "../../wailsjs/go/main/App";
+  ScheduleTodo,
+} from "bindings/checklist/app";
+import { endOfDayISO } from "@/utils/dates";
 import {
   DraggableAttributes,
   DraggableSyntheticListeners,
@@ -13,7 +14,7 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, MoreHorizontal, Star, Trash2 } from "lucide-react";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 import { DaysLeft } from "./DaysLeft";
 import {
   DropdownMenu,
@@ -105,7 +106,7 @@ const TaskRow = ({
   const calculateTime = async () => {
     const result = await CalculateRemainingTime(todo.ID);
     console.log("result in calculateTime: ", result);
-    setDaysLeft(result);
+    setDaysLeft(result ?? undefined);
   };
 
   const isToday = typeof daysLeft === "number" && daysLeft <= 0;
@@ -117,25 +118,8 @@ const TaskRow = ({
         await DeleteDeadline(todo.ID);
         setDaysLeft(undefined);
       } else {
-        // Set deadline to today at end of day (23:59:59)
-        const today = new Date();
-        const todayDeadline = new Date(
-          today.getFullYear(),
-          today.getMonth(),
-          today.getDate(),
-          23,
-          59,
-          59,
-          999
-        );
-        await UpdateTodo(
-          todo.ID,
-          todo.Name,
-          todo.Description || "",
-          todo.ListID,
-          false,
-          todayDeadline.toISOString()
-        );
+        // due at the end of today; also takes the task out of Someday
+        await ScheduleTodo(todo.ID, endOfDayISO(new Date()));
         setDaysLeft(0);
       }
       window.dispatchEvent(new CustomEvent("taskMoved"));

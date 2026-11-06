@@ -20,14 +20,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { GetListCount } from "../../../wailsjs/go/main/App";
+import { GetListCount } from "bindings/checklist/app";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
+import { buttonVariants } from "@/components/ui/button";
 
 type ListItemProps = {
   list: models.List;
-  onDelete: (id: number) => void;
+  // deleteTasks false = move the list's tasks to the Inbox
+  onDelete: (id: number, deleteTasks: boolean) => void;
 };
 
 export const ListItem = ({ list, onDelete }: ListItemProps) => {
@@ -132,17 +134,27 @@ export const ListItem = ({ list, onDelete }: ListItemProps) => {
         <AlertDialog open={open} onOpenChange={setOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogTitle>Delete “{list.Name}”?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone.
+                {count > 0
+                  ? `This list has ${count} open ${count === 1 ? "task" : "tasks"}. Move its tasks to the Inbox, or delete them along with the list. This can't be undone.`
+                  : "Any completed tasks in it move to the Inbox and stay in the Logbook. This can't be undone."}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel onClick={() => setOpen(false)}>
                 Cancel
               </AlertDialogCancel>
-              <AlertDialogAction onClick={() => onDelete(list.ID)}>
-                Continue
+              {count > 0 && (
+                <AlertDialogAction
+                  className={buttonVariants({ variant: "destructive" })}
+                  onClick={() => onDelete(list.ID, true)}
+                >
+                  Delete list and tasks
+                </AlertDialogAction>
+              )}
+              <AlertDialogAction onClick={() => onDelete(list.ID, false)}>
+                {count > 0 ? "Move tasks to Inbox" : "Delete list"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

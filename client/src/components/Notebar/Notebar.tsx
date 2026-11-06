@@ -6,8 +6,8 @@ import {
   CreateNote,
   DeleteNote,
   UpdateNote,
-} from "../../../wailsjs/go/main/App";
-import { models } from "../../../wailsjs/go/models";
+} from "bindings/checklist/app";
+import * as models from "bindings/checklist/core/models";
 import { NotebarButton } from "./NotebarButton";
 import { NoteListView } from "./NoteListView";
 import { NoteDetailView } from "./NoteDetailView";

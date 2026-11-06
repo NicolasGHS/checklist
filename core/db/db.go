@@ -50,6 +50,25 @@ func InitDB() error {
 		database.Create(&inbox)
 	}
 
+	if err := repairOrphans(database); err != nil {
+		return err
+	}
+
 	DB = database
 	return nil
+}
+
+// repairOrphans re-homes rows left behind by older versions that deleted
+// lists and areas without touching what pointed at them: top-level tasks of a
+// missing list (or list 0) go to the Inbox, and lists of a missing area
+// become area-less. Both are no-ops on a healthy database.
+func repairOrphans(database *gorm.DB) error {
+	if err := database.Exec(
+		"UPDATE todos SET list_id = 1, position = 0 WHERE parent_id IS NULL AND list_id NOT IN (SELECT id FROM lists)",
+	).Error; err != nil {
+		return err
+	}
+	return database.Exec(
+		"UPDATE lists SET area_id = 0 WHERE area_id != 0 AND area_id NOT IN (SELECT id FROM areas)",
+	).Error
 }

@@ -44,32 +44,38 @@ func GetTodosByList(id uint) ([]models.Todo, error) {
 	return todos, nil
 }
 
-func GetUnfinishedTodayTodos() ([]models.Todo, error) {
-	var unfinishedTodos []models.Todo
+// GetTodosDueBetween returns top-level tasks whose deadline falls in
+// [start, end]. Deadlines are stored in UTC, and SQLite compares them as
+// text, so the bounds are converted to UTC to keep the comparison valid.
+func GetTodosDueBetween(start, end time.Time) ([]models.Todo, error) {
+	var todos []models.Todo
 
-	result := db.DB.Where("DATE(deadline) = DATE(?) AND parent_id IS NULL", time.Now()).Find(&unfinishedTodos).Error
-	if result != nil {
-		return nil, result
+	result := db.DB.Where("deadline >= ? AND deadline <= ? AND parent_id IS NULL", start.UTC(), end.UTC()).
+		Find(&todos)
+	if result.Error != nil {
+		return nil, result.Error
 	}
 
-	return unfinishedTodos, nil
+	return todos, nil
 }
 
-func GetOverdueTodayTodos() ([]models.Todo, error) {
-	var overdueTodos []models.Todo
+// GetOverdueTodos returns unfinished top-level tasks due before the given time.
+func GetOverdueTodos(before time.Time) ([]models.Todo, error) {
+	var todos []models.Todo
 
-	result := db.DB.Where("completed = 0 AND deadline < DATE(?) AND parent_id IS NULL", time.Now()).Find(&overdueTodos).Error
-	if result != nil {
-		return nil, result
+	result := db.DB.Where("completed = 0 AND deadline < ? AND parent_id IS NULL", before.UTC()).
+		Find(&todos)
+	if result.Error != nil {
+		return nil, result.Error
 	}
 
-	return overdueTodos, nil
+	return todos, nil
 }
 
 func GetTodosByDeadline(start, end time.Time) ([]models.Todo, error) {
 	var todos []models.Todo
 
-	result := db.DB.Where("deadline >= ? AND deadline <= ? AND parent_id IS NULL", start, end).Order("completed asc").Find(&todos)
+	result := db.DB.Where("deadline >= ? AND deadline <= ? AND parent_id IS NULL", start.UTC(), end.UTC()).Order("completed asc").Find(&todos)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -138,12 +144,33 @@ func AddSubtask(name string, parent_id uint) error {
 	return nil
 }
 
+// UpdateTodo writes name, description, list and today flag as given, so they
+// can be cleared. A nil deadline leaves the stored deadline untouched; use
+// DeleteDeadline to remove it.
 func UpdateTodo(id uint, name string, description string, list_id uint, today bool, deadline *time.Time) error {
-	result := db.DB.Model(&models.Todo{}).Where("id = ?", id).Updates(&models.Todo{Name: name, Description: description, ListID: list_id, Today: today, Deadline: deadline})
-	if result.Error != nil {
-		return result.Error
+	fields := map[string]any{
+		"name":        name,
+		"description": description,
+		"list_id":     list_id,
+		"today":       today,
 	}
-	return nil
+	if deadline != nil {
+		fields["deadline"] = *deadline
+	}
+	return db.DB.Model(&models.Todo{}).Where("id = ?", id).Updates(fields).Error
+}
+
+// ScheduleTodo sets a task's deadline and takes it out of Someday.
+func ScheduleTodo(id uint, deadline time.Time) error {
+	return db.DB.Model(&models.Todo{}).Where("id = ?", id).
+		Updates(map[string]any{"deadline": deadline, "archive": false}).Error
+}
+
+// UnscheduleTodo removes a task's deadline and puts it in Anytime
+// (someday=false) or Someday (someday=true).
+func UnscheduleTodo(id uint, someday bool) error {
+	return db.DB.Model(&models.Todo{}).Where("id = ?", id).
+		Updates(map[string]any{"deadline": nil, "today_position": 0, "archive": someday}).Error
 }
 
 func DeleteDeadline(id uint) (models.Todo, error) {
@@ -159,6 +186,16 @@ func DeleteDeadline(id uint) (models.Todo, error) {
 	_ = db.DB.Where("id = ?", id).Find(&todo)
 
 	return todo, nil
+}
+
+// SetTodoCompleted marks a task done or not done, stamping CompletedAt.
+func SetTodoCompleted(id uint, completed bool) error {
+	completedAt := time.Time{}
+	if completed {
+		completedAt = time.Now()
+	}
+	return db.DB.Model(&models.Todo{}).Where("id = ?", id).
+		Updates(map[string]any{"completed": completed, "completed_at": completedAt}).Error
 }
 
 func DeleteTodo(id uint) error {

@@ -2,7 +2,7 @@ import { Calendar, Inbox, Star, FolderOpen, Layers } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Separator } from "../ui/separator";
 import { useDroppable } from "@dnd-kit/core";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 
 import {
   Sidebar,
@@ -23,29 +23,35 @@ import {
   GetListCount,
   GetListsWithoutArea,
   DeleteList,
-} from "../../../wailsjs/go/main/App";
+} from "bindings/checklist/app";
 import { useEffect, useState } from "react";
 import { AreaList } from "./AreaList";
 import { ScrollArea } from "../ui/scroll-area";
 import { ListItem } from "./ListItem";
-import { sidebarItems } from "@/constants/sidebarItems";
+import { sidebarItems, VIEW_DROP_PREFIX } from "@/constants/sidebarItems";
 import { useCount } from "@/hooks/useCount";
+
+const INBOX_LIST_ID = 1;
 
 const DroppableMenuItem = ({ item }: { item: (typeof sidebarItems)[0] }) => {
   const location = useLocation();
+  // Inbox is a real list; every other entry is a view with its own drop action
   const { isOver, setNodeRef } = useDroppable({
-    id: `drop-list-${item.id}`,
+    id:
+      item.view === "inbox"
+        ? `drop-list-${INBOX_LIST_ID}`
+        : `${VIEW_DROP_PREFIX}${item.view}`,
   });
   const { inboxCount, setInboxCount, todayCount, setTodayCount } = useCount();
-  const isToday = item.title == "Today";
-  const isInbox = item.title == "Inbox";
+  const isToday = item.view === "today";
+  const isInbox = item.view === "inbox";
 
   const getCount = async () => {
     if (isToday) {
       const count = await GetTodayCount();
       setTodayCount(count);
     } else if (isInbox) {
-      const count = await GetListCount(1);
+      const count = await GetListCount(INBOX_LIST_ID);
       console.log(`Inbox has ${count} todo's`);
       setInboxCount(count);
     }
@@ -110,27 +116,25 @@ export function AppSidebar() {
   const [updateTrigger, setUpdateTrigger] = useState<number>(0);
 
   const loadLists = async () => {
-    let result = (await GetLists()) as unknown as models.List[];
-    setLists(result);
-
-    result = (await GetListsWithoutArea()) as unknown as models.List[];
-    setListsWithoutArea(result);
+    setLists((await GetLists()) ?? []);
+    setListsWithoutArea((await GetListsWithoutArea()) ?? []);
   };
 
   const loadAreas = async () => {
-    const result = (await GetAreas()) as unknown as models.Area[];
-    setAreas(result);
+    setAreas((await GetAreas()) ?? []);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: number, deleteTasks: boolean) => {
     try {
-      await DeleteList(id);
+      await DeleteList(id, deleteTasks);
     } catch (error) {
       console.error("Error deleting list: ", error);
     }
 
     loadLists();
     setUpdateTrigger((prev) => prev + 1);
+    // tasks moved to the Inbox (or were deleted): refresh counts and pages
+    window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
   useEffect(() => {
@@ -184,7 +188,7 @@ export function AppSidebar() {
               <SidebarMenu>
                 <div>
                   {sidebarItems.map((item) => (
-                    <DroppableMenuItem key={item.title} item={item} />
+                    <DroppableMenuItem key={item.view} item={item} />
                   ))}
                 </div>
 
@@ -193,7 +197,7 @@ export function AppSidebar() {
                     <ListItem
                       key={list.ID}
                       list={list}
-                      onDelete={() => handleDelete(list.ID)}
+                      onDelete={handleDelete}
                     />
                   ))}
                 </div>

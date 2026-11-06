@@ -2,44 +2,49 @@ package main
 
 import (
 	"embed"
+	"log"
 
-	"github.com/wailsapp/wails/v2"
-	"github.com/wailsapp/wails/v2/pkg/options"
-	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
-	"github.com/wailsapp/wails/v2/pkg/options/mac"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 //go:embed all:client/dist
 var assets embed.FS
+
+//go:embed build/appicon.png
 var icon []byte
 
 func main() {
-	// Create an instance of the app structure
-	app := NewApp()
+	opts := application.Options{
+		Name:        "Checklist",
+		Description: "A Things 3 inspired task manager",
+		Icon:        icon,
+		Services: []application.Service{
+			application.NewService(NewApp()),
+		},
+		Assets: application.AssetOptions{
+			Handler: application.AssetFileServerFS(assets),
+		},
+		Mac: application.MacOptions{
+			ApplicationShouldTerminateAfterLastWindowClosed: true,
+		},
+		IOS: application.IOSOptions{
+			DisableBounce:             true,
+			DisableInputAccessoryView: true,
+			DisableLinkPreview:        true,
+		},
+	}
 
-	// Create application with options
-	err := wails.Run(&options.App{
-		Title:  "Checklist",
-		Width:  1024,
-		Height: 768,
-		AssetServer: &assetserver.Options{
-			Assets: assets,
-		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-		OnStartup:        app.startup,
-		Bind: []interface{}{
-			app,
-		},
-		Mac: &mac.Options{
-			About: &mac.AboutInfo{
-				Title:   "Checklist",
-				Message: "© 2025 NicolasGHS",
-				Icon:    icon,
-			},
-		},
+	app := application.New(opts)
+
+	app.Window.NewWithOptions(application.WebviewWindowOptions{
+		Title:            "Checklist",
+		Width:            1024,
+		Height:           768,
+		BackgroundColour: application.NewRGB(27, 38, 54),
+		URL:              "/",
 	})
 
-	if err != nil {
-		println("Error:", err.Error())
+	if err := app.Run(); err != nil {
+		log.Fatal(err)
 	}
 }

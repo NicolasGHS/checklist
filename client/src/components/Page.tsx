@@ -11,7 +11,7 @@ import {
   ReorderTodayTodos,
   UpdateTodo,
   ToggleTodo,
-} from "../../wailsjs/go/main/App";
+} from "bindings/checklist/app";
 import { DragEndEvent, useDndMonitor } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -19,12 +19,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { NewTaskButton } from "./NewTaskButton";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 import { useLocation } from "react-router-dom";
 import { TodoCard } from "./TaskCard";
 import { Button } from "./ui/button";
-import { useCount } from "@/hooks/useCount";
 import { ProjectFilter, ProjectFilterOption } from "./ProjectFilter";
+import { endOfDayISO } from "@/utils/dates";
 
 const INBOX_LIST_ID = 1;
 const TODAY_FILTER_KEY = "todayProjectFilter";
@@ -60,7 +60,6 @@ export const Page = ({ title, id }: PageProps) => {
   const [listNameMap, setListNameMap] = useState<Map<number, string>>(new Map());
   const [projectFilter, setProjectFilter] = useState<number[]>(readTodayFilter);
   const location = useLocation();
-  const { inboxCount, setInboxCount, setTodayCount } = useCount();
   const isTodayPage = location.pathname === "/today";
 
   const updateProjectFilter = (ids: number[]) => {
@@ -141,12 +140,12 @@ export const Page = ({ title, id }: PageProps) => {
 
   const loadTodos = async () => {
     const result = await GetTodosByList(id);
-    setTodos(result);
+    setTodos(result ?? []);
   };
 
   const loadTodayTodos = async () => {
     const result = await GetTodayTodos();
-    setTodos(result);
+    setTodos(result ?? []);
   };
 
   const reloadTodos = () =>
@@ -154,7 +153,7 @@ export const Page = ({ title, id }: PageProps) => {
 
   const loadListNames = async () => {
     const lists = await GetLists();
-    setListNameMap(new Map(lists.map((l) => [l.ID, l.Name])));
+    setListNameMap(new Map((lists ?? []).map((l) => [l.ID, l.Name])));
   };
 
   const createTodo = async (
@@ -163,14 +162,20 @@ export const Page = ({ title, id }: PageProps) => {
     today: boolean,
     deadline: string,
   ) => {
-    await AddTodo(name, description, id, today, deadline);
-    loadTodos();
-    if (today) {
-      setTodayCount((prev) => prev + 1);
-    } else if (id == 1) {
-      setInboxCount((prev) => prev + 1);
+    // Today isn't a list: tasks made there go to the Inbox, due today, so they
+    // show up on Today and still have a home once the date is removed
+    if (isTodayPage) {
+      await AddTodo(
+        name,
+        description,
+        INBOX_LIST_ID,
+        today,
+        deadline || endOfDayISO(new Date()),
+      );
+    } else {
+      await AddTodo(name, description, id, today, deadline);
     }
-    // update list counts in the sidebar
+    // reloads this page and the sidebar counts
     window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 

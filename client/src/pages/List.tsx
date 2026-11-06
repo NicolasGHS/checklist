@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { GetListBySlug } from "../../wailsjs/go/main/App";
+import { GetListBySlug } from "bindings/checklist/app";
 import { Page } from "../components/Page";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 
 export const ListPage = () => {
   const { slug } = useParams();

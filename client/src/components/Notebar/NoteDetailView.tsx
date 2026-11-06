@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { models } from "wailsjs/go/models";
+import * as models from "bindings/checklist/core/models";
 import { NoteEditForm } from "./NoteEditForm";
 
 type NoteDetailsViewProps = {

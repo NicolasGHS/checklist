@@ -27,12 +27,15 @@ func GetTodosByList(id uint) ([]models.Todo, error) {
 }
 
 func GetTodayTodos() ([]models.Todo, error) {
-	unfinishedTodos, err := repository.GetUnfinishedTodayTodos()
+	// "today" is the local calendar day, not the UTC one
+	startOfDay, endOfDay := localDayBounds(time.Now())
+
+	unfinishedTodos, err := repository.GetTodosDueBetween(startOfDay, endOfDay)
 	if err != nil {
 		return nil, err
 	}
 
-	overdueTodos, err := repository.GetOverdueTodayTodos()
+	overdueTodos, err := repository.GetOverdueTodos(startOfDay)
 	if err != nil {
 		return nil, err
 	}
@@ -88,11 +91,7 @@ func GetListCount(id uint) (int, error) {
 }
 
 func GetTodosByDeadline(date time.Time) ([]models.Todo, error) {
-	// TODO: separate time logic
-	loc := time.Local
-	localDate := date.In(loc)
-	startOfDay := time.Date(localDate.Year(), localDate.Month(), localDate.Day(), 0, 0, 0, 0, loc)
-	endOfDay := time.Date(localDate.Year(), localDate.Month(), localDate.Day(), 23, 59, 59, 999999999, loc)
+	startOfDay, endOfDay := localDayBounds(date)
 
 	response, err := repository.GetTodosByDeadline(startOfDay, endOfDay)
 	if err != nil {
@@ -158,6 +157,30 @@ func DeleteDeadline(id uint) (models.Todo, error) {
 		return models.Todo{}, err
 	}
 	return response, nil
+}
+
+// localDayBounds returns the first and last instant of t's local calendar day.
+func localDayBounds(t time.Time) (time.Time, time.Time) {
+	local := t.In(time.Local)
+	start := time.Date(local.Year(), local.Month(), local.Day(), 0, 0, 0, 0, time.Local)
+	end := time.Date(local.Year(), local.Month(), local.Day(), 23, 59, 59, 999999999, time.Local)
+	return start, end
+}
+
+// ScheduleTodo gives a task a deadline and moves it out of Someday.
+func ScheduleTodo(id uint, deadline time.Time) error {
+	return repository.ScheduleTodo(id, deadline)
+}
+
+// UnscheduleTodo clears a task's deadline and files it under Anytime, or
+// Someday when someday is true.
+func UnscheduleTodo(id uint, someday bool) error {
+	return repository.UnscheduleTodo(id, someday)
+}
+
+// SetTodoCompleted sets a task's completed state (idempotent, unlike ToggleTodo).
+func SetTodoCompleted(id uint, completed bool) error {
+	return repository.SetTodoCompleted(id, completed)
 }
 
 func ToggleTodo(id uint) error {
