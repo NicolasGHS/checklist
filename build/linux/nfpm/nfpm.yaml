@@ -3,26 +3,26 @@
 #
 # The lines below are called `modelines`. See `:help modeline`
 
-name: "tmpl"
+name: "Checklist"
 arch: ${GOARCH}
 platform: "linux"
-version: "0.1.0"
+version: "0.2.0"
 section: "default"
 priority: "extra"
 maintainer: ${GIT_COMMITTER_NAME} <${GIT_COMMITTER_EMAIL}>
-description: "A tmpl application"
-vendor: "My Company"
+description: "A Things 3 inspired task manager"
+vendor: "NicolasGHS"
 homepage: "https://wails.io"
 license: "MIT"
 release: "1"
 
 contents:
-  - src: "./bin/tmpl"
-    dst: "/usr/local/bin/tmpl"
+  - src: "./bin/Checklist"
+    dst: "/usr/local/bin/Checklist"
   - src: "./build/appicon.png"
-    dst: "/usr/share/icons/hicolor/128x128/apps/tmpl.png"
-  - src: "./build/linux/tmpl.desktop"
-    dst: "/usr/share/applications/tmpl.desktop"
+    dst: "/usr/share/icons/hicolor/128x128/apps/Checklist.png"
+  - src: "./build/linux/Checklist.desktop"
+    dst: "/usr/share/applications/Checklist.desktop"
 
 # Default dependencies for the GTK4 + WebKitGTK 6.0 stack (Ubuntu 24.04+ / Debian 13+)
 depends:
