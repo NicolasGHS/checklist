@@ -25,6 +25,7 @@ import { endOfDayISO } from "@/utils/dates";
 import { Hash } from "lucide-react";
 import * as models from "bindings/checklist/core/models";
 import { Notebar } from "./components/Notebar/Notebar";
+import { useNavigationHotkeys } from "@/hooks/useNavigationHotkeys";
 
 const isTaskId = (id: unknown) => String(id).startsWith("task-");
 
@@ -69,6 +70,8 @@ const Layout: React.FC = () => {
     name?: string;
   } | null>(null);
   const [draggedList, setDraggedList] = useState<models.List | null>(null);
+
+  useNavigationHotkeys();
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
