@@ -45,6 +45,9 @@ export const Page = ({ title, id }: PageProps) => {
     setTodos(result);
   };
 
+  const reloadTodos = () =>
+    location.pathname === "/today" ? loadTodayTodos() : loadTodos();
+
   const loadListNames = async () => {
     const lists = await GetLists();
     setListNameMap(new Map(lists.map((l) => [l.ID, l.Name])));
@@ -111,7 +114,7 @@ export const Page = ({ title, id }: PageProps) => {
         ),
       );
     }
-    loadTodos();
+    await reloadTodos();
     window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
@@ -134,7 +137,7 @@ export const Page = ({ title, id }: PageProps) => {
 
   const handleDelete = async (id: number) => {
     await DeleteTodo(id);
-    loadTodos();
+    await reloadTodos();
     window.dispatchEvent(new CustomEvent("taskMoved"));
   };
 
@@ -197,8 +200,8 @@ export const Page = ({ title, id }: PageProps) => {
           <ul>
             {todos
               ?.filter((todo) => !todo.Completed)
-              .map((todo: models.Todo, index) => (
-                <li key={index} className="text-white mb-2">
+              .map((todo: models.Todo) => (
+                <li key={todo.ID} className="text-white mb-2">
                   {todo.ID !== openTodoId ? (
                     <Task
                       todo={todo}
@@ -225,8 +228,8 @@ export const Page = ({ title, id }: PageProps) => {
             {showCompleted &&
               todos
                 ?.filter((todo) => todo.Completed)
-                .map((todo: models.Todo, index) => (
-                  <li key={index} className="text-white mb-2">
+                .map((todo: models.Todo) => (
+                  <li key={todo.ID} className="text-white mb-2">
                     {todo.ID !== openTodoId ? (
                       <Task
                         todo={todo}

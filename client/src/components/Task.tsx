@@ -106,7 +106,7 @@ export const Task = ({
 
   useEffect(() => {
     calculateTime();
-  });
+  }, [todo.ID, todo.Deadline]);
 
   return (
     <div
