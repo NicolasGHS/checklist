@@ -1,13 +1,13 @@
 [Desktop Entry]
 Version=1.0
 Name=Checklist
-Comment=A tmpl application
+Comment=A Things 3 inspired task manager
 # The Exec line includes %u to pass the URL to the application
-Exec=/usr/local/bin/tmpl %u
+Exec=/usr/local/bin/Checklist %u
 Terminal=false
 Type=Application
-Icon=tmpl
+Icon=Checklist
 Categories=Utility;
-StartupWMClass=tmpl
+StartupWMClass=Checklist
 
  

@@ -1,15 +1,15 @@
 {
 	"fixed": {
-		"file_version": "0.1.0",
-		"product_version": "0.1.0"
+		"file_version": "0.2.0",
+		"product_version": "0.2.0"
 	},
 	"info": {
 		"0409": {
-			"FileVersion": "0.1.0",
-			"ProductVersion": "0.1.0",
-			"CompanyName": "My Company",
-			"FileDescription": "A tmpl application",
-			"LegalCopyright": "© 2026, My Company",
+			"FileVersion": "0.2.0",
+			"ProductVersion": "0.2.0",
+			"CompanyName": "NicolasGHS",
+			"FileDescription": "A Things 3 inspired task manager",
+			"LegalCopyright": "© 2025 NicolasGHS",
 			"ProductName": "Checklist",
 			"Comments": "This is a comment"
 		}
