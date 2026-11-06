@@ -5,7 +5,12 @@ import {
   DeleteDeadline,
   UpdateTodo,
 } from "../../wailsjs/go/main/App";
-import { useDraggable } from "@dnd-kit/core";
+import {
+  DraggableAttributes,
+  DraggableSyntheticListeners,
+  useDraggable,
+} from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, MoreHorizontal, Star, Trash2 } from "lucide-react";
 import { models } from "wailsjs/go/models";
@@ -25,29 +30,74 @@ type TaskProps = {
   currentListId?: number;
   showCompletionDate?: boolean;
   listNameMap?: Map<number, string>;
+  // inside a SortableContext: the row can be reordered and is a drop target
+  sortable?: boolean;
 };
 
-export const Task = ({
+type DragBindings = {
+  setNodeRef: (node: HTMLElement | null) => void;
+  attributes: DraggableAttributes;
+  listeners: DraggableSyntheticListeners;
+  style: React.CSSProperties;
+};
+
+export const Task = ({ sortable = false, ...props }: TaskProps) =>
+  sortable ? <SortableTask {...props} /> : <DraggableTask {...props} />;
+
+type RowProps = Omit<TaskProps, "sortable">;
+
+const DraggableTask = (props: RowProps) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: `task-${props.todo.ID}`,
+      disabled: props.todo.Completed,
+      data: { todo: props.todo },
+    });
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  };
+  return (
+    <TaskRow {...props} drag={{ setNodeRef, attributes, listeners, style }} />
+  );
+};
+
+const SortableTask = (props: RowProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: `task-${props.todo.ID}`,
+    disabled: props.todo.Completed,
+    data: { todo: props.todo },
+  });
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+    position: "relative" as const,
+    zIndex: isDragging ? 1 : undefined,
+  };
+  return (
+    <TaskRow {...props} drag={{ setNodeRef, attributes, listeners, style }} />
+  );
+};
+
+const TaskRow = ({
   todo,
   onToggle,
   openCard,
   onDelete,
   showCompletionDate = false,
   listNameMap,
-}: TaskProps) => {
+  drag,
+}: RowProps & { drag: DragBindings }) => {
   const [daysLeft, setDaysLeft] = useState<number>();
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: `task-${todo.ID}`,
-      disabled: todo.Completed,
-      data: {
-        todo,
-      },
-    });
-  const style = {
-    transform: CSS.Translate.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
-  };
+  const { attributes, listeners, setNodeRef, style } = drag;
   const handleChange = () => {
     onToggle(todo.ID);
   };

@@ -69,6 +69,10 @@ export function GetTodosByDeadline(arg1:time.Time):Promise<Array<models.Todo>>;
 
 export function GetTodosByList(arg1:number):Promise<Array<models.Todo>>;
 
+export function ReorderListTodos(arg1:Array<number>):Promise<void>;
+
+export function ReorderTodayTodos(arg1:Array<number>):Promise<void>;
+
 export function SelectSyncFolder():Promise<string>;
 
 export function SetSyncFolder(arg1:string):Promise<void>;

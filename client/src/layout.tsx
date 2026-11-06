@@ -5,10 +5,13 @@ import { AppSidebar } from "./components/Sidebar/AppSidebar";
 import { ThemeProvider } from "./components/theme-provider";
 import { CountContextProvider } from "./contexts/CountContext";
 import {
+  closestCenter,
+  CollisionDetection,
   DndContext,
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
+  pointerWithin,
 } from "@dnd-kit/core";
 import {
   UpdateTodoList,
@@ -18,6 +21,21 @@ import {
 import { Hash } from "lucide-react";
 import { models } from "wailsjs/go/models";
 import { Notebar } from "./components/Notebar/Notebar";
+
+const isTaskId = (id: unknown) => String(id).startsWith("task-");
+
+// Sidebar targets (lists, Today, areas) win when the pointer is on them;
+// otherwise the closest task is the target, which drives reordering.
+const collisionDetection: CollisionDetection = (args) => {
+  const sidebarHits = pointerWithin(args).filter((c) => !isTaskId(c.id));
+  if (sidebarHits.length > 0) return sidebarHits;
+  return closestCenter({
+    ...args,
+    droppableContainers: args.droppableContainers.filter((c) =>
+      isTaskId(c.id),
+    ),
+  });
+};
 
 const Layout: React.FC = () => {
   const [draggedTask, setDraggedTask] = useState<{
@@ -32,7 +50,7 @@ const Layout: React.FC = () => {
 
     if (active.id.toString().startsWith("task-")) {
       const taskId = parseInt(active.id.toString().replace("task-", ""));
-      setDraggedTask({ id: taskId, name: "Task" });
+      setDraggedTask({ id: taskId, name: active.data.current?.todo?.Name });
       console.log("Dragging task:", taskId);
       window.dispatchEvent(new CustomEvent("taskDragStarted", { detail: { taskId } }));
     } else if (active.id.toString().startsWith("list-")) {
@@ -161,7 +179,11 @@ const Layout: React.FC = () => {
   return (
     <CountContextProvider>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <DndContext
+          collisionDetection={collisionDetection}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
           <SidebarProvider>
             <div className="flex min-h-screen w-screen bg-background">
               <AppSidebar />
@@ -185,7 +207,7 @@ const Layout: React.FC = () => {
               <div className="flex gap-3 items-center bg-background border rounded px-3 py-2 shadow-lg opacity-90">
                 <div className="w-4 h-4 border border-border rounded bg-muted"></div>
                 <p className="text-foreground">
-                  Drag to Today to set deadline...
+                  {draggedTask.name ?? "Task"}
                 </p>
               </div>
             ) : draggedList ? (

@@ -126,6 +126,8 @@ export namespace models {
 	    Today: boolean;
 	    Deadline?: time.Time;
 	    Archive: boolean;
+	    Position: number;
+	    TodayPosition: number;
 	    CompletedAt: time.Time;
 	    CreatedAt: time.Time;
 	    UpdatedAt: time.Time;
@@ -145,6 +147,8 @@ export namespace models {
 	        this.Today = source["Today"];
 	        this.Deadline = this.convertValues(source["Deadline"], time.Time);
 	        this.Archive = source["Archive"];
+	        this.Position = source["Position"];
+	        this.TodayPosition = source["TodayPosition"];
 	        this.CompletedAt = this.convertValues(source["CompletedAt"], time.Time);
 	        this.CreatedAt = this.convertValues(source["CreatedAt"], time.Time);
 	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], time.Time);

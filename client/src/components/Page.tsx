@@ -7,9 +7,17 @@ import {
   GetLists,
   GetTodayTodos,
   GetTodosByList,
+  ReorderListTodos,
+  ReorderTodayTodos,
   UpdateTodo,
   ToggleTodo,
 } from "../../wailsjs/go/main/App";
+import { DragEndEvent, useDndMonitor } from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { NewTaskButton } from "./NewTaskButton";
 import { models } from "wailsjs/go/models";
 import { useLocation } from "react-router-dom";
@@ -93,6 +101,39 @@ export const Page = ({ title, id }: PageProps) => {
     isTodayPage && projectFilter.length > 0
       ? todos.filter((todo) => projectFilter.includes(todo.ListID))
       : todos;
+
+  const openTasks = visibleTodos.filter((todo) => !todo.Completed);
+  const sortableIds = openTasks
+    .filter((todo) => todo.ID !== openTodoId)
+    .map((todo) => `task-${todo.ID}`);
+
+  // reorder when a task is dropped on another task of this page; drops on the
+  // sidebar are handled in layout.tsx
+  const handleReorder = async ({ active, over }: DragEndEvent) => {
+    const activeKey = String(active.id);
+    const overKey = over ? String(over.id) : "";
+    if (activeKey === overKey) return;
+    if (!activeKey.startsWith("task-") || !overKey.startsWith("task-")) return;
+
+    const from = todos.findIndex((t) => `task-${t.ID}` === activeKey);
+    const to = todos.findIndex((t) => `task-${t.ID}` === overKey);
+    if (from < 0 || to < 0) return;
+
+    // move within the full list so tasks hidden by the Today filter keep
+    // their place relative to each other
+    const reordered = arrayMove(todos, from, to);
+    setTodos(reordered);
+
+    const ids = reordered.filter((t) => !t.Completed).map((t) => t.ID);
+    try {
+      await (isTodayPage ? ReorderTodayTodos(ids) : ReorderListTodos(ids));
+    } catch (error) {
+      console.error("Failed to save task order:", error);
+      reloadTodos();
+    }
+  };
+
+  useDndMonitor({ onDragEnd: handleReorder });
 
   const showCard = () => {
     setShowNewTaskCard(!showNewTaskCard);
@@ -229,20 +270,13 @@ export const Page = ({ title, id }: PageProps) => {
         loadTodos();
       }
     };
+    // the dragged task stays in the list while dragging (it's sortable), so
+    // only a completed move to another list needs a reload
     const handleTaskMoved = () => reload();
-    const handleTaskDragStarted = (e: Event) => {
-      const { taskId } = (e as CustomEvent).detail;
-      setTodos((prev) => prev.filter((t) => t.ID !== taskId));
-    };
-    const handleTaskDragCancelled = () => reload();
 
     window.addEventListener("taskMoved", handleTaskMoved);
-    window.addEventListener("taskDragStarted", handleTaskDragStarted);
-    window.addEventListener("taskDragCancelled", handleTaskDragCancelled);
     return () => {
       window.removeEventListener("taskMoved", handleTaskMoved);
-      window.removeEventListener("taskDragStarted", handleTaskDragStarted);
-      window.removeEventListener("taskDragCancelled", handleTaskDragCancelled);
     };
   }, [id]);
 
@@ -269,13 +303,16 @@ export const Page = ({ title, id }: PageProps) => {
         </div>
         <div>
           {showNewTaskCard && <NewTodoCard AddTodoFunction={createTodo} />}
-          <ul>
-            {visibleTodos
-              ?.filter((todo) => !todo.Completed)
-              .map((todo: models.Todo) => (
+          <SortableContext
+            items={sortableIds}
+            strategy={verticalListSortingStrategy}
+          >
+            <ul>
+              {openTasks.map((todo: models.Todo) => (
                 <li key={todo.ID} className="text-white mb-2">
                   {todo.ID !== openTodoId ? (
                     <Task
+                      sortable
                       todo={todo}
                       onToggle={handleToggle}
                       currentListId={id}
@@ -288,7 +325,8 @@ export const Page = ({ title, id }: PageProps) => {
                   )}
                 </li>
               ))}
-          </ul>
+            </ul>
+          </SortableContext>
           <Button
             variant="ghost"
             className="text-muted-foreground hover:cursor-pointer"

@@ -4,6 +4,7 @@ import (
 	"checklist/core/db"
 	"checklist/core/models"
 	"checklist/core/repository"
+	"sort"
 	"time"
 )
 
@@ -37,6 +38,16 @@ func GetTodayTodos() ([]models.Todo, error) {
 	}
 
 	result := append(unfinishedTodos, overdueTodos...)
+
+	// manually placed tasks first in their order; unplaced ones (0) keep the
+	// default order (due today, then overdue) after them
+	sort.SliceStable(result, func(i, j int) bool {
+		a, b := result[i].TodayPosition, result[j].TodayPosition
+		if (a == 0) != (b == 0) {
+			return b == 0
+		}
+		return a < b
+	})
 
 	return result, nil
 }
@@ -174,7 +185,18 @@ func UpdateTodoList(id uint, listID uint) error {
 	}
 
 	todo.ListID = listID
+	todo.Position = 0 // goes to the bottom of the new list
 	return repository.SaveTodo(&todo)
+}
+
+// ReorderListTodos stores the manual order of tasks within a list.
+func ReorderListTodos(ids []uint) error {
+	return repository.SetTodoPositions("position", ids)
+}
+
+// ReorderTodayTodos stores the manual order of tasks on the Today page.
+func ReorderTodayTodos(ids []uint) error {
+	return repository.SetTodoPositions("today_position", ids)
 }
 
 func CalculateDaysLeft(id uint) (*int, error) {

@@ -134,6 +134,14 @@ export function GetTodosByList(arg1) {
   return window['go']['main']['App']['GetTodosByList'](arg1);
 }
 
+export function ReorderListTodos(arg1) {
+  return window['go']['main']['App']['ReorderListTodos'](arg1);
+}
+
+export function ReorderTodayTodos(arg1) {
+  return window['go']['main']['App']['ReorderTodayTodos'](arg1);
+}
+
 export function SelectSyncFolder() {
   return window['go']['main']['App']['SelectSyncFolder']();
 }

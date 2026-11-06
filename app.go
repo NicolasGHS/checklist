@@ -121,6 +121,14 @@ func (a *App) UpdateTodoList(id uint, listID uint) error {
 	return api.UpdateTodoList(id, listID)
 }
 
+func (a *App) ReorderListTodos(ids []uint) error {
+	return api.ReorderListTodos(ids)
+}
+
+func (a *App) ReorderTodayTodos(ids []uint) error {
+	return api.ReorderTodayTodos(ids)
+}
+
 func (a *App) CalculateRemainingTime(id uint) (*int, error) {
 	return api.CalculateDaysLeft(id)
 }

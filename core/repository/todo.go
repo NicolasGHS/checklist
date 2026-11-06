@@ -4,6 +4,8 @@ import (
 	"checklist/core/db"
 	"checklist/core/models"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 func GetTodos() ([]models.Todo, error) {
@@ -31,7 +33,10 @@ func GetTodoById(id uint) (models.Todo, error) {
 func GetTodosByList(id uint) ([]models.Todo, error) {
 	var todos []models.Todo
 
-	result := db.DB.Where("list_id = ? AND archive = 0 AND parent_id IS NULL", id).Order("completed asc").Find(&todos)
+	// position is NULL on rows from before the column existed: treat as 0 (unplaced)
+	result := db.DB.Where("list_id = ? AND archive = 0 AND parent_id IS NULL", id).
+		Order("completed asc, COALESCE(position, 0) = 0 asc, position asc, id asc").
+		Find(&todos)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -144,7 +149,9 @@ func UpdateTodo(id uint, name string, description string, list_id uint, today bo
 func DeleteDeadline(id uint) (models.Todo, error) {
 	var todo models.Todo
 
-	result := db.DB.Model(&models.Todo{}).Where("id = ?", id).Update("deadline", nil)
+	// leaving Today drops the task's spot there, so it re-enters at the bottom
+	result := db.DB.Model(&models.Todo{}).Where("id = ?", id).
+		Updates(map[string]any{"deadline": nil, "today_position": 0})
 	if result.Error != nil {
 		return models.Todo{}, result.Error
 	}
@@ -160,4 +167,18 @@ func DeleteTodo(id uint) error {
 
 func SaveTodo(todo *models.Todo) error {
 	return db.DB.Save(todo).Error
+}
+
+// SetTodoPositions writes 1-based positions into column ("position" or
+// "today_position") following the order of ids, in one transaction.
+func SetTodoPositions(column string, ids []uint) error {
+	return db.DB.Transaction(func(tx *gorm.DB) error {
+		for i, id := range ids {
+			if err := tx.Model(&models.Todo{}).Where("id = ?", id).
+				Update(column, i+1).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
