@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NewTodoCard } from "./NewTodoCard";
 import { Task } from "./Task";
 import {
@@ -16,6 +16,28 @@ import { useLocation } from "react-router-dom";
 import { TodoCard } from "./TaskCard";
 import { Button } from "./ui/button";
 import { useCount } from "@/hooks/useCount";
+import { ProjectFilter, ProjectFilterOption } from "./ProjectFilter";
+
+const INBOX_LIST_ID = 1;
+const TODAY_FILTER_KEY = "todayProjectFilter";
+
+const readTodayFilter = (): number[] => {
+  try {
+    const raw = localStorage.getItem(TODAY_FILTER_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter(Number.isInteger) : [];
+  } catch {
+    return [];
+  }
+};
+
+const writeTodayFilter = (ids: number[]) => {
+  try {
+    localStorage.setItem(TODAY_FILTER_KEY, JSON.stringify(ids));
+  } catch {
+    // storage unavailable: the filter just won't persist
+  }
+};
 
 type PageProps = {
   title: string;
@@ -28,8 +50,49 @@ export const Page = ({ title, id }: PageProps) => {
   const [openTodoId, setOpenTodoId] = useState<number>();
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
   const [listNameMap, setListNameMap] = useState<Map<number, string>>(new Map());
+  const [projectFilter, setProjectFilter] = useState<number[]>(readTodayFilter);
   const location = useLocation();
   const { inboxCount, setInboxCount, setTodayCount } = useCount();
+  const isTodayPage = location.pathname === "/today";
+
+  const updateProjectFilter = (ids: number[]) => {
+    setProjectFilter(ids);
+    writeTodayFilter(ids);
+  };
+
+  const listName = (listId: number) =>
+    listId === INBOX_LIST_ID ? "Inbox" : listNameMap.get(listId);
+
+  // projects that have tasks on Today, plus any still selected in the filter
+  const projectOptions = useMemo<ProjectFilterOption[]>(() => {
+    if (!isTodayPage) return [];
+    const counts = new Map<number, number>();
+    for (const todo of todos) {
+      if (!counts.has(todo.ListID)) counts.set(todo.ListID, 0);
+      if (!todo.Completed) counts.set(todo.ListID, counts.get(todo.ListID)! + 1);
+    }
+    for (const listId of projectFilter) {
+      if (!counts.has(listId)) counts.set(listId, 0);
+    }
+    return [...counts.entries()]
+      .map(([listId, count]) => ({
+        id: listId,
+        name: listName(listId) ?? "Unknown project",
+        count,
+      }))
+      .sort((a, b) =>
+        a.id === INBOX_LIST_ID
+          ? -1
+          : b.id === INBOX_LIST_ID
+            ? 1
+            : a.name.localeCompare(b.name),
+      );
+  }, [isTodayPage, todos, projectFilter, listNameMap]);
+
+  const visibleTodos =
+    isTodayPage && projectFilter.length > 0
+      ? todos.filter((todo) => projectFilter.includes(todo.ListID))
+      : todos;
 
   const showCard = () => {
     setShowNewTaskCard(!showNewTaskCard);
@@ -194,11 +257,20 @@ export const Page = ({ title, id }: PageProps) => {
   return (
     <div className="mt-10 flex flex-col h-full relative select-none">
       <div className="flex-1 p-6">
-        <h1 className="text-3xl text-foreground font-bold mb-6">{title}</h1>
+        <div className="flex items-center justify-between gap-4 mb-6 mr-10">
+          <h1 className="text-3xl text-foreground font-bold">{title}</h1>
+          {isTodayPage && (
+            <ProjectFilter
+              options={projectOptions}
+              selected={projectFilter}
+              onChange={updateProjectFilter}
+            />
+          )}
+        </div>
         <div>
           {showNewTaskCard && <NewTodoCard AddTodoFunction={createTodo} />}
           <ul>
-            {todos
+            {visibleTodos
               ?.filter((todo) => !todo.Completed)
               .map((todo: models.Todo) => (
                 <li key={todo.ID} className="text-white mb-2">
@@ -226,7 +298,7 @@ export const Page = ({ title, id }: PageProps) => {
           </Button>
           <ul>
             {showCompleted &&
-              todos
+              visibleTodos
                 ?.filter((todo) => todo.Completed)
                 .map((todo: models.Todo) => (
                   <li key={todo.ID} className="text-white mb-2">
